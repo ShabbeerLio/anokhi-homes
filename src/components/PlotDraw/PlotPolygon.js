@@ -17,11 +17,13 @@ export default function PlotPolygon({
 
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef(null);
+  const [moved, setMoved] = useState(false);
 
   const startDrag = (e) => {
     if (mood !== "admin") return;
     e.stopPropagation();
     setDragging(true);
+    setMoved(false);
     dragStart.current = { x: e.clientX, y: e.clientY };
   };
 
@@ -29,11 +31,18 @@ export default function PlotPolygon({
     if (!dragging) return;
     e.stopPropagation();
 
-    const dx = (e.clientX - dragStart.current.x) / scale;
-    const dy = (e.clientY - dragStart.current.y) / scale;
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
 
-    const nextPoints = plot.points.map(([x, y]) => [x + dx, y + dy]);
+    // 👇 threshold to detect real drag
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+      setMoved(true);
+    }
 
+    const moveX = dx / scale;
+    const moveY = dy / scale;
+
+    const nextPoints = plot.points.map(([x, y]) => [x + moveX, y + moveY]);
     /* ---------- VALIDATION ---------- */
 
     // 🚫 Must stay inside MAIN (except ROAD)
@@ -62,13 +71,16 @@ export default function PlotPolygon({
       }
     }
 
-    /* ---------- APPLY MOVE ---------- */
+    /* validations already in your code */
     updatePlot(plot.id, () => nextPoints);
 
     dragStart.current = { x: e.clientX, y: e.clientY };
   };
 
-  const stopDrag = () => setDragging(false);
+  const stopDrag = () => {
+    setDragging(false);
+    setTimeout(() => setMoved(false), 0);
+  };
 
   return (
     <>
@@ -82,6 +94,10 @@ export default function PlotPolygon({
         onMouseUp={stopDrag}
         onClick={(e) => {
           e.stopPropagation();
+
+          // ❌ ignore click if it was a drag
+          if (moved) return;
+
           onSelect && onSelect(plot);
         }}
         style={{

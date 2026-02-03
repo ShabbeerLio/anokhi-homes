@@ -10,6 +10,7 @@ import Other from "./Pages/Other/Other";
 import Plot from "./Pages/Plot/Plot";
 import Projects from "./Pages/Plot/Projects";
 import ProjectDetail from "./Pages/Plot/ProjectDetail";
+import Profile from "./Pages/Profile/Profile";
 
 function App() {
   const [dark, setDark] = useState(false);
@@ -51,10 +52,11 @@ function App() {
                     <Routes>
                       <Route path="/" element={<Home />} />
                       <Route path="/user" element={<Other />} />
-                      <Route path="/plot" element={<Plot />} />
-                      <Route path="/plot/:plotId" element={<Projects />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/plot" element={<Plot mood={mood} />} />
+                      <Route path="/plot/:plotId" element={<Projects mood={mood} />} />
                       <Route
-                        path="/projects/:projectId"
+                        path="/plot/:plotId/:projectId"
                         element={<ProjectDetail mood={mood}/>}
                       />
                     </Routes>

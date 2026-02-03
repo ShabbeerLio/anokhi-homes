@@ -1,10 +1,13 @@
 import React from "react";
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 
 function Home() {
   return (
     <div className="home">
-      <h1>Welcome Anokhi!</h1>
-      <p className="breadcrumb">Home / Dashboards / Default</p>
+      <div className="table-filters">
+        <h2>Welcome Anokhi!</h2>
+      </div>
+        <Breadcrumb/>
 
       <div className="card big">
         <h3>Configure the Theme</h3>
@@ -16,7 +19,7 @@ function Home() {
       </div>
 
       <div className="stats">
-        <div className="stat">Earnings<br/><b>$340</b></div>
+        <div className="stat">Earnings<br/><b>₹340</b></div>
         <div className="stat">Orders<br/><b>163</b></div>
         <div className="stat">Sessions<br/><b>742</b></div>
         <div className="stat">Comments<br/><b>182</b></div>

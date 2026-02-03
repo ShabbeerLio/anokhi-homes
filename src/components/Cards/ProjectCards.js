@@ -11,7 +11,7 @@ const ProjectCards = ({ p }) => {
     >
       <div className="plot-img">
         <img src={p.img} alt={p.title} />
-        <span className="offer">{p.offer}</span>
+        {/* <span className="offer">{p.offer}</span> */}
       </div>
       <div className="plot-details">
         <h3>{p.title}</h3>

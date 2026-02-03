@@ -1,0 +1,50 @@
+.profile-grid {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.profile-card{
+    margin-bottom: 1rem;
+}
+
+.profile-top{
+    text-align: center;
+}
+.profile-top h3{
+    margin: 0;
+}
+.profile-top p{
+    font-size: 12px;
+    margin-top: 5px;
+    color: #9f9f9f;
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 2.3rem;
+  margin-bottom: 10px;
+}
+
+.profile-sidebar {
+  width: 30%;
+}
+
+.profile-main {
+  width: 70%;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.profile-nav {
+    margin-top: 1rem;
+}
+.profile-nav span{
+    cursor: pointer;
+}

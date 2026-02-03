@@ -7,18 +7,21 @@
     0 0 #0000,
     0 0 #0000,
     0 0 #0000,
-    0px 3px 8px #00000014;
+    0px 3px 8px #00000000;
 }
 
 .table-card {
-  height: 93%;
+  height: 91%;
+  padding: 1.5rem;
 }
 
 /* Filters */
 .table-filters {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  margin-bottom: 15px;
+  /* margin-bottom: 15px; */
 }
 
 .table-filters button {
@@ -95,7 +98,7 @@
 }
 
 .app.dark .card {
-  background: #1e1e1e;
+  background: #252528;
 }
 
 .pagination {

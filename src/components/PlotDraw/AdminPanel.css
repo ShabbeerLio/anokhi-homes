@@ -9,8 +9,7 @@
 }
 
 .admin-panel button,
-.admin-panel select,
-.finish-btn {
+.admin-panel select {
   padding: 6px 14px;
   border-radius: 20px;
   border: none;
@@ -29,7 +28,10 @@
 .finish-btn {
   background-color: var(--mood-color);
   color: white;
-  border: var(--mood-color);
+  border: 1px solid var(--mood-color);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
 }
 
 .modal-bg {
@@ -43,7 +45,7 @@
 
 .modal {
   background: #fff;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 1.75rem;
 }
 
@@ -54,7 +56,7 @@
 
 .app.dark .modal,
 .app.dark .plot-draw {
-  background: #1e1e1e;
+  background: #252528;
 }
 
 .tool-row {
@@ -63,20 +65,136 @@
   gap: 5px;
 }
 
-.plot-compass{
-    position: absolute;
-    top: 5%;
-    right: 3%;
-    z-index: 5;
-}
-.plot-compass img{
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
+.plot-compass {
+  position: absolute;
+  top: 5%;
+  right: 3%;
+  z-index: 5;
 }
 
-.tool-row .active{
-    background-color: var(--mood-color);
-    color: white;
-    border: 1px solid var(--mood-color);
+.plot-compass img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.tool-row .active {
+  background-color: var(--mood-color);
+  color: white;
+  border: 1px solid var(--mood-color);
+}
+
+.plot-modal .field {
+  display: flex;
+  /* align-items: center; */
+  justify-content: flex-start;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.plot-modal .field select,
+.plot-modal .field input ,
+.plot-modal .field textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 20px;
+  border: 1px solid #bcbcbc2e;
+  background-color: transparent;
+  color: #9f9f9f;
+}
+
+.modal-actions button {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: none;
+  background: var(--mood-color);
+  color: white;
+  cursor: pointer;
+  border: 1px solid var(--mood-color);
+}
+
+.modal-actions {
+  display: flex;
+}
+
+.btn.sale {
+  background-color: green;
+  border: 1px solid green;
+}
+
+.btn.sold {
+  background-color: red;
+  border: 1px solid red;
+}
+
+.btn.pending {
+  background-color: orange;
+  border: 1px solid orange;
+}
+
+.bg-tools {
+  display: flex;
+  gap: 10px;
+  /* margin-bottom: 10px; */
+}
+
+.bg-tools input {
+  font-size: 12px;
+}
+
+.btn.complete {
+  background: #22c55e;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+.plot-draw.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #f8fafc;
+  border-radius: 0;
+  padding: 0;
+}
+
+.plot-draw.fullscreen svg {
+  height: calc(100vh - 40px);
+}
+.plot-buttons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.plot-buttons .bg-tools button,
+.plot-buttons .bg-tools input,
+.plot-buttons .upload-btn,
+.plot-buttons .fullscreen-tools button {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  background: transparent;
+  color: #9f9f9f;
+  cursor: pointer;
+  border: 1px solid #9f9f9f;
+}
+
+.plot-buttons .bg-tools button {
+  background-color: var(--mood-color);
+  color: white;
+  border: 1px solid var(--mood-color);
+}
+
+.plot-buttons .upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 12px;
+}
+.plot-buttons .upload-btn svg {
+  width: 16px;
+  height: 16px;
 }

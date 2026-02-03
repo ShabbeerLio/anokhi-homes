@@ -49,7 +49,7 @@ body {
   width: 100%;
 }
 .app.dark {
-  background: #121212;
+  background: #202022;
   color: #fff;
 }
 
@@ -64,10 +64,10 @@ body {
     0 0 #0000,
     0 0 #0000,
     0 0 #0000,
-    0px 3px 8px #00000014;
+    0px 3px 8px #00000000;
 }
 .app.dark .sidebar {
-  background: #1e1e1e;
+  background: #252528;
 }
 
 .menu-group {
@@ -112,10 +112,10 @@ body {
     0 0 #0000,
     0 0 #0000,
     0 0 #0000,
-    0px 3px 8px #00000014;
+    0px 3px 8px #00000000;
 }
 .app.dark .topbar {
-  background: #1e1e1e;
+  background: #252528;
 }
 .app.dark .top-mood {
   color: #fff;
@@ -180,7 +180,7 @@ body {
 }
 
 .app.dark .profile-modal {
-  background: #1e1e1e;
+  background: #252528;
 }
 
 @keyframes drop {
@@ -237,14 +237,14 @@ body {
   border-radius: 12px;
   border: none;
   background: #fff;
-  color: #1e1e1e;
+  color: #252528;
   margin-top: 10px;
   cursor: pointer;
-  border: 0.1px solid #1e1e1e;
+  border: 0.1px solid #252528;
 }
 
 .app.dark .pm-logout {
-  background: #1e1e1e;
+  background: #252528;
   color: #fff;
   border: 0.1px solid #c8c8c859;
 }
@@ -264,10 +264,6 @@ body {
 .home {
   padding: 20px;
 }
-.breadcrumb {
-  color: #aaa;
-  margin-top: -10px;
-}
 
 .card.big {
   background: #fff;
@@ -276,7 +272,7 @@ body {
   margin-top: 20px;
 }
 .app.dark .card.big {
-  background: #1e1e1e;
+  background: #252528;
 }
 
 .btns {
@@ -306,7 +302,7 @@ body {
   border-radius: 18px;
 }
 .app.dark .stat {
-  background: #1e1e1e;
+  background: #252528;
 }
 
 /* Sidebar wrapper */
@@ -318,7 +314,6 @@ body {
 /* Page */
 .page-wrap {
   flex: 1;
-  padding: 1.5rem;
 }
 .mobile-btn {
   display: none;
@@ -341,7 +336,7 @@ body {
   background-image: url("./Assets/Bg/bg-dark.jpg");
 }
 .app.dark .auth-card {
-  background: #1e1e1e;
+  background: #252528;
 }
 
 .auth-card {
@@ -400,7 +395,7 @@ body {
 }
 
 .app.dark .auth-card button {
-  background-color: #1e1e1e;
+  background-color: #252528;
   border: 1px solid #bcbcbc2e;
   color: #fff;
 }

@@ -10,8 +10,8 @@ const ProjectData = [
         id: "p1",
         img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
         name: "Blue Dome Colony",
-        price: "₹2.5 Cr",
-        area: "2500 sqft",
+        price: "₹50 - 500/sqft",
+        area: "20500 sqft",
         offer: "20% Off",
         details: "Luxury villas with sea view and private pool.",
         layout: {
@@ -63,8 +63,8 @@ const ProjectData = [
         id: "p2",
         img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
         name: "Sunset Heights Colony",
-        price: "₹1.8 Cr",
-        area: "1800 sqft",
+        price: "₹50 - 400/sqft",
+        area: "10800 sqft",
         offer: "20% Off",
         details: "Hill-facing homes with sunset views.",
         layout: {
@@ -116,8 +116,379 @@ const ProjectData = [
         id: "p3",
         img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
         name: "Moon Heights Colony",
-        price: "₹1.5 Cr",
-        area: "1600 sqft",
+        price: "₹50 - 300/sqft",
+        area: "10600 sqft",
+        offer: "15% Off",
+        details: "Affordable luxury apartments.",
+        layout: {
+          mainPlot: {
+            id: "MAIN",
+            plotType: "NOT_FOR_SALE",
+            points: [
+              [50, 50],
+              [550, 50],
+              [550, 350],
+              [50, 350],
+            ],
+          },
+          plots: [
+            {
+              id: "P-1",
+              plotType: "FOR_SALE",
+              points: [
+                [80, 80],
+                [220, 80],
+                [220, 200],
+                [80, 200],
+              ],
+            },
+            {
+              id: "P-2",
+              plotType: "SOLD",
+              points: [
+                [260, 80],
+                [500, 80],
+                [500, 200],
+                [260, 200],
+              ],
+            },
+            {
+              id: "ROAD-1",
+              plotType: "ROAD",
+              points: [
+                [80, 240],
+                [500, 240],
+                [500, 300],
+                [80, 300],
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: "p3",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
+        name: "Moon Heights Colony",
+        price: "₹50 - 300/sqft",
+        area: "10600 sqft",
+        offer: "15% Off",
+        details: "Affordable luxury apartments.",
+        layout: {
+          mainPlot: {
+            id: "MAIN",
+            plotType: "NOT_FOR_SALE",
+            points: [
+              [50, 50],
+              [550, 50],
+              [550, 350],
+              [50, 350],
+            ],
+          },
+          plots: [
+            {
+              id: "P-1",
+              plotType: "FOR_SALE",
+              points: [
+                [80, 80],
+                [220, 80],
+                [220, 200],
+                [80, 200],
+              ],
+            },
+            {
+              id: "P-2",
+              plotType: "SOLD",
+              points: [
+                [260, 80],
+                [500, 80],
+                [500, 200],
+                [260, 200],
+              ],
+            },
+            {
+              id: "ROAD-1",
+              plotType: "ROAD",
+              points: [
+                [80, 240],
+                [500, 240],
+                [500, 300],
+                [80, 300],
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: "p3",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
+        name: "Moon Heights Colony",
+        price: "₹50 - 300/sqft",
+        area: "10600 sqft",
+        offer: "15% Off",
+        details: "Affordable luxury apartments.",
+        layout: {
+          mainPlot: {
+            id: "MAIN",
+            plotType: "NOT_FOR_SALE",
+            points: [
+              [50, 50],
+              [550, 50],
+              [550, 350],
+              [50, 350],
+            ],
+          },
+          plots: [
+            {
+              id: "P-1",
+              plotType: "FOR_SALE",
+              points: [
+                [80, 80],
+                [220, 80],
+                [220, 200],
+                [80, 200],
+              ],
+            },
+            {
+              id: "P-2",
+              plotType: "SOLD",
+              points: [
+                [260, 80],
+                [500, 80],
+                [500, 200],
+                [260, 200],
+              ],
+            },
+            {
+              id: "ROAD-1",
+              plotType: "ROAD",
+              points: [
+                [80, 240],
+                [500, 240],
+                [500, 300],
+                [80, 300],
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: "p3",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
+        name: "Moon Heights Colony",
+        price: "₹50 - 300/sqft",
+        area: "10600 sqft",
+        offer: "15% Off",
+        details: "Affordable luxury apartments.",
+        layout: {
+          mainPlot: {
+            id: "MAIN",
+            plotType: "NOT_FOR_SALE",
+            points: [
+              [50, 50],
+              [550, 50],
+              [550, 350],
+              [50, 350],
+            ],
+          },
+          plots: [
+            {
+              id: "P-1",
+              plotType: "FOR_SALE",
+              points: [
+                [80, 80],
+                [220, 80],
+                [220, 200],
+                [80, 200],
+              ],
+            },
+            {
+              id: "P-2",
+              plotType: "SOLD",
+              points: [
+                [260, 80],
+                [500, 80],
+                [500, 200],
+                [260, 200],
+              ],
+            },
+            {
+              id: "ROAD-1",
+              plotType: "ROAD",
+              points: [
+                [80, 240],
+                [500, 240],
+                [500, 300],
+                [80, 300],
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: "p3",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
+        name: "Moon Heights Colony",
+        price: "₹50 - 300/sqft",
+        area: "10600 sqft",
+        offer: "15% Off",
+        details: "Affordable luxury apartments.",
+        layout: {
+          mainPlot: {
+            id: "MAIN",
+            plotType: "NOT_FOR_SALE",
+            points: [
+              [50, 50],
+              [550, 50],
+              [550, 350],
+              [50, 350],
+            ],
+          },
+          plots: [
+            {
+              id: "P-1",
+              plotType: "FOR_SALE",
+              points: [
+                [80, 80],
+                [220, 80],
+                [220, 200],
+                [80, 200],
+              ],
+            },
+            {
+              id: "P-2",
+              plotType: "SOLD",
+              points: [
+                [260, 80],
+                [500, 80],
+                [500, 200],
+                [260, 200],
+              ],
+            },
+            {
+              id: "ROAD-1",
+              plotType: "ROAD",
+              points: [
+                [80, 240],
+                [500, 240],
+                [500, 300],
+                [80, 300],
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: "p3",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
+        name: "Moon Heights Colony",
+        price: "₹50 - 300/sqft",
+        area: "10600 sqft",
+        offer: "15% Off",
+        details: "Affordable luxury apartments.",
+        layout: {
+          mainPlot: {
+            id: "MAIN",
+            plotType: "NOT_FOR_SALE",
+            points: [
+              [50, 50],
+              [550, 50],
+              [550, 350],
+              [50, 350],
+            ],
+          },
+          plots: [
+            {
+              id: "P-1",
+              plotType: "FOR_SALE",
+              points: [
+                [80, 80],
+                [220, 80],
+                [220, 200],
+                [80, 200],
+              ],
+            },
+            {
+              id: "P-2",
+              plotType: "SOLD",
+              points: [
+                [260, 80],
+                [500, 80],
+                [500, 200],
+                [260, 200],
+              ],
+            },
+            {
+              id: "ROAD-1",
+              plotType: "ROAD",
+              points: [
+                [80, 240],
+                [500, 240],
+                [500, 300],
+                [80, 300],
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: "p3",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
+        name: "Moon Heights Colony",
+        price: "₹50 - 300/sqft",
+        area: "10600 sqft",
+        offer: "15% Off",
+        details: "Affordable luxury apartments.",
+        layout: {
+          mainPlot: {
+            id: "MAIN",
+            plotType: "NOT_FOR_SALE",
+            points: [
+              [50, 50],
+              [550, 50],
+              [550, 350],
+              [50, 350],
+            ],
+          },
+          plots: [
+            {
+              id: "P-1",
+              plotType: "FOR_SALE",
+              points: [
+                [80, 80],
+                [220, 80],
+                [220, 200],
+                [80, 200],
+              ],
+            },
+            {
+              id: "P-2",
+              plotType: "SOLD",
+              points: [
+                [260, 80],
+                [500, 80],
+                [500, 200],
+                [260, 200],
+              ],
+            },
+            {
+              id: "ROAD-1",
+              plotType: "ROAD",
+              points: [
+                [80, 240],
+                [500, 240],
+                [500, 300],
+                [80, 300],
+              ],
+            },
+          ],
+        },
+      },
+      {
+        id: "p3",
+        img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
+        name: "Moon Heights Colony",
+        price: "₹50 - 300/sqft",
+        area: "10600 sqft",
         offer: "15% Off",
         details: "Affordable luxury apartments.",
         layout: {
@@ -178,8 +549,8 @@ const ProjectData = [
         id: "p4",
         img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
         name: "Palm  Colony",
-        price: "₹1.2 Cr",
-        area: "1400 sqft",
+        price: "₹40 - 400/sqft",
+        area: "10400 sqft",
         offer: "10% Off",
         details: "Green living near beaches.",
         layout: {
@@ -231,8 +602,8 @@ const ProjectData = [
         id: "p5",
         img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
         name: "Just Colony",
-        price: "₹1.2 Cr",
-        area: "1400 sqft",
+        price: "₹50 - 500/sqft",
+        area: "10400 sqft",
         offer: "10% Off",
         details: "Green living near beaches.",
         layout: {
@@ -293,7 +664,7 @@ const ProjectData = [
         id: "p6",
         img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
         name: "Lagoon View Colony",
-        price: "₹3.2 Cr",
+       price: "₹70 - 700/sqft",
         area: "3200 sqft",
         offer: "10% Off",
         details: "Premium overwater villas.",

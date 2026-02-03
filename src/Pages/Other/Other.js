@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Other.css";
 import SearchItems from "../../components/SearchItems/SearchItems";
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -136,18 +137,21 @@ const Other = () => {
     <div className="table-card ">
       {/* Filters */}
       <div className="table-filters">
-        {["all", "user", "staff", "agent"].map((f) => (
-          <button
-            key={f}
-            className={filter === f ? "active" : ""}
-            onClick={() => setFilter(f)}
-          >
-            {f.toUpperCase()}
-          </button>
-        ))}
-        <SearchItems/>
+        <h2>Users</h2>
+        <div className="page-tools">
+          {["all", "user", "staff", "agent"].map((f) => (
+            <button
+              key={f}
+              className={filter === f ? "active" : ""}
+              onClick={() => setFilter(f)}
+            >
+              {f.toUpperCase()}
+            </button>
+          ))}
+          <SearchItems />
+        </div>
       </div>
-
+      <Breadcrumb />
 
       {/* Table */}
       <div className="table card">
@@ -165,15 +169,8 @@ const Other = () => {
             <img src={item.avatar} alt="" />
             <span>{item.id}</span>
 
-            <span
-              className="title"
-            >
-              {item.name}
-            </span>
-            <span
-            >
-              {item.user}
-            </span>
+            <span className="title">{item.name}</span>
+            <span>{item.user}</span>
 
             <span className={`status ${item.status}`}>
               {item.status === "active" ? "Active" : "In Active"}

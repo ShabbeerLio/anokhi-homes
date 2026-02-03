@@ -59,10 +59,48 @@
 
 .plot-container {
   overflow: auto;
-  height: 94%;
-  padding: 0 8px;
+  height: 95%;
+  padding: 1.5rem;
+  padding-bottom: 2rem;
 }
-.plot-container h2{
+.table-filters h2 {
   margin: 0;
 }
 
+.plot-card-price {
+  color: var(--mood-color);
+  font-weight: 600;
+}
+
+.back-button {
+  cursor: pointer;
+}
+
+.page-tools {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.page-tools .add-button {
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  /* border: 1px solid #9f9f9f; */
+  box-shadow:
+    0px 3px 8px #00000014,
+    0 0 #0000,
+    0 0 #0000,
+    0 0 #0000,
+    0px 3px 8px #00000000;
+  display: flex;
+  align-items: center;
+}
+
+.app.dark .page-tools .add-button {
+  background: #252528;
+}
+.page-tools .add-button svg {
+  width: 18px;
+  height: 18px;
+}

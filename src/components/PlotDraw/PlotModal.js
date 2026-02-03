@@ -1,22 +1,28 @@
 import React from "react";
 
-const PLOT_TYPES = [
-  "FOR_SALE",
-  "SOLD",
-  "PENDING",
-  "NOT_FOR_SALE",
-  "ROAD",
-];
+const PLOT_TYPES = ["FOR_SALE", "SOLD", "PENDING", "NOT_FOR_SALE", "ROAD"];
 
 const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
   const isAdmin = mood === "admin";
 
+  const PLOT_ACTION_CONFIG = {
+    FOR_SALE: {
+      label: "Book Plot",
+      className: "agent btn sale",
+    },
+    SOLD: {
+      label: "SOLD",
+      className: "agent btn sold",
+    },
+    PENDING: {
+      label: "Pending",
+      className: "agent btn pending",
+    },
+  };
+
   return (
-    <div className="modal-bg" onClick={onClose}>
-      <div
-        className="modal"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="modal-bg plot-modal" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>Plot Details</h3>
 
         {/* Plot ID */}
@@ -31,9 +37,7 @@ const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
           <input
             value={plot.name || ""}
             disabled={!isAdmin}
-            onChange={(e) =>
-              updatePlot(plot.id, { name: e.target.value })
-            }
+            onChange={(e) => updatePlot(plot.id, { name: e.target.value })}
             placeholder="Enter plot name"
           />
         </div>
@@ -44,9 +48,7 @@ const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
           <select
             value={plot.plotType}
             disabled={!isAdmin}
-            onChange={(e) =>
-              updatePlot(plot.id, { plotType: e.target.value })
-            }
+            onChange={(e) => updatePlot(plot.id, { plotType: e.target.value })}
           >
             {PLOT_TYPES.map((t) => (
               <option key={t} value={t}>
@@ -77,8 +79,17 @@ const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
         </p>
 
         <div className="modal-actions">
+          {mood === "agent" && plot.plotType !== "ROAD" && (
+            <button
+              className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
+              onClick={onClose}
+              disabled={plot.plotType === "SOLD"}
+            >
+              {PLOT_ACTION_CONFIG[plot.plotType]?.label}
+            </button>
+          )}
           <button className="btn secondary" onClick={onClose}>
-            Close
+            {isAdmin ? "Done " : "Close"}
           </button>
         </div>
       </div>
