@@ -1,31 +1,25 @@
 import React from "react";
-import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
+import "./Home.css";
+import CTA from "../../components/LandingPage/CTA";
+import Banner from "../../components/LandingPage/Banner";
+import About from "../../components/LandingPage/About";
+import Projects from "../../components/LandingPage/Projects";
+import Services from "../../components/LandingPage/Services";
+import Testimonial from "../../components/LandingPage/Testimonial";
+import Counter from "../../components/LandingPage/Counter";
 
-function Home() {
+const Home = () => {
   return (
-    <div className="home">
-      <div className="table-filters">
-        <h2>Welcome Anokhi!</h2>
-      </div>
-        <Breadcrumb/>
-
-      <div className="card big">
-        <h3>Configure the Theme</h3>
-        <p>Configuring theme colors and background options allows you to personalize the theme.</p>
-        <div className="btns">
-          <button className="btn primary">Configure</button>
-          <button className="btn">Buy</button>
-        </div>
-      </div>
-
-      <div className="stats">
-        <div className="stat">Earnings<br/><b>₹340</b></div>
-        <div className="stat">Orders<br/><b>163</b></div>
-        <div className="stat">Sessions<br/><b>742</b></div>
-        <div className="stat">Comments<br/><b>182</b></div>
-      </div>
-    </div>
+    <>
+      <Banner />
+      <About />
+      <Counter/>
+      <Projects />
+      <Services />
+      <Testimonial />
+      <CTA />
+    </>
   );
-}
+};
 
 export default Home;

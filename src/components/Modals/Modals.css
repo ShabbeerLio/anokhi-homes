@@ -229,10 +229,17 @@
   gap: 5px;
 }
 .modal-header button {
-  padding: 8px 10px;
-  border-radius: 15px;
+  /* padding: 8px 10px; */
+  /* border-radius: 15px; */
   border: none;
-  background: red;
-  color: white;
+  background: transparent;
+  color: black;
   cursor: pointer;
+  position: absolute;
+  top: 4%;
+  right: 3%;
+}
+
+.app.dark .modal-header button {
+    color: white;
 }

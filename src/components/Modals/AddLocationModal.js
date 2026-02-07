@@ -1,5 +1,6 @@
 import React from "react";
 import "./Modals.css";
+import { X } from "lucide-react";
 
 const AddLocationModal = ({ open, onClose, title, children }) => {
   if (!open) return null;
@@ -10,7 +11,7 @@ const AddLocationModal = ({ open, onClose, title, children }) => {
         <div className="modal-header">
           <h3>{title}</h3>
           <button className="modal-close" onClick={onClose}>
-            ✕
+            <X />
           </button>
         </div>
 

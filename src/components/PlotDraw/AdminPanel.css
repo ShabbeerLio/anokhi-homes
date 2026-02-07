@@ -47,6 +47,7 @@
   background: #fff;
   padding: 1.5rem;
   border-radius: 1.75rem;
+  position: relative;
 }
 
 .plot-draw {

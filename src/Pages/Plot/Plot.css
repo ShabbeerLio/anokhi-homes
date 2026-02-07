@@ -104,3 +104,9 @@
   width: 18px;
   height: 18px;
 }
+
+@media (max-width: 900px) {
+    .plot-grid {
+    grid-template-columns: repeat(1, 1fr);
+}
+}

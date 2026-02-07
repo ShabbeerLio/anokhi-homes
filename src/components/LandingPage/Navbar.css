@@ -1,0 +1,104 @@
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border-radius: 0 0 1.75rem 1.75rem;
+  box-shadow:
+    0px 3px 8px #00000014,
+    0 0 #0000,
+    0 0 #0000,
+    0 0 #0000,
+    0px 3px 8px #00000000;
+  z-index: 9;
+}
+.nav-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+.nav-center a {
+  color: black;
+  text-decoration: none;
+}
+.nav-center a:hover {
+  color: var(--mood-color);
+}
+
+.nav-left {
+  width: 12%;
+}
+
+.nav-left h1 {
+  font-size: 20px;
+  margin: 0;
+  color: var(--mood-color);
+}
+
+.nav-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.nav-togle{
+    display: none;
+}
+
+@media (max-width: 900px) {
+  .nav {
+    padding: 16px;
+  }
+  .nav-center {
+    position: absolute;
+    top: 0;
+    right: -100%;
+    background-color: white;
+    flex-direction: column;
+    height: 100vh;
+    width: 70%;
+    transition: 0.5s ease-in-out;
+    border-radius:  1.75rem 0 0 1.75rem;
+  box-shadow:
+    0px 3px 8px #00000014,
+    0 0 #0000,
+    0 0 #0000,
+    0 0 #0000,
+    0px 3px 8px #00000000;
+    background-image: url("../../Assets/Bg/bg-light.jpg");
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  }
+  .nav-center.active {
+    right: 0;
+  }
+  .nav-left {
+    width: 40%;
+  }
+  .nav-right{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .nav-right{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .nav-togle{
+    display: flex;
+    width: 30px;
+    height: 30px;
+  }
+  .nav-togle.close-btn{
+    position: absolute;
+    top: 2%;
+    right: 5%;
+  }
+}

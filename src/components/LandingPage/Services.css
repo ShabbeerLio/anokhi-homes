@@ -1,0 +1,7 @@
+.Services-card {
+  text-align: center;
+}
+.Services-card img {
+  width: 80% !important;
+  object-fit: contain !important;
+}
