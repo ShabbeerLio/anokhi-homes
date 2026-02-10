@@ -49,6 +49,12 @@
   border-radius: 1.75rem;
   position: relative;
 }
+.modal h3{
+  margin: 0;
+  padding-bottom: 5px;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #9f9f9f;
+}
 
 .plot-draw {
   background-color: #fff;
@@ -91,6 +97,13 @@
   justify-content: flex-start;
   gap: 5px;
   flex-direction: column;
+}
+.plot-modal .user-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6rem;
+  padding-bottom: 1rem;
 }
 
 .plot-modal .field select,

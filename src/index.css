@@ -48,6 +48,7 @@ body {
   position: fixed;
   width: 100%;
 }
+.app.dark .contact-socail-box ,
 .app.dark {
   background: #202022;
   color: #fff;
@@ -125,10 +126,8 @@ body {
   background-color: transparent;
 }
 
-.logo {
-  font-weight: 700;
-  font-size: 20px;
-  color: var(--mood-color);
+.logo svg path {
+  fill: var(--mood-color);
 }
 .version {
   margin-left: 15px;
@@ -332,9 +331,14 @@ body {
   background-repeat: no-repeat;
 }
 
+.app.dark .landing-head-box,
+.app.dark .hero,
+.app.dark .testimonial-box,
+.app.dark .nav-center ,
 .app.dark .auth-bg {
   background-image: url("./Assets/Bg/bg-dark.jpg");
 }
+.app.dark .nav,
 .app.dark .auth-card {
   background: #252528;
 }

@@ -9,6 +9,10 @@ const LABEL_MAP = {
   other: "Other",
 };
 
+const capitalize = (text) =>
+  text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+
+
 const LBreadcrumb = () => {
   const location = useLocation();
   const paths = location.pathname.split("/").filter(Boolean);
@@ -19,7 +23,8 @@ const LBreadcrumb = () => {
 
       {paths.map((path, i) => {
         const to = "/" + paths.slice(0, i + 1).join("/");
-        const label = LABEL_MAP[path] || path;
+         const rawLabel = LABEL_MAP[path] || path;
+        const label = capitalize(rawLabel);
 
         return (
           <span key={to}>

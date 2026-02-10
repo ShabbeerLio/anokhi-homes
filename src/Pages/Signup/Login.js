@@ -7,7 +7,7 @@ const Login = ({mood}) => {
   const [password, setPassword] = useState("h@38742dksb");
 
   const handleSubmit = () => {
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

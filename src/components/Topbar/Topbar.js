@@ -7,6 +7,7 @@ import NiTool from "../../icons/ni-tool";
 import { useNavigate } from "react-router-dom";
 import NotificationModal from "../Modals/NotificationModal";
 import SearchModal from "../Modals/SearchModal";
+import MainLogo from "../../icons/MainLogo";
 
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
         <button className="mobile-btn" onClick={() => setMobileOpen((v) => !v)}>
           ☰
         </button>
-        <span className="logo">ANOKHI HOMES</span>
+        <span className="logo"><MainLogo /></span>
       </div>
 
       <div className="top-right">

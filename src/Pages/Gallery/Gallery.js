@@ -27,11 +27,14 @@ const Gallery = () => {
     }, []);
     return (
         <>
-            <div className="landing-head">
-                <div className="landing-top">
-                    <h1>Gallery</h1>
+            <div className="landing-head-box">
+
+                <div className="landing-head">
+                    <div className="landing-top">
+                        <h1>Gallery</h1>
+                    </div>
+                    <LBreadcrumb />
                 </div>
-                <LBreadcrumb />
             </div>
 
             {/* Gallery */}

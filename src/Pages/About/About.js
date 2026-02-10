@@ -8,11 +8,13 @@ import Vision from "../../Assets/icons/vision.png"
 const About = () => {
     return (
         <>
-            <div className="landing-head">
-                <div className="landing-top">
-                    <h1>About Us</h1>
+            <div className="landing-head-box">
+                <div className="landing-head">
+                    <div className="landing-top">
+                        <h1>About Us</h1>
+                    </div>
+                    <LBreadcrumb />
                 </div>
-                <LBreadcrumb />
             </div>
             <Abouts />
             <div className="landing-pages">

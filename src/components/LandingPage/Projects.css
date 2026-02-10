@@ -19,12 +19,20 @@
 
 .swiper-button-prev,
 .swiper-button-next {
-    background-color: #fff !important;
-    border-radius: 50% !important;
+  background-color: #fff !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
 }
 .swiper-button-prev svg,
 .swiper-button-next svg {
-width: 18px !important;
-height: 18px !important;
-color: black !important;
+  width: 14px !important;
+  height: 14px !important;
+  color: black !important;
+}
+
+@media (max-width: 900px) {
+  .swiper-button-prev {
+    left: 70% !important;
+  }
 }

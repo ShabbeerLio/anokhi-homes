@@ -11,6 +11,9 @@
     justify-content: center;
     gap: 10px;
 }
+.app.dark .counter-icon svg{
+color: #fff;
+}
 .counter-icon svg{
 font-size: 60px;
 color: #4d4d4d;

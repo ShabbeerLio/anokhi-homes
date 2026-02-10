@@ -6,6 +6,9 @@
   color: #4d4d4d;
   margin-top: 0;
 }
+.app.dark .landing-pages h2 {
+  color: #fff;
+}
 .landing-pages p {
   color: #666;
   font-size: 16px;
@@ -45,6 +48,9 @@
 .feature-card:hover {
   transform: translateY(-6px);
 }
+.app.dark .feature-card span svg {
+  color: #fff;
+}
 .feature-card span svg {
   border: 1px solid var(--mood-color);
   border-radius: 50%;
@@ -52,6 +58,9 @@
   height: 40px;
   width: 40px;
   color: #4d4d4d;
+}
+.app.dark .feature-card h3 {
+  color: #fff;
 }
 .feature-card h3 {
   margin: 0;

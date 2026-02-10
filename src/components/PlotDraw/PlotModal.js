@@ -26,57 +26,85 @@ const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
         <h3>Plot Details</h3>
 
         {/* Plot ID */}
-        <div className="field">
-          <label>Plot ID</label>
-          <input value={plot.id} disabled />
-        </div>
+        {isAdmin ? (
+          <>
+            <div className="field">
+              <label>Plot ID</label>
+              <input value={plot.id} disabled />
+            </div>
 
-        {/* Plot Name */}
-        <div className="field">
-          <label>Plot Name</label>
-          <input
-            value={plot.name || ""}
-            disabled={!isAdmin}
-            onChange={(e) => updatePlot(plot.id, { name: e.target.value })}
-            placeholder="Enter plot name"
-          />
-        </div>
+            <div className="field">
+              <label>Plot Name</label>
+              <input
+                value={plot.name || ""}
+                disabled={!isAdmin}
+                onChange={(e) => updatePlot(plot.id, { name: e.target.value })}
+                placeholder="Enter plot name"
+              />
+            </div>
 
-        {/* Plot Type */}
-        <div className="field">
-          <label>Plot Type</label>
-          <select
-            value={plot.plotType}
-            disabled={!isAdmin}
-            onChange={(e) => updatePlot(plot.id, { plotType: e.target.value })}
-          >
-            {PLOT_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t.replaceAll("_", " ")}
-              </option>
-            ))}
-          </select>
-        </div>
+            {/* Plot Type */}
+            <div className="field">
+              <label>Plot Type</label>
+              <select
+                value={plot.plotType}
+                disabled={!isAdmin}
+                onChange={(e) =>
+                  updatePlot(plot.id, { plotType: e.target.value })
+                }
+              >
+                {PLOT_TYPES.map((t) => (
+                  <option key={t} value={t}>
+                    {t.replaceAll("_", " ")}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* Area */}
-        <div className="field">
-          <label>Area (sq.ft)</label>
-          <input
-            type="number"
-            value={plot.areaSqFt || 0}
-            disabled={!isAdmin}
-            onChange={(e) =>
-              updatePlot(plot.id, {
-                areaSqFt: Number(e.target.value),
-              })
-            }
-          />
-        </div>
+            {/* Area */}
+            <div className="field">
+              <label>Area (sq.ft)</label>
+              <input
+                type="number"
+                value={plot.areaSqFt || 0}
+                disabled={!isAdmin}
+                onChange={(e) =>
+                  updatePlot(plot.id, {
+                    areaSqFt: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
 
-        {/* Auto calculated area info */}
-        <p className="hint">
-          * Area is editable. Auto-calculated from shape by default.
-        </p>
+            {/* Auto calculated area info */}
+            <p className="hint">
+              * Area is editable. Auto-calculated from shape by default.
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="user-field">
+              <label>Plot ID</label>
+              <div className="value">{plot.id}</div>
+            </div>
+            <div className="user-field">
+              <label>Plot Name</label>
+              <div className="value">{plot.name || "-"}</div>
+            </div>
+
+            {/* Plot Type */}
+            <div className="user-field">
+              <label>Plot Type</label>
+              <div className="value">{plot.plotType.replaceAll("_", " ")}</div>
+            </div>
+
+            {/* Area */}
+            <div className="user-field">
+              <label>Area (sq.ft)</label>
+              <div className="value">{plot.areaSqFt || 0} sq.ft</div>
+            </div>
+          </>
+        )}
 
         <div className="modal-actions">
           {mood === "agent" && plot.plotType !== "ROAD" && (

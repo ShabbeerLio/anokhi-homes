@@ -10,11 +10,14 @@ import { AiFillInstagram } from "react-icons/ai";
 const Contact = () => {
   return (
     <>
-      <div className="landing-head">
-        <div className="landing-top">
-          <h1>Contact Us</h1>
+      <div className="landing-head-box">
+
+        <div className="landing-head">
+          <div className="landing-top">
+            <h1>Contact Us</h1>
+          </div>
+          <LBreadcrumb />
         </div>
-        <LBreadcrumb />
       </div>
       <div className="landing-pages">
         <div className="contact-container">

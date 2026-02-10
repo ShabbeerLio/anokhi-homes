@@ -1,8 +1,14 @@
+.landing-head-box{
+  background: url("../../Assets/Bg/bg-light.jpg");
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
 .landing-head {
   position: relative;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 15px 2rem 15px;
+  padding: 2rem 15px 2rem 15px;
   width: 100%;
   margin-top: 4rem;
 }
@@ -39,10 +45,10 @@
 
 .landing-head .breadcrumb {
   position: absolute;
-  top: 8%;
+  top: 15%;
   right: 7%;
   z-index: 7;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   
 }
@@ -60,9 +66,10 @@
     }
     .landing-head{
         padding-bottom: 0;
+        margin-top: 3rem;
     }
     .landing-head .breadcrumb {
-        top: 67%;
+        top: 72%;
         left: 8%;
         font-size: 14px;
     }

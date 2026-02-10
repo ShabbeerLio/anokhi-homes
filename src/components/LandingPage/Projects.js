@@ -1,6 +1,5 @@
 import React from "react";
 import "./Projects.css";
-import PlotCard from "../Cards/PlotCard";
 import PlotData from "../../Pages/Plot/PlotData"
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -9,6 +8,7 @@ import { Navigation } from "swiper/modules";
 // Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
+import PlotCardUsers from "../Cards/PlotCardUsers";
 
 const Projects = () => {
     const plot = PlotData[0]
@@ -35,7 +35,7 @@ const Projects = () => {
             >
                 {plot.plots.map((p, index) => (
                     <SwiperSlide key={index}>
-                        <PlotCard p={p} />
+                        <PlotCardUsers p={p} />
                     </SwiperSlide>
                 ))}
             </Swiper>

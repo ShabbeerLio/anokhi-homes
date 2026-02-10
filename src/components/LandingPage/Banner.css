@@ -22,6 +22,9 @@
   line-height: 1.1;
   color: #4d4d4d;
 }
+.app.dark .hero-left h1 {
+  color: #fff;
+}
 
 .hero-left p {
   margin-top: 20px;

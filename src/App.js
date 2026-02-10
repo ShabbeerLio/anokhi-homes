@@ -18,6 +18,7 @@ import About from "./Pages/About/About";
 import LandingProjects from "./Pages/LandingProjects/LandingProjects";
 import Gallery from "./Pages/Gallery/Gallery";
 import Contact from "./Pages/Contact/Contact";
+import LandingProjectDetail from "./Pages/LandingProjects/LandingProjectDetail";
 
 const LandingLayout = () => {
   return (
@@ -42,6 +43,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/projects" element={<LandingProjects />} />
+            <Route path="/projects/:projectId" element={<LandingProjectDetail />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
           </Route>
