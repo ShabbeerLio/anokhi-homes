@@ -13,6 +13,9 @@ body {
 
 .app {
   --mood-color: #b832b8; /* default admin */
+  --success-color: #67bb3a;
+  --error-color: #ff4d4f;
+  --warning-color: #f8a32a;
 }
 
 .mood-admin {
@@ -23,7 +26,7 @@ body {
   --mood-color: #00c0eb;
 }
 
-.mood-staf {
+.mood-staff {
   --mood-color: #67bb3a;
 }
 
@@ -79,7 +82,7 @@ body {
 .menu {
   display: block;
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: 1.125rem;
   color: #9f9f9f;
   text-decoration: none;
   margin-bottom: 6px;
@@ -213,8 +216,8 @@ body {
 }
 
 .pm-item {
-  padding: 10px 8px;
-  border-radius: 12px;
+  padding: 10px 15px;
+  border-radius: 1.125rem;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -233,7 +236,7 @@ body {
 .pm-logout {
   width: 100%;
   padding: 10px;
-  border-radius: 12px;
+  border-radius: 1.125rem;
   border: none;
   background: #fff;
   color: #252528;
@@ -267,7 +270,7 @@ body {
 .card.big {
   background: #fff;
   padding: 25px;
-  border-radius: 20px;
+  border-radius: 1.75rem;
   margin-top: 20px;
 }
 .app.dark .card.big {
@@ -281,7 +284,7 @@ body {
   padding: 8px 18px;
   border-radius: 20px;
   border: none;
-  margin-right: 10px;
+  /* margin-right: 10px; */
   cursor: pointer;
 }
 .primary {
@@ -363,7 +366,7 @@ body {
   width: 100%;
   padding: 10px;
   margin: 8px 0;
-  border-radius: 20px;
+  border-radius: 1.125rem;
   border: 1px solid #bcbcbc2e;
   background-color: transparent;
 }
@@ -372,7 +375,7 @@ body {
   width: 100%;
   padding: 10px;
   border: none;
-  border-radius: 20px;
+  border-radius: 1.125rem;
   margin-top: 10px;
   cursor: pointer;
 }
@@ -387,8 +390,8 @@ body {
   background: #00c0eb;
   color: #fff;
 }
-.app.dark .auth-card .role-staf:hover,
-.auth-card .role-staf:hover {
+.app.dark .auth-card .role-staff:hover,
+.auth-card .role-staff:hover {
   background: #67bb3a;
   color: #fff;
 }

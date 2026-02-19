@@ -97,6 +97,7 @@
   justify-content: flex-start;
   gap: 5px;
   flex-direction: column;
+  width: 100%;
 }
 .plot-modal .user-field {
   display: flex;
@@ -111,7 +112,7 @@
 .plot-modal .field textarea {
   width: 100%;
   padding: 10px;
-  margin: 8px 0;
+  margin: 0 0 8px 0;
   border-radius: 20px;
   border: 1px solid #bcbcbc2e;
   background-color: transparent;
@@ -131,6 +132,16 @@
 
 .modal-actions {
   display: flex;
+  gap: 10px;
+}
+.modal-actions .close-btn{
+ background-color: transparent;
+ color: black;
+ border: none;
+ position: absolute;
+ top: 2%;
+ right: 2%;
+ width: auto;
 }
 
 .btn.sale {

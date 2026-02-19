@@ -95,6 +95,7 @@
   cursor: pointer;
   font-size: 20px;
   color: #9f9f9f;
+  text-align: center;
 }
 
 .app.dark .card {

@@ -39,7 +39,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   }, []);
 
   const handleLogout = () => {
-    navigate("/role");
+    navigate("/");
   };
   return (
     <div className="topbar">
@@ -58,7 +58,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
         >
           <option value="admin">Admin</option>
           <option value="agent">Agent</option>
-          <option value="staf">Staff</option>
+          <option value="staff">Staff</option>
           <option value="user">User</option>
         </select>
         {/* <div
@@ -73,7 +73,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
 
           {openSearch && <SearchModal />}
         </div> */}
-        <NiTool />
+        {/* <NiTool /> */}
         <div
           className="notif"
           ref={notifRef}

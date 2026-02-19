@@ -19,6 +19,13 @@ import LandingProjects from "./Pages/LandingProjects/LandingProjects";
 import Gallery from "./Pages/Gallery/Gallery";
 import Contact from "./Pages/Contact/Contact";
 import LandingProjectDetail from "./Pages/LandingProjects/LandingProjectDetail";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import Booking from "./Pages/Booking/Booking";
+import Team from "./Pages/Teams/Team";
+import Management from "./Pages/Management/Management";
+import SiteVisit from "./Pages/SiteVisit/SiteVisit";
+import Payments from "./Pages/Payments/Payments";
+import TeamDetail from "./Pages/Teams/TeamDetail";
 
 const LandingLayout = () => {
   return (
@@ -33,7 +40,7 @@ const LandingLayout = () => {
 function App() {
   const [dark, setDark] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mood, setMood] = useState("staf");
+  const [mood, setMood] = useState("staff");
 
   return (
     <BrowserRouter>
@@ -43,7 +50,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/projects" element={<LandingProjects />} />
-            <Route path="/projects/:projectId" element={<LandingProjectDetail />} />
+            <Route
+              path="/projects/:projectId"
+              element={<LandingProjectDetail />}
+            />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
           </Route>
@@ -68,13 +78,46 @@ function App() {
                       mobileOpen ? "sidebar-wrap show" : "sidebar-wrap"
                     }
                   >
-                    <Sidebar closeMobile={() => setMobileOpen(false)} />
+                    <Sidebar
+                      closeMobile={() => setMobileOpen(false)}
+                      mood={mood}
+                    />
                   </div>
 
                   <div className="page-wrap">
                     <Routes>
+                      <Route
+                        path="/dashboard"
+                        element={<Dashboard mood={mood} />}
+                      />
                       <Route path="/user" element={<Other />} />
-                      <Route path="/profile" element={<Profile />} />
+                      <Route
+                        path="/bookings"
+                        element={<Booking mood={mood} />}
+                      />
+                      <Route path="/teams" element={<Team mood={mood} />} />
+                      <Route
+                        path="/teams/:id"
+                        element={
+                          <TeamDetail
+                            mood="agent"
+                            currentUser={{ id: "amit", name: "Amit" }}
+                          />
+                        }
+                      />
+                      <Route
+                        path="/management"
+                        element={<Management mood={mood} />}
+                      />
+                      <Route
+                        path="/site-visits"
+                        element={<SiteVisit mood={mood} />}
+                      />
+                      <Route
+                        path="/payments"
+                        element={<Payments mood={mood} />}
+                      />
+                      <Route path="/user/:id" element={<Profile />} />
                       <Route path="/plot" element={<Plot mood={mood} />} />
                       <Route
                         path="/plot/:plotId"

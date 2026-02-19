@@ -86,6 +86,7 @@
   border-radius: 20px;
   border: none;
   cursor: pointer;
+  background-color: white;
   /* border: 1px solid #9f9f9f; */
   box-shadow:
     0px 3px 8px #00000014,
@@ -95,6 +96,7 @@
     0px 3px 8px #00000000;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .app.dark .page-tools .add-button {

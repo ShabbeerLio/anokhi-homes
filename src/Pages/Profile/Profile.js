@@ -4,10 +4,15 @@ import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import Projectss from "../../components/Tabs/Projectss";
 import Permissions from "../../components/Tabs/Permissions";
 import Overview from "../../components/Tabs/Overview";
+import { useLocation, useParams } from "react-router-dom";
 
 const TABS = ["Overview", "Projects", "Permissions", "Friends", "Social"];
 
 const Profile = () => {
+    const { id } = useParams();
+    const location = useLocation();
+
+    const userData = location.state;
     const [activeTab, setActiveTab] = useState("Overview");
 
     const renderContent = () => {
@@ -24,7 +29,7 @@ const Profile = () => {
     return (
         <div className="plot-container">
             <div className="table-filters">
-                <h2>Anokhi Homes</h2>
+                <h2>Profile Detail</h2>
             </div>
             <Breadcrumb />
             <div className="profile-grid">
@@ -32,18 +37,17 @@ const Profile = () => {
                 <div className="profile-sidebar">
                     <div className="profile-card card">
                         <div className="profile-top">
-                        <img
-                            src="https://i.pravatar.cc/150?img=32"
-                            alt="Laura Ellis"
-                            className="profile-avatar"
-                        />
-                        <h3>Laura Ellis</h3>
-                        <p className="role">Executive UI/UX Designer</p>
+                            <img
+                                src={userData.avatar}
+                                alt="Laura Ellis"
+                                className="profile-avatar"
+                            />
+                            <h3>{userData.name}</h3>
+                            <p className="role">{userData.user}, {userData.status}</p>
 
-                        <div className="profile-actions">
-                            <button className="btn primary">Contact</button>
-                            <button className="btn ghost">Follow</button>
-                        </div>
+                            <div className="profile-actions">
+                                <button className="btn primary">Contact</button>
+                            </div>
                         </div>
                         {/* NAV */}
                         <div className="profile-nav">
@@ -58,7 +62,7 @@ const Profile = () => {
                             ))}
                         </div>
                     </div>
-                    <div className="profile-card card">
+                    {/* <div className="profile-card card">
                         <h4>Achievements</h4>
                         <div className="badge">Social Media <b>x4</b></div>
                         <div className="badge">Innovation Architect <b>x2</b></div>
@@ -82,7 +86,7 @@ const Profile = () => {
                                 <span key={t}>{t}</span>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* RIGHT PANEL */}

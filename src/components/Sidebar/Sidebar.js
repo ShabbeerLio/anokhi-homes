@@ -4,8 +4,15 @@ import "./Sidebar.css";
 import NiDashboard from "../../icons/ni-dashboard";
 import NiDashboardOutline from "../../icons/ni-dashboard-outline";
 import NiTool from "../../icons/ni-tool";
+import NiBooking from "../../icons/ni-booking";
+import NiTeams from "../../icons/ni-teams";
+import NiManagement from "../../icons/ni-management";
+import NiUser from "../../icons/ni-user";
+import NiSetting from "../../icons/ni-setting";
+import NiSitevisit from "../../icons/ni-sitevisit";
+import NiPayments from "../../icons/ni-payments";
 
-function Sidebar({ closeMobile }) {
+function Sidebar({ closeMobile, mood }) {
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState("dash"); // only one open at a time
 
@@ -13,78 +20,65 @@ function Sidebar({ closeMobile }) {
     setOpenMenu(openMenu === menu ? "" : menu);
   };
 
-  const handleBoth = (item) => {
-    toggleMenu(item);
-    closeMobile();
+  const handleClick = () => {
+    closeMobile && closeMobile();
+  };
+
+  // 🔥 Menu Configuration (Professional Way)
+  const menuConfig = {
+    user: [
+      { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
+    ],
+    admin: [
+      { path: "/management", label: "Management", icon: <NiManagement /> },
+      { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
+      { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
+      { path: "/user", label: "Users", icon: <NiUser /> },
+      { path: "/teams", label: "Teams", icon: <NiTeams /> },
+      { path: "/payments", label: "Payments", icon: <NiPayments /> },
+    ],
+    staff: [
+      { path: "/management", label: "Management", icon: <NiManagement /> },
+      { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
+      { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
+      { path: "/user", label: "Users", icon: <NiUser /> },
+      { path: "/teams", label: "Teams", icon: <NiTeams /> },
+      { path: "/payments", label: "Payments", icon: <NiPayments /> },
+    ],
+    agent: [
+      { path: "/management", label: "Management", icon: <NiManagement /> },
+      { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
+      { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
+      { path: "/teams", label: "Teams", icon: <NiTeams /> },
+      { path: "/payments", label: "Payments", icon: <NiPayments /> },
+    ],
   };
 
   return (
     <div className={collapsed ? "sidebar collapsed" : "sidebar"}>
-      <NavLink to="/" className="menu" onClick={() => handleBoth("dashboard")}>
+      <NavLink to="/dashboard" className="menu" onClick={handleClick}>
         <NiDashboardOutline />
         {!collapsed && "Dashboard"}
       </NavLink>
-      {/* Dashboards */}
-      {/* <div
-        className={`menu-parent ${openMenu === "dash" ? "active" : ""}`}
-        onClick={() => toggleMenu("dash")}
-      >
-        <span>
-          {openMenu === "dash" ? <NiDashboard /> : <NiDashboardOutline />}
-          {!collapsed && "User"}
-        </span>
-        {!collapsed && (
-          <span className={openMenu === "dash" ? "arrow open" : "arrow"}>
-            ›
-          </span>
-        )}
-      </div>
-
-      {openMenu === "dash" && !collapsed && (
-        <div className="submenu">
-          <NavLink to="/users" className="menu" onClick={closeMobile}>
-            Users
-          </NavLink>
-        </div>
-      )} */}
-
-      {/* Applications */}
-      {/* <div
-        className={`menu-parent ${openMenu === "apps" ? "active" : ""}`}
-        onClick={() => toggleMenu("apps")}
-      >
-        <span>
-          <NiTool /> {!collapsed && "Plots"}
-        </span>
-        {!collapsed && (
-          <span className={openMenu === "apps" ? "arrow open" : "arrow"}>
-            ›
-          </span>
-        )}
-      </div>
-
-      {openMenu === "apps" && !collapsed && (
-        <div className="submenu">
-          <NavLink to="/plots" className="menu" onClick={closeMobile}>
-            Plots
-          </NavLink>
-          <NavLink to="/mail" className="menu" onClick={closeMobile}>
-            Add
-          </NavLink>
-          <NavLink to="/todo" className="menu" onClick={closeMobile}>
-            Todo
-          </NavLink>
-        </div>
-      )} */}
-
-      <NavLink to="/user" className="menu" onClick={() => handleBoth("user")}>
-        <NiTool /> {!collapsed && "User"}
-      </NavLink>
-      <NavLink to="/plot" className="menu" onClick={() => handleBoth("plot")}>
-        <NiTool /> {!collapsed && "Plot"}
-      </NavLink>
-      <NavLink to="/settings" className="menu single" onClick={closeMobile}>
-        ⚙️ {!collapsed && "Settings"}
+      {/* Role Based Menus */}
+      {menuConfig[mood]?.map((item) => (
+        <NavLink
+          key={item.path}
+          to={item.path}
+          className="menu"
+          onClick={handleClick}
+        >
+          {item.icon}
+          {!collapsed && item.label}
+        </NavLink>
+      ))}
+      <NavLink to="/settings" className="menu single" onClick={handleClick}>
+        <NiSetting />
+        {!collapsed && "Settings"}
       </NavLink>
     </div>
   );

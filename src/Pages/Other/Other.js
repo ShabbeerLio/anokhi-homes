@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Other.css";
 import SearchItems from "../../components/SearchItems/SearchItems";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
+import { useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -114,6 +115,7 @@ const DATA = [
 ];
 
 const Other = () => {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -141,9 +143,9 @@ const Other = () => {
         <div className="page-tools">
           {["all", "user", "staff", "agent"].map((f) => (
             <button
-              key={f}
-              className={filter === f ? "active" : ""}
-              onClick={() => setFilter(f)}
+            key={f}
+            className={filter === f ? "active" : ""}
+            onClick={() => setFilter(f)}
             >
               {f.toUpperCase()}
             </button>
@@ -165,7 +167,12 @@ const Other = () => {
         </div>
 
         {currentData.map((item) => (
-          <div key={item.id} className="table-row">
+          <div
+            key={item.id}
+            className="table-row"
+            onClick={() => navigate(`/user/${item.id}`, { state: item })}
+            style={{ cursor: "pointer" }}
+          >
             <img src={item.avatar} alt="" />
             <span>{item.id}</span>
 

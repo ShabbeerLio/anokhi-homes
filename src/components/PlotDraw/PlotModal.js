@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
+import EnquireModal from "../Modals/EnquireModal";
+import { X } from "lucide-react";
 
 const PLOT_TYPES = ["FOR_SALE", "SOLD", "PENDING", "NOT_FOR_SALE", "ROAD"];
 
 const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
   const isAdmin = mood === "admin";
+  const [showEnquiryModal, setShowEnquiryModal] = useState(false);
 
   const PLOT_ACTION_CONFIG = {
     FOR_SALE: {
@@ -19,6 +22,16 @@ const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
       className: "agent btn pending",
     },
   };
+
+  const handleActionClick = () => {
+    // onClose();
+    setShowEnquiryModal(true);
+  };
+
+  const agent = {
+  id: "AG123",
+  name: "Rahul Sharma"
+}
 
   return (
     <div className="modal-bg plot-modal" onClick={onClose}>
@@ -110,17 +123,56 @@ const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
           {mood === "agent" && plot.plotType !== "ROAD" && (
             <button
               className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
-              onClick={onClose}
+              // onClick={onClose}
               disabled={plot.plotType === "SOLD"}
+              onClick={() =>
+                plot.plotType === "FOR_SALE"
+                  ? handleActionClick()
+                  : onClose()
+              }
             >
               {PLOT_ACTION_CONFIG[plot.plotType]?.label}
             </button>
           )}
-          <button className="btn secondary" onClick={onClose}>
-            {isAdmin ? "Done " : "Close"}
+          {mood === "user" && plot.plotType !== "ROAD" && (
+            <>
+              {plot.plotType === "FOR_SALE" ? (
+                <button
+                  className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
+                  onClick={() => handleActionClick()}
+                >
+                  Enquire Now
+                </button>
+              ) : (
+                <button className="btn sold" onClick={onClose}>
+                  SOLD
+                </button>
+              )}
+            </>
+          )}
+          <button className="close-btn" onClick={onClose}>
+            <X/>
           </button>
+          {isAdmin && <button className="btn secondary" onClick={onClose}>
+            Done
+          </button>}
         </div>
       </div>
+      {/* ENQUIRY / BOOK MODAL */}
+      {showEnquiryModal && (
+        <div
+          className="modal-bg enquiry-modal"
+          onClick={() => setShowEnquiryModal(false)}
+        >
+          <EnquireModal
+            setShowEnquiryModal={setShowEnquiryModal}
+            plot={plot}
+            mood={mood}
+            agent={agent}
+            onClose={onClose}
+          />
+        </div>
+      )}
     </div>
   );
 };
