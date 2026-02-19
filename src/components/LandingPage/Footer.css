@@ -1,6 +1,6 @@
 .footer {
   background: #111;
-  color: #666;
+  color: #9f9f9f;
   /* padding-top: 2rem; */
 }
 
@@ -52,7 +52,7 @@
 }
 
 .footer-col ul li a {
-  color: #666;
+  color: #9f9f9f;
   text-decoration: none;
   transition: color 0.3s;
 }
@@ -108,7 +108,7 @@
 
 .footer-navitems li,
 .footer-contact li{
-    border-right: 1px solid #666;
+    border-right: 1px solid #9f9f9f;
     padding-right: 12px;
 }
 .footer-navitems li:last-child,

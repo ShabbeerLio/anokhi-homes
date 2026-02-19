@@ -6,11 +6,8 @@
   color: #4d4d4d;
   margin-top: 0;
 }
-.app.dark .landing-pages h2 {
-  color: #fff;
-}
 .landing-pages p {
-  color: #666;
+  color: #9f9f9f;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -20,6 +17,10 @@
 }
 .about-left h3 {
   color: #4d4d4d;
+}
+.app.dark .landing-pages h2,
+.about-left h3 {
+  color: #fff;
 }
 .about-right {
   width: 50%;
@@ -57,14 +58,14 @@
   padding: 5px;
   height: 40px;
   width: 40px;
-  color: #4d4d4d;
+  color: #9f9f9f;
 }
 .app.dark .feature-card h3 {
   color: #fff;
 }
 .feature-card h3 {
   margin: 0;
-  color: #4d4d4d;
+  color: #9f9f9f;
 }
 
 @media (max-width: 900px) {
