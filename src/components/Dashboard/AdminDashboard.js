@@ -31,18 +31,6 @@ const AdminDashboard = () => {
       {/* ================= STATS ================= */}
       <div className="dashboard-grid">
         <DashboardCard
-          title="Total Leads"
-          value="100"
-          icons={<NiManagement />}
-        />
-        <DashboardCard
-          title="Total Bookings"
-          value="89"
-          icons={<NiBooking />}
-        />
-        <DashboardCard title="Available Plots" value="320" icons={<NiTool />} />
-        <DashboardCard title="Active Agents" value="12" icons={<NiTeams />} />
-        <DashboardCard
           title="Total Revenue"
           value="₹12,50,000"
           icons={<NiPayments />}
@@ -52,6 +40,20 @@ const AdminDashboard = () => {
           value="₹50,000"
           icons={<NiPayments />}
         />
+          <DashboardCard title="Agents Income" value="₹12,00,000" icons={<NiTeams />} />
+        <DashboardCard
+          title="Total Bookings"
+          value="89"
+          icons={<NiBooking />}
+        />
+        <DashboardCard title="Available Plots" value="320" icons={<NiTool />} />
+        <DashboardCard title="Plots on Hold" value="12" icons={<NiTool />} />
+        <DashboardCard
+          title="Total Leads"
+          value="100"
+          icons={<NiManagement />}
+        />
+        <DashboardCard title="Active Agents" value="12" icons={<NiTeams />} />
       </div>
 
 

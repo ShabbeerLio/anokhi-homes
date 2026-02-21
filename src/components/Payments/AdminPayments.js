@@ -1,3 +1,4 @@
+import NiPayments from "../../icons/ni-payments";
 import DashboardCard from "../Cards/DashboardCard";
 import Charts from "../Dashboard/Charts";
 import PaymentTable from "./PaymentTable";
@@ -21,12 +22,12 @@ const AdminPayments = ({ mood }) => {
     <div className="dashboard-wrapper">
       {/* ================= STATS ================= */}
       <div className="dashboard-grid">
-        <DashboardCard title="Total Collection" value="₹12,00,000" />
-        <DashboardCard title="This Month" value="₹3,50,000" />
-        <DashboardCard title="Pending Dues" value="₹1,20,000" />
-        <DashboardCard title="Overdue" value="₹45,000" />
-        <DashboardCard title="Today’s Collection" value="₹50,000" />
-        <DashboardCard title="Pending Approval" value="4" />
+        <DashboardCard title="Total Collection" value="₹12,00,000" icons = <NiPayments /> />
+        <DashboardCard title="This Month" value="₹3,50,000" icons = <NiPayments /> />
+        <DashboardCard title="Pending Dues" value="₹1,20,000" icons = <NiPayments /> />
+        <DashboardCard title="Overdue" value="₹45,000" icons = <NiPayments /> />
+        <DashboardCard title="Today’s Collection" value="₹50,000" icons = <NiPayments /> />
+        <DashboardCard title="Pending Approval" value="4" icons = <NiPayments /> />
       </div>
       <h4>Payments</h4>
       <PaymentTable

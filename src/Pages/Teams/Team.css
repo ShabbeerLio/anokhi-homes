@@ -1,6 +1,5 @@
 .team-leader-box {
-  background: var(--mood-color) !important;
-  color: white;
+  /* color: white; */
   margin-bottom: 30px;
   display: flex;
   align-items: center;

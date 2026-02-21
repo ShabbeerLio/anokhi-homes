@@ -62,6 +62,7 @@ const DataTable = ({ data, actions, mood }) => {
                     >
                         <option value="">All Status</option>
                         <option value="New">New</option>
+                        <option value="Processing">Processing</option>
                         <option value="Converted">Converted</option>
                         <option value="Lost">Lost</option>
                     </select>

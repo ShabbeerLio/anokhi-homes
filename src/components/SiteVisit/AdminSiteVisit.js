@@ -1,3 +1,4 @@
+import NiSitevisit from "../../icons/ni-sitevisit";
 import DashboardCard from "../Cards/DashboardCard";
 import Charts from "../Dashboard/Charts";
 import VisitTable from "./VisitTable";
@@ -19,12 +20,13 @@ const AdminSiteVisit = ({ mood }) => {
     <div className="dashboard-wrapper">
       {/* ================= STATS ================= */}
       <div className="dashboard-grid">
-        <DashboardCard title="Total Visits" value="120" />
-        <DashboardCard title="Today's Visits" value="12" />
-        <DashboardCard title="Completed" value="80" />
-        <DashboardCard title="Cancelled" value="10" />
-        <DashboardCard title="Conversion %" value="45%" />
-        <DashboardCard title="Agent-wise Visits" value="8 Agents" />
+        <DashboardCard title="Total Visits" value="120" icons = <NiSitevisit /> />
+        <DashboardCard title="Today's Visits" value="12" icons = <NiSitevisit /> />
+        <DashboardCard title="Total Completed" value="80" icons = <NiSitevisit /> />
+        <DashboardCard title="Total Resheduled" value="5" icons = <NiSitevisit /> />
+        <DashboardCard title="Total Cancelled" value="10" icons = <NiSitevisit /> />
+        <DashboardCard title="Conversion %" value="45%" icons = <NiSitevisit /> />
+        <DashboardCard title="Agent-wise Visits" value="8 Agents" icons = <NiSitevisit /> />
       </div>
       {/* Filters */}
       <h4>Site Visits</h4>

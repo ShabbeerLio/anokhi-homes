@@ -1,3 +1,4 @@
+import NiPayments from "../../icons/ni-payments";
 import DashboardCard from "../Cards/DashboardCard";
 import PaymentTable from "./PaymentTable";
 
@@ -21,10 +22,10 @@ const StaffPayments = ({ staffType }) => {
       {staffType === "accounts" && (
         <>
           <div className="dashboard-grid">
-            <DashboardCard title="Today’s Collection" value="₹50,000" />
-            <DashboardCard title="Pending Approval" value="4" />
-            <DashboardCard title="Outstanding" value="₹1,20,000" />
-            <DashboardCard title="This Month" value="₹3,50,000" />
+            <DashboardCard title="Today’s Collection" value="₹50,000" icons = <NiPayments />/>
+            <DashboardCard title="Pending Approval" value="4" icons = <NiPayments />/>
+            <DashboardCard title="Outstanding" value="₹1,20,000" icons = <NiPayments />/>
+            <DashboardCard title="This Month" value="₹3,50,000" icons = <NiPayments />/>
           </div>
           <h4>Payments</h4>
           <PaymentTable

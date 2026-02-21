@@ -88,6 +88,7 @@ const VisitTable = ({ data, actions = [], mood }) => {
           <span>Customer</span>
           <span>Phone</span>
           <span>Agent</span>
+          <span>Site</span>
           <span>Status</span>
           <span>Interest</span>
           <span>Actions</span>

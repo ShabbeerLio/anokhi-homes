@@ -1,3 +1,4 @@
+import NiSitevisit from "../../icons/ni-sitevisit";
 import DashboardCard from "../Cards/DashboardCard";
 import VisitTable from "./VisitTable";
 
@@ -20,10 +21,10 @@ const StaffSiteVisit = ({ staffType }) => {
       {staffType === "operations" && (
         <>
           <div className="dashboard-grid">
-            <DashboardCard title="Today's Visits" value="12" />
-            <DashboardCard title="Pending Updates" value="5" />
-            <DashboardCard title="Completed Today" value="8" />
-            <DashboardCard title="Cancelled Today" value="2" />
+            <DashboardCard title="Today's Visits" value="12" icons = <NiSitevisit />/>
+            <DashboardCard title="Pending Updates" value="5" icons = <NiSitevisit />/>
+            <DashboardCard title="Completed Today" value="8" icons = <NiSitevisit />/>
+            <DashboardCard title="Cancelled Today" value="2" icons = <NiSitevisit />/>
           </div>
 <h4>Site Visits</h4>
           <VisitTable

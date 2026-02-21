@@ -1,5 +1,6 @@
 import React from "react";
 import DashboardCard from "../Cards/DashboardCard";
+import NiManagement from "../../icons/ni-management";
 
 const StaffLeadManagement = ({ staffType }) => {
   return (
@@ -7,9 +8,9 @@ const StaffLeadManagement = ({ staffType }) => {
       {staffType === "marketing" && (
         <>
           <div className="dashboard-grid">
-            <DashboardCard title="Total Leads" value="120" />
-            <DashboardCard title="New Leads" value="10" />
-            <DashboardCard title="Without Follow-up" value="7" />
+            <DashboardCard title="Total Leads" value="120" icons = <NiManagement />/>
+            <DashboardCard title="New Leads" value="10" icons = <NiManagement />/>
+            <DashboardCard title="Without Follow-up" value="7" icons = <NiManagement />/>
           </div>
 
           {/* <div className="card">

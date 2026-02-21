@@ -2,6 +2,7 @@ import React from "react";
 import DashboardCard from "../Cards/DashboardCard";
 import Charts from "../Dashboard/Charts";
 import DataTable from "./DataTable";
+import NiManagement from "../../icons/ni-management";
 
 const AdminLeadManagement = ({ mood }) => {
     const leads = [
@@ -34,12 +35,12 @@ const AdminLeadManagement = ({ mood }) => {
         <div className="dashboard-wrapper">
             {/* ================= STATS ================= */}
             <div className="dashboard-grid">
-                <DashboardCard title="Total Leads" value="120" />
-                <DashboardCard title="New Today" value="10" />
-                <DashboardCard title="Converted" value="45" />
-                <DashboardCard title="Lost Leads" value="20" />
-                <DashboardCard title="Unassigned" value="8" />
-                <DashboardCard title="Conversion Rate" value="37%" />
+                <DashboardCard title="Total Leads" value="120" icons = <NiManagement /> />
+                <DashboardCard title="New Today" value="10" icons = <NiManagement /> />
+                <DashboardCard title="Converted" value="45" icons = <NiManagement /> />
+                <DashboardCard title="Lost Leads" value="20" icons = <NiManagement /> />
+                <DashboardCard title="Unassigned" value="8" icons = <NiManagement /> />
+                <DashboardCard title="Conversion Rate" value="37%" icons = <NiManagement /> />
             </div>
 
             {/* Filters */}

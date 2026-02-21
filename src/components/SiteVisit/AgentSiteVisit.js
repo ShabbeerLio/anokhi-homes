@@ -1,3 +1,4 @@
+import NiSitevisit from "../../icons/ni-sitevisit";
 import DashboardCard from "../Cards/DashboardCard";
 import VisitTable from "./VisitTable";
 
@@ -18,12 +19,12 @@ const AgentSiteVisit = () => {
     <div className="dashboard-wrapper">
 
       <div className="dashboard-grid">
-        <DashboardCard title="My Visits" value="25" />
-        <DashboardCard title="Today's Visits" value="4" />
-        <DashboardCard title="Completed" value="15" />
-        <DashboardCard title="Cancelled" value="2" />
-        <DashboardCard title="Conversion Rate" value="40%" />
-        <DashboardCard title="Upcoming Visits" value="3" />
+        <DashboardCard title="My Visits" value="25" icons = <NiSitevisit />/>
+        <DashboardCard title="Today's Visits" value="4" icons = <NiSitevisit />/>
+        <DashboardCard title="Completed" value="15" icons = <NiSitevisit />/>
+        <DashboardCard title="Cancelled" value="2" icons = <NiSitevisit />/>
+        <DashboardCard title="Conversion Rate" value="40%" icons = <NiSitevisit />/>
+        <DashboardCard title="Upcoming Visits" value="3" icons = <NiSitevisit />/>
       </div>
 <h4>Site Visits</h4>
       <VisitTable

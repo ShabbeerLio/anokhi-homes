@@ -28,7 +28,7 @@ const Dashboard = ({ mood }) => {
       "Add Agent",
       "Add Plot",
       "Add Booking",
-      "Add Payment",
+      "Add Payment(Received)",
     ],
     agent: [
       "Add Lead",
