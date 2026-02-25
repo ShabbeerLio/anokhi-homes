@@ -2,8 +2,31 @@ import DashboardCard from "../Cards/DashboardCard";
 import NiPayments from "../../icons/ni-payments";
 import NiTool from "../../icons/ni-tool";
 import CircularProgress from "./CircularProgress";
+import PaymentCard from "../Cards/PaymentCard";
+import BookingData from "../Data/BookingData";
+import { Link, useNavigate } from "react-router-dom";
+import BookingCard from "../Cards/BookingCard";
+import { FaAngleRight } from "react-icons/fa6";
 
-const UserDashboard = () => {
+const UserDashboard = ({ mood }) => {
+  const navigate = useNavigate();
+  const payments = [
+    {
+      id: 1,
+      client: "Rahul",
+      phone: "9876543210",
+      project: "Green City",
+      amount: 50000,
+      mode: "Cash",
+      status: "Pending",
+      dueStatus: "Partial",
+      date: "2026-02-18",
+    },
+  ];
+  const handleNavigate = () => {
+    navigate("/bookings");
+  };
+
   return (
     <div className="dashboard-wrapper">
       <h4>Stats</h4>
@@ -29,24 +52,23 @@ const UserDashboard = () => {
       <div className="dashboard-box">
         {/* ================= RECENT ACTIVITY ================= */}
         <div className=" dashboard-box-left">
+          <div className="dashboard-title-box">
           <h4>Payment History</h4>
-          <div className=" table card">
+            <Link to="/bookings" className="view-all"> <FaAngleRight /> View All</Link>
+          </div>
+          {/* <div className=" table card">
             <div className="dashboard-activity table-head">
               <span>S.No.</span>
               <span>Plot</span>
               <span>Date</span>
               <span>Amount</span>
               <span>Status</span>
-              {/* <span>Actions</span> */}
             </div>
 
             <div
-              // key={item.id}
               className="dashboard-activity table-row"
-              // onClick={() => navigate(`/user/${item.id}`, { state: item })}
               style={{ cursor: "pointer" }}
             >
-              {/* <img src={item.avatar} alt="" /> */}
               <span>1</span>
               <span>A-12</span>
               <span>12 Jan 2026</span>
@@ -55,15 +77,11 @@ const UserDashboard = () => {
 
               <span className={`status active`}>Confirmed</span>
 
-              {/* <span className="dots">⋮</span> */}
             </div>
             <div
-              // key={item.id}
               className="dashboard-activity table-row"
-              // onClick={() => navigate(`/user/${item.id}`, { state: item })}
               style={{ cursor: "pointer" }}
             >
-              {/* <img src={item.avatar} alt="" /> */}
               <span>2</span>
               <span>A-13</span>
               <span>25 Jan 2026</span>
@@ -72,20 +90,34 @@ const UserDashboard = () => {
 
               <span className={`status active`}>Confirmed</span>
 
-              {/* <span className="dots">⋮</span> */}
             </div>
+          </div> */}
+          <div className="user-card-box">
+            {payments.length === 0 ? (
+              <p>No Bookings Found</p>
+            ) : (
+              payments.slice(0, 2).map((item) => (
+                <PaymentCard
+                  item={item}
+                  // setSelectedPayment={setSelectedPayment}
+                  // setIsEditMode={setIsEditMode}
+                  // setOpen={setOpen}
+                  mood={mood}
+                />
+              ))
+            )}
           </div>
+          <div className="dashboard-title-box">
           <h4>Booking Details</h4>
-          <div className="booking-grid">
-            <div className="card">
-              <p>Plot A-12</p>
-              <p>Booking Date: 12 Jan 2026</p>
-            </div>
-            <div className="card">
-              <p>Plot A-13</p>
-              <p>Booking Date: 25 Jan 2026</p>
-            </div>
-
+            <Link to="/bookings" className="view-all"> <FaAngleRight /> View All</Link>
+          </div>
+          <div className="user-card-box">
+            {BookingData.slice(0, 2).map((item) => (
+              <BookingCard
+                item={item}
+                dashboard={() => handleNavigate()}
+              />
+            ))}
           </div>
         </div>
         <div className="dashboard-box-right">

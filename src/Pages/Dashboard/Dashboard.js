@@ -7,8 +7,11 @@ import AgentDashboard from "../../components/Dashboard/AgentDashboard";
 import UserDashboard from "../../components/Dashboard/UserDashboard";
 import NiTool from "../../icons/ni-tool";
 import NiDashboardgph from "../../icons/NiDashboardgph";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = ({ mood }) => {
+  const navigate = useNavigate();
+
   const renderDashboard = () => {
     switch (mood) {
       case "admin":
@@ -25,30 +28,32 @@ const Dashboard = ({ mood }) => {
 
   const quickActions = {
     admin: [
-      "Add Agent",
-      "Add Plot",
-      "Add Booking",
-      "Add Payment(Received)",
+      { label: "Add Agent", link: "/user" },
+      { label: "Add Plot", link: "/plot" },
+      { label: "Add Booking", link: "/bookings" },
+      { label: "Add Payment (Received)", link: "/payments" },
     ],
     agent: [
-      "Add Lead",
-      "Schedule Visit",
+      { label: "Add Lead", link: "/management" },
+      { label: "Schedule Visit", link: "/site-visits" },
     ],
     staff: [
-      "Approve Payment",
-      "Verify Booking",
+      { label: "Approve Payment", link: "/payments" },
+      { label: "Verify Booking", link: "/bookings" },
     ],
     user: [
-      "Download Receipt",
+      { label: "Download Receipt", link: "/bookings" },
     ],
   };
 
   return (
     <div className="plot-container">
       <div className="table-filters">
-        <h2>Welcome {mood?.toUpperCase()}</h2>
+        <div className="page-head-title">
+          <h2>Welcome {mood?.toUpperCase()}</h2>
+          <Breadcrumb />
+        </div>
       </div>
-      <Breadcrumb />
       <div className="dashboard-container">
         <div className="dashboard-box">
           <div className="dashboard-box-left">
@@ -66,13 +71,18 @@ const Dashboard = ({ mood }) => {
           <div className="dashboard-box-right">
             <h6>Quick Actions</h6>
             {quickActions[mood]?.map((action, i) => (
-              <div className="dashboard-box-item card" key={i}>
+              <div
+                className="dashboard-box-item card"
+                key={i}
+                onClick={() => navigate(action.link)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="dashboard-box-item-left">
                   <NiTool />
                 </div>
                 <div className="dashboard-box-item-right">
-                  <h6>{action}</h6>
-                  <p>Quick access to {action}</p>
+                  <h6>{action.label}</h6>
+                  <p>Quick access to {action.label}</p>
                 </div>
               </div>
             ))}

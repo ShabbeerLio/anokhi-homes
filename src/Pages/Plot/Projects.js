@@ -7,11 +7,13 @@ import SearchItems from "../../components/SearchItems/SearchItems";
 import { ChevronLeft, LucidePlus } from "lucide-react";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import AddLocationModal from "../../components/Modals/AddLocationModal";
+import NiSearch from "../../icons/ni-search";
 
 const Projects = ({ mood }) => {
   const { plotId } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState();
 
   const plot = ProjectData.find((p) => p.id === plotId);
 
@@ -20,20 +22,31 @@ const Projects = ({ mood }) => {
   return (
     <div className="plot-container">
       <div className="table-filters">
-        <div className="page-tools">
-          <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
-          <h2>{plot.title} Projects</h2>
+        <div className="page-head-title">
+          <div className="page-tools">
+            <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
+            <h2>{plot.title} Projects</h2>
+          </div>
+            <Breadcrumb />
         </div>
         <div className="page-tools">
-          <SearchItems />
+          <div className="searchItem">
+            <NiSearch />
+            <input
+              placeholder="Search Project..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+            />
+          </div>
           {mood === "admin" && (
             <button className="add-button" onClick={() => setOpen(true)}>
-              <LucidePlus />
+              <LucidePlus /> Add
             </button>
           )}
         </div>
       </div>
-      <Breadcrumb />
 
       <div className="plot-grid ">
         {plot.plots.map((p) => (

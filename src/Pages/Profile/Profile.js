@@ -29,9 +29,11 @@ const Profile = () => {
     return (
         <div className="plot-container">
             <div className="table-filters">
-                <h2>Profile Detail</h2>
+                <div className="page-head-title">
+                    <h2>Profile Detail</h2>
+                    <Breadcrumb />
+                </div>
             </div>
-            <Breadcrumb />
             <div className="profile-grid">
                 {/* LEFT PANEL */}
                 <div className="profile-sidebar">

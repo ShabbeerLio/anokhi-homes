@@ -2,57 +2,64 @@ import React, { useEffect, useState } from "react";
 import "./Booking.css";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { useNavigate } from "react-router-dom";
-import SearchItems from "../../components/SearchItems/SearchItems";
+import { LucidePlus } from "lucide-react";
+import AddLocationModal from "../../components/Modals/AddLocationModal";
+import NiSearch from "../../icons/ni-search";
+import BookingCard from "../../components/Cards/BookingCard";
+import BookingData from "../../components/Data/BookingData";
 const ITEMS_PER_PAGE = 12;
 
 const Booking = ({ mood }) => {
   const currentUser = { id: "user1", name: "Agent Smith" }; // Mocked current user
   const navigate = useNavigate();
-  const allBookings = [
-    {
-      id: 1,
-      customerId: "user1",
-      agentId: "agent1",
-      plot: "A-12",
-      amount: "₹12,00,000",
-      status: "Paid",
-    },
-    {
-      id: 2,
-      customerId: "user2",
-      agentId: "agent2",
-      plot: "B-5",
-      amount: "₹8,50,000",
-      status: "Pending",
-    },
-    {
-      id: 3,
-      customerId: "user3",
-      agentId: "agent3",
-      plot: "C-8",
-      amount: "₹10,00,000",
-      status: "Cancelled",
-    },
-  ];
+  
+  const [open, setOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [search, setSearch] = useState()
+
+  const [formData, setFormData] = useState({
+    id: "",
+    customerId: "",
+    plot: "",
+    amount: "",
+    amountPaid: "",
+    status: "",
+  });
+
+  useEffect(() => {
+    if (selectedBooking) {
+      setFormData(selectedBooking);
+    } else {
+      setFormData({
+        id: "",
+        customerId: "",
+        plot: "",
+        amount: "",
+        amountPaid: "",
+        status: "",
+      });
+    }
+  }, [selectedBooking]);
 
   // 🔥 Role-Based Filtering
   let visibleBookings = [];
 
   if (mood === "admin" || mood === "staff") {
-    visibleBookings = allBookings;
+    visibleBookings = BookingData;
   } else if (mood === "agent") {
-    visibleBookings = allBookings.filter(
+    visibleBookings = BookingData.filter(
       (booking) => booking.agentId === currentUser.id,
     );
   } else if (mood === "user") {
-    visibleBookings = allBookings.filter(
+    visibleBookings = BookingData.filter(
       (booking) => booking.customerId === currentUser.id,
     );
   }
 
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  console.log(filter, "filter");
+  // console.log(filter, "filter");
 
   const filteredData =
     filter === "all"
@@ -73,11 +80,37 @@ const Booking = ({ mood }) => {
   );
 
   return (
-    <div className="table-card ">
+    <div className="plot-container">
       {/* Filters */}
       <div className="table-filters">
-        <h2>Bookings</h2>
+        <div className="page-head-title">
+          <h2>Bookings</h2>
+          <Breadcrumb />
+        </div>
         <div className="page-tools">
+          {(mood === "admin" || mood === "staff") && (
+            <button
+              className="add-button"
+              onClick={() => {
+                setSelectedBooking(null);
+                setIsEditMode(false);
+                setOpen(true);
+              }}
+            >
+              <LucidePlus /> Add
+            </button>
+          )}
+          <div className="searchItem">
+            <NiSearch />
+            <input
+              placeholder="Search Name..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+            />
+          </div>
+
           {["all", "Pending", "Closed", "Completed"].map((f) => (
             <button
               key={f}
@@ -87,50 +120,97 @@ const Booking = ({ mood }) => {
               {f.toUpperCase()}
             </button>
           ))}
-          <SearchItems />
+          
         </div>
       </div>
-
-      <Breadcrumb />
-
-      <div className="table card">
+      {/* <div className="table card">
         {currentData.length === 0 ? (
           <p>No Bookings Found</p>
         ) : (
           <>
-            <div className="table-head">
+            <div className="booking-table table-head">
               <span>ID</span>
               <span>Customer</span>
               <span>Plot</span>
               <span>Amount</span>
+              <span>Paid</span>
+              <span>Remaining</span>
               <span>Status</span>
+              <span>Action</span>
             </div>
-            {currentData.map((b) => (
-              <div
-                key={b.id}
-                className="table-row"
-                onClick={() => navigate(`/user/${b.id}`, { state: b })}
-                style={{ cursor: "pointer" }}
-              >
-                <span>{b.id}</span>
-                <span className="title">{b.customerId}</span>
-                <span>{b.plot}</span>
-                <span>{b.amount}</span>
+            {currentData.map((b) => {
+              const total = Number(b.amount.replace(/[₹,]/g, ""));
+              const paid = Number(b.amountPaid || 0);
+              const remaining = total - paid;
+              return (
 
-                {/* <span className={`status ${b.status.toLowerCase()}`}> */}
-                {b.status === "Paid" ? (
-                  <span className="status active">Paid</span>
-                ) : b.status === "Pending" ? (
-                  <span className="status pending">Pending</span>
-                ) : (
-                  <span className="status cancelled">Cancelled</span>
-                )}
-                {/* </span> */}
+                <div
+                  key={b.id}
+                  className="booking-table table-row"
+                  style={{ cursor: "pointer" }}
+                >
+                  <span>{b.id}</span>
+                  <span className="title">{b.customerId}</span>
+                  <span>{b.plot}</span>
+                  <span>{b.amount}</span>
+                  <span>₹{b.amountPaid || 0}</span>
+                  <span>₹{remaining}</span>
 
-                <span className="dots">⋮</span>
-              </div>
-            ))}
+                  {b.status === "Paid" ? (
+                    <span className="status active">Paid</span>
+                  ) : b.status === "Pending" ? (
+                    <span className="status pending">Pending</span>
+                  ) : (
+                    <span className="status cancelled">Cancelled</span>
+                  )}
+
+                  <div className="dots">
+                    <span>
+                      <NiOpenEye />
+                    </span>
+                    {(mood !== "user" &&
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveRow(activeRow === b.id ? null : b.id);
+                        }}
+                      >
+                        <NiDots />
+                      </span>)}
+
+                    {activeRow === b.id && (
+                      <ActionModal
+                        item={b}
+                        onClose={() => setActiveRow(null)}
+                        onEdit={(booking) => {
+                          setSelectedBooking(booking);
+                          setIsEditMode(true);
+                          setOpen(true);
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </>
+        )}
+      </div> */}
+      <div className="user-card-box">
+        {currentData.length === 0 ? (
+          <p>No Bookings Found</p>
+        ) : (
+
+          currentData.map((item) => (
+            <BookingCard
+              item={item}
+              setSelectedBooking={setSelectedBooking}
+              setIsEditMode={setIsEditMode}
+              setOpen={setOpen}
+              mood={mood}
+            />
+          ))
+
         )}
       </div>
       {/* Pagination */}
@@ -161,6 +241,97 @@ const Booking = ({ mood }) => {
           </button>
         </div>
       )}
+      <AddLocationModal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={isEditMode ? "Edit Booking" : "Add Booking"}
+      >
+        <div className="field">
+          <label>Customer ID</label>
+          <input
+            value={formData.customerId}
+            onChange={(e) =>
+              setFormData({ ...formData, customerId: e.target.value })
+            }
+            placeholder="Customer ID"
+          />
+        </div>
+
+        <div className="field">
+          <label>Plot</label>
+          <input
+            value={formData.plot}
+            onChange={(e) =>
+              setFormData({ ...formData, plot: e.target.value })
+            }
+            placeholder="Plot Number"
+          />
+        </div>
+
+        <div className="field">
+          <label>Amount</label>
+          <input
+            value={formData.amount}
+            onChange={(e) =>
+              setFormData({ ...formData, amount: e.target.value })
+            }
+            placeholder="Amount"
+          />
+        </div>
+        <div className="field">
+          <label>Amount Paid</label>
+          <input
+            type="number"
+            value={formData.amountPaid}
+            onChange={(e) =>
+              setFormData({ ...formData, amountPaid: e.target.value })
+            }
+            placeholder="Amount Paid"
+          />
+        </div>
+        {formData.amount && formData.amountPaid && (
+          <div className="field">
+            <label>Remaining Amount</label>
+            <input
+              value={
+                Number(formData.amount.replace(/[₹,]/g, "")) -
+                Number(formData.amountPaid)
+              }
+              disabled
+            />
+          </div>
+        )}
+
+        <div className="field">
+          <label>Status</label>
+          <select
+            value={formData.status}
+            onChange={(e) =>
+              setFormData({ ...formData, status: e.target.value })
+            }
+          >
+            <option value="">Select Status</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        <div className="modal-actions">
+          <button
+            onClick={() => {
+              if (isEditMode) {
+                console.log("Update Booking:", formData);
+              } else {
+                console.log("Add Booking:", formData);
+              }
+              setOpen(false);
+            }}
+          >
+            {isEditMode ? "Update Booking" : "Add Booking"}
+          </button>
+        </div>
+      </AddLocationModal>
     </div>
   );
 };

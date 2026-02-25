@@ -97,6 +97,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
 }
 
 .app.dark .page-tools .add-button {
@@ -110,5 +111,12 @@
 @media (max-width: 900px) {
     .plot-grid {
     grid-template-columns: repeat(1, 1fr);
+}
+}
+
+@media (max-width: 768px) {
+  .plot-container {
+  overflow: auto;
+  height: 90%;
 }
 }

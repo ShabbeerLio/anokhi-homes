@@ -1,7 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import AddLocationModal from "../Modals/AddLocationModal";
 import NiSearch from "../../icons/ni-search";
 import { LucidePlus } from "lucide-react";
+import NiOpenEye from "../../icons/ni-openEye";
+import NiDots from "../../icons/ni-dots";
+import ActionModal from "../Modals/ActionModal";
+import PaymentCard from "../Cards/PaymentCard";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -10,6 +14,37 @@ const PaymentTable = ({ data, actions = [], mood }) => {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [activeRow, setActiveRow] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const [formData, setFormData] = useState({
+    date: "",
+    client: "",
+    phone: "",
+    project: "",
+    amount: "",
+    mode: "",
+    status: "",
+    dueStatus: "",
+  });
+
+  useEffect(() => {
+    if (selectedPayment) {
+      setFormData(selectedPayment);
+    } else {
+      setFormData({
+        date: "",
+        client: "",
+        phone: "",
+        project: "",
+        amount: "",
+        mode: "",
+        status: "",
+        dueStatus: "",
+      });
+    }
+  }, [selectedPayment]);
 
   const filtered = useMemo(() => {
     return data.filter((payment) => {
@@ -33,6 +68,18 @@ const PaymentTable = ({ data, actions = [], mood }) => {
   return (
     <div>
       <div className="filter-grid page-tools table-filters">
+        {mood === "admin" && (
+          <button
+            className="add-button"
+            onClick={() => {
+              setSelectedPayment(null);
+              setIsEditMode(false);
+              setOpen(true);
+            }}
+          >
+            <LucidePlus /> Add
+          </button>
+        )}
         <div className="searchItem">
           <NiSearch />
           <input
@@ -58,13 +105,19 @@ const PaymentTable = ({ data, actions = [], mood }) => {
             <option value="Rejected">Rejected</option>
           </select>
         </div>
-        {mood === "admin" && (
-          <button className="add-button" onClick={() => setOpen(true)}>
-            <LucidePlus />
-          </button>
-        )}
+        <div className="searchItem">
+          <input
+            type="date"
+            // value={dateFilter}
+            onChange={(e) => {
+              // setDateFilter(e.target.value);
+              // setPage(1);
+            }}
+          />
+        </div>
+        
       </div>
-      <div className=" card">
+      {/* <div className=" card">
         <div className="payment-table table-head">
           <span>Date</span>
           <span>Client</span>
@@ -82,10 +135,8 @@ const PaymentTable = ({ data, actions = [], mood }) => {
             <div
               key={item.id}
               className="payment-table table-row"
-              // onClick={() => navigate(`/user/${item.id}`, { state: item })}
               style={{ cursor: "pointer" }}
             >
-              {/* <span>{item.id}</span> */}
 
               <span className="title">{item.date}</span>
               <span className="title">{item.client}</span>
@@ -100,13 +151,52 @@ const PaymentTable = ({ data, actions = [], mood }) => {
                 {item.status}
               </span>
               <span>{item.dueStatus}</span>
-              {/* <span>{item.source}</span> */}
 
-              <span className="dots">⋮</span>
+              <div className="dots">
+                <span>
+                  <NiOpenEye />
+                </span>
+
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveRow(activeRow === item.id ? null : item.id);
+                  }}
+                >
+                  <NiDots />
+                </span>
+
+                {activeRow === item.id && (
+                  <ActionModal
+                    item={item}
+                    onClose={() => setActiveRow(null)}
+                    onEdit={(payment) => {
+                      setSelectedPayment(payment);
+                      setIsEditMode(true);
+                      setOpen(true);
+                    }}
+                  />
+                )}
+              </div>
             </div>
           ))
         ) : (
           <p>No Payment found</p>
+        )}
+      </div> */}
+      <div className="user-card-box">
+        {paginated.length === 0 ? (
+          <p>No Bookings Found</p>
+        ) : (
+          paginated.map((item) => (
+            <PaymentCard
+              item={item}
+              setSelectedPayment={setSelectedPayment}
+              setIsEditMode={setIsEditMode}
+              setOpen={setOpen}
+              mood={mood}
+            />
+          ))
         )}
       </div>
       <div className="pagination">
@@ -134,37 +224,118 @@ const PaymentTable = ({ data, actions = [], mood }) => {
       <AddLocationModal
         open={open}
         onClose={() => setOpen(false)}
-        title="Add Lead"
+        title={isEditMode ? "Edit Payment" : "Add Payment"}
       >
         <div className="field">
-          <label>Customer Name</label>
-          <input placeholder="Customer Name" />
+          <label>Date</label>
+          <input
+            type="date"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          />
         </div>
+
+        <div className="field">
+          <label>Client</label>
+          <input
+            value={formData.client}
+            onChange={(e) =>
+              setFormData({ ...formData, client: e.target.value })
+            }
+            placeholder="Client Name"
+          />
+        </div>
+
         <div className="field">
           <label>Phone</label>
-          <input placeholder="Phone Number" />
+          <input
+            value={formData.phone}
+            onChange={(e) =>
+              setFormData({ ...formData, phone: e.target.value })
+            }
+            placeholder="Phone"
+          />
         </div>
+
         <div className="field">
-          <label>Status</label>
-          <select>
-            <option value="">Select Status</option>
-            <option value="New">New</option>
-            <option value="Converted">Converted</option>
-            <option value="Lost">Lost</option>
+          <label>Project</label>
+          <input
+            value={formData.project}
+            onChange={(e) =>
+              setFormData({ ...formData, project: e.target.value })
+            }
+            placeholder="Project Name"
+          />
+        </div>
+
+        <div className="field">
+          <label>Amount</label>
+          <input
+            type="number"
+            value={formData.amount}
+            onChange={(e) =>
+              setFormData({ ...formData, amount: e.target.value })
+            }
+            placeholder="Amount"
+          />
+        </div>
+
+        <div className="field">
+          <label>Payment Mode</label>
+          <select
+            value={formData.mode}
+            onChange={(e) => setFormData({ ...formData, mode: e.target.value })}
+          >
+            <option value="">Select Mode</option>
+            <option value="Cash">Cash</option>
+            <option value="UPI">UPI</option>
+            <option value="Bank Transfer">Bank Transfer</option>
           </select>
         </div>
+
         <div className="field">
-          <label>Agent</label>
-          <select>
-            <option value="">Select Agent</option>
-            <option value="Amit">Amit</option>
-            <option value="Sana">Sana</option>
-            <option value="Raj">Raj</option>
+          <label>Status</label>
+          <select
+            value={formData.status}
+            onChange={(e) =>
+              setFormData({ ...formData, status: e.target.value })
+            }
+          >
+            <option value="">Select Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+
+        <div className="field">
+          <label>Due Status</label>
+          <select
+            value={formData.dueStatus}
+            onChange={(e) =>
+              setFormData({ ...formData, dueStatus: e.target.value })
+            }
+          >
+            <option value="">Select Due Status</option>
+            <option value="Paid">Paid</option>
+            <option value="Partially Paid">Partially Paid</option>
+            <option value="Overdue">Overdue</option>
           </select>
         </div>
         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
         <div className="modal-actions">
-          <button onClick={() => setOpen(false)}>Add Lead</button>
+          <button
+            onClick={() => {
+              if (isEditMode) {
+                console.log("Update Payment:", formData);
+              } else {
+                console.log("Add Payment:", formData);
+              }
+              setOpen(false);
+            }}
+          >
+            {isEditMode ? "Update Payment" : "Add Payment"}
+          </button>
         </div>
       </AddLocationModal>
     </div>

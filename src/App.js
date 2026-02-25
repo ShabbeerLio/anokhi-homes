@@ -90,7 +90,7 @@ function App() {
                         path="/dashboard"
                         element={<Dashboard mood={mood} />}
                       />
-                      <Route path="/user" element={<Other />} />
+                      <Route path="/user" element={<Other mood={mood}/>} />
                       <Route
                         path="/bookings"
                         element={<Booking mood={mood} />}

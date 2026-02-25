@@ -4,6 +4,10 @@ import NiManagement from "../../icons/ni-management";
 import NiPayments from "../../icons/ni-payments";
 import NiSitevisit from "../../icons/ni-sitevisit";
 import Charts from "./Charts";
+import BookingCard from "../Cards/BookingCard";
+import BookingData from "../Data/BookingData";
+import { FaAngleRight } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 const salesData = [
   { name: "Jan", sales: 2 },
@@ -40,24 +44,23 @@ const AgentDashboard = () => {
       <div className="dashboard-box">
         {/* ================= RECENT ACTIVITY ================= */}
         <div className=" dashboard-box-left">
-          <h4>Recent Bookings</h4>
-          <div className="table card">
+          <div className="dashboard-title-box">
+            <h4>Recent Bookings</h4>
+            <Link to="/bookings" className="view-all"> <FaAngleRight /> View All</Link>
+          </div>
+          {/* <div className="table card">
             <div className="dashboard-activity table-head">
               <span>S.No.</span>
               <span>Plot</span>
               <span>Customer</span>
               <span>Amount</span>
               <span>Status</span>
-              {/* <span>Actions</span> */}
             </div>
 
             <div
-              // key={item.id}
               className="dashboard-activity table-row"
-              // onClick={() => navigate(`/user/${item.id}`, { state: item })}
               style={{ cursor: "pointer" }}
             >
-              {/* <img src={item.avatar} alt="" /> */}
               <span>1</span>
               <span>A-12</span>
               <span>Rahul</span>
@@ -65,16 +68,11 @@ const AgentDashboard = () => {
               <span>₹12,00,000</span>
 
               <span className={`status active`}>Confirmed</span>
-
-              {/* <span className="dots">⋮</span> */}
             </div>
             <div
-              // key={item.id}
               className="dashboard-activity table-row"
-              // onClick={() => navigate(`/user/${item.id}`, { state: item })}
               style={{ cursor: "pointer" }}
             >
-              {/* <img src={item.avatar} alt="" /> */}
               <span>2</span>
               <span>A-13</span>
               <span>Raj</span>
@@ -82,17 +80,24 @@ const AgentDashboard = () => {
               <span>₹10,00,000</span>
 
               <span className={`status pending`}>Pending</span>
-
-              {/* <span className="dots">⋮</span> */}
             </div>
+          </div> */}
+          <div className="user-card-box">
+            {BookingData.slice(0, 2).map((item) => (
+              <BookingCard item={item} />
+            ))}
           </div>
         </div>
         <div className=" dashboard-box-right">
           <h6 style={{ margin: "1.5rem 0 .5rem 0" }}>Upcoming Site Visits</h6>
           <div className="dashboard-alerts ">
             <ul>
-              <li className="alert-items card"><NiSitevisit/> Rahul - Plot A12 - 4 PM</li>
-              <li className="alert-items card"><NiSitevisit/> Imran - Plot B5 - 6 PM</li>
+              <li className="alert-items card">
+                <NiSitevisit /> Rahul - Plot A12 - 4 PM
+              </li>
+              <li className="alert-items card">
+                <NiSitevisit /> Imran - Plot B5 - 6 PM
+              </li>
             </ul>
           </div>
         </div>

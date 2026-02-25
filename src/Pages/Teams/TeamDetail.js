@@ -4,6 +4,9 @@ import { ChevronLeft } from "lucide-react";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import TeamGraph from "../../components/Team/TeamGraph";
 import "./Team.css";
+import NiOpenEye from "../../icons/ni-openEye";
+import NiDots from "../../icons/ni-dots";
+import ActionModal from "../../components/Modals/ActionModal";
 
 const teamsData = [
     {
@@ -57,6 +60,7 @@ const TeamDetail = ({ mood, currentUser }) => {
     const [view, setView] = useState("graph");
 
     const team = teamsData.find((t) => t.id === Number(id));
+    const [activeRow, setActiveRow] = useState(null);
 
     /* ===== SAFE FIND FUNCTION ===== */
 
@@ -171,7 +175,6 @@ const TeamDetail = ({ mood, currentUser }) => {
                                     <span>ID</span>
                                     <span>Name</span>
                                     <span>Role</span>
-                                    {/* <span>Status</span> */}
                                     <span>Actions</span>
                                 </div>
 
@@ -179,15 +182,32 @@ const TeamDetail = ({ mood, currentUser }) => {
                                     <div
                                         key={item.id}
                                         className="team-table table-row"
-                                        onClick={() => navigate(`/user/${item.id}`, { state: item })}
-                                        style={{ cursor: "pointer" }}
                                     >
                                         <img src={item.avatar} alt="" />
                                         <span>{item.id}</span>
 
                                         <span className="title">{item.name}</span>
                                         <span>{item.role}</span>
-                                        <span className="dots">⋮</span>
+                                        <div className="dots">
+                                            <span
+                                                onClick={() => navigate(`/user/${item.id}`, { state: item })}
+                                            >
+                                                <NiOpenEye />
+                                            </span>
+
+                                            <span
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveRow(activeRow === item.id ? null : item.id);
+                                                }}
+                                            >
+                                                <NiDots />
+                                            </span>
+
+                                            {activeRow === item.id && (
+                                                <ActionModal onClose={() => setActiveRow(null)} />
+                                            )}
+                                        </div>
                                     </div>
                                 ))}
                             </div>

@@ -1,0 +1,16 @@
+.booking-table.table-head,
+.booking-table.table-row {
+  display: grid;
+  grid-template-columns: 60px 80px 1fr 140px 140px 140px 140px 60px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.user-card-bottom-left{
+    font-size: 14px;
+}
+
+.user-card-bottom-right{
+    text-align: right;
+    font-size: 14px;
+}

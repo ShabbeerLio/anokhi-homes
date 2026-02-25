@@ -23,9 +23,11 @@ const Payments = ({ mood, staffType }) => {
   return (
     <div className="plot-container">
       <div className="table-filters">
+         <div className="page-head-title">
         <h2>Payments Management</h2>
+          <Breadcrumb />
+        </div>
       </div>
-      <Breadcrumb />
       <div className="dashboard-container">{renderPage()}</div>
     </div>
   );

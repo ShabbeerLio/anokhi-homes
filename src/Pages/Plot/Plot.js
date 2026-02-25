@@ -6,23 +6,36 @@ import SearchItems from "../../components/SearchItems/SearchItems";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { LucidePlus } from "lucide-react";
 import AddLocationModal from "../../components/Modals/AddLocationModal";
+import NiSearch from "../../icons/ni-search";
 
 const PlotList = ({ mood }) => {
     const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState();
     return (
         <div className="plot-container">
             <div className="table-filters">
-                <h2>Trending Locations</h2>
+                <div className="page-head-title">
+                    <h2>Trending Locations</h2>
+                    <Breadcrumb />
+                </div>
                 <div className="page-tools">
-                    <SearchItems />
+                    <div className="searchItem">
+                        <NiSearch />
+                        <input
+                            placeholder="Search Location..."
+                            value={search}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                            }}
+                        />
+                    </div>
                     {mood === "admin" && (
                         <button className="add-button" onClick={() => setOpen(true)}>
-                            <LucidePlus />
+                            <LucidePlus /> Add
                         </button>
                     )}
                 </div>
             </div>
-            <Breadcrumb />
 
             <div className="plot-grid ">
                 {ProjectData.map((p) => (

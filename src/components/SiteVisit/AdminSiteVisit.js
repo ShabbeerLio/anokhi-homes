@@ -9,6 +9,7 @@ const visits = [
     customer: "Rahul",
     phone: "9876543210",
     agent: "Amit",
+    site: "B-198, Goa Colony",
     date: "2026-02-18",
     status: "Completed",
     interest: "High",

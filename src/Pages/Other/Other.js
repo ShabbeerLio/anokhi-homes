@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Other.css";
 import SearchItems from "../../components/SearchItems/SearchItems";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { useNavigate } from "react-router-dom";
+import NiOpenEye from "../../icons/ni-openEye";
+import NiDots from "../../icons/ni-dots";
+import NiDelete from "../../icons/ni-delete";
+import NiEdit from "../../icons/ni-edit";
+import NiSearch from "../../icons/ni-search";
+import NiCard from "../../icons/ni-card";
+import NiList from "../../icons/ni-list";
+import { LucidePlus } from "lucide-react";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -114,10 +122,17 @@ const DATA = [
   },
 ];
 
-const Other = () => {
+const Other = ({ mood }) => {
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeRow, setActiveRow] = useState(null);
+  const [viewItem, setViewItem] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
 
   const filteredData =
     filter === "all" ? DATA : DATA.filter((d) => d.user === filter);
@@ -135,58 +150,174 @@ const Other = () => {
     startIndex + ITEMS_PER_PAGE,
   );
 
+  const ref = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setActiveRow(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [setActiveRow]);
+
+
   return (
-    <div className="table-card ">
+    <div className="plot-container">
       {/* Filters */}
       <div className="table-filters">
-        <h2>Users</h2>
+        <div className="page-head-title">
+          <h2>Users</h2>
+          <Breadcrumb />
+        </div>
         <div className="page-tools">
-          {["all", "user", "staff", "agent"].map((f) => (
+          {(mood === "admin" || mood === "staff") && (
             <button
-            key={f}
-            className={filter === f ? "active" : ""}
-            onClick={() => setFilter(f)}
+              className="add-button"
+              onClick={() => {
+                setSelectedUser(null);
+                setIsEditMode(false);
+                setOpen(true);
+              }}
             >
-              {f.toUpperCase()}
+              <LucidePlus /> Add
             </button>
-          ))}
-          <SearchItems />
+          )}
+          <div className="searchItem">
+            <NiSearch />
+            <input
+              placeholder="Search Nane"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+            />
+          </div>
+          <div className="filter-buttons">
+            {["all", "user", "staff", "agent"].map((f) => (
+              <button
+                key={f}
+                className={filter === f ? "active" : ""}
+                onClick={() => setFilter(f)}
+              >
+                {f.toUpperCase()}
+              </button>
+            ))}
+          </div>
+          <div className="page-toggle">
+            <span className={`${viewItem === false ? "active" : ""}`} onClick={() => setViewItem(false)}><NiList /></span>
+            <span className={`${viewItem === true ? "active" : ""}`} onClick={() => setViewItem(true)}><NiCard /></span>
+          </div>
+
         </div>
       </div>
-      <Breadcrumb />
+
 
       {/* Table */}
-      <div className="table card">
-        <div className="table-head">
-          <span>Image</span>
-          <span>ID</span>
-          <span>Name</span>
-          <span>Role</span>
-          <span>Status</span>
-          <span>Actions</span>
-        </div>
-
-        {currentData.map((item) => (
-          <div
-            key={item.id}
-            className="table-row"
-            onClick={() => navigate(`/user/${item.id}`, { state: item })}
-            style={{ cursor: "pointer" }}
-          >
-            <img src={item.avatar} alt="" />
-            <span>{item.id}</span>
-
-            <span className="title">{item.name}</span>
-            <span>{item.user}</span>
-
-            <span className={`status ${item.status}`}>
-              {item.status === "active" ? "Active" : "In Active"}
-            </span>
-
-            <span className="dots">⋮</span>
+      {viewItem === false ? (
+        <div className="table card">
+          <div className="table-head">
+            <span>Image</span>
+            <span>ID</span>
+            <span>Name</span>
+            <span>Role</span>
+            <span>Status</span>
+            <span>Actions</span>
           </div>
-        ))}
-      </div>
+
+          {currentData.map((item) => (
+
+            <div key={item.id} className="table-row">
+              <img src={item.avatar} alt="" />
+              <span>{item.id}</span>
+              <span className="title">{item.name}</span>
+              <span>{item.user}</span>
+              <span className={`status ${item.status}`}>
+                {item.status === "active" ? "Active" : "In Active"}
+              </span>
+
+              <div className="dots">
+                <span
+                  onClick={() => navigate(`/user/${item.id}`, { state: item })}
+                >
+                  <NiOpenEye />
+                </span>
+
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveRow(activeRow === item.id ? null : item.id);
+                  }}
+                >
+                  <NiDots />
+                </span>
+
+                {activeRow === item.id &&
+                  <div ref={ref} className="action-modal">
+                    <span>
+                      <NiEdit />{item.status === "active" ? "In Active" : "Active"}
+                    </span>
+                    <span>
+                      <NiDelete /> Delete
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="user-card-box">
+          {currentData.map((item) => (
+            <div className="user-card card">
+              <div className="user-card-top">
+                <div className="user-card-title">
+                  <img src={item.avatar} alt="" />
+                  <div className="user-card-detail">
+                    <h4>{item.name}</h4>
+                    <p>{item.id}</p>
+                  </div>
+                </div>
+                <div className="dots">
+                  <span
+                    onClick={() => navigate(`/user/${item.id}`, { state: item })}
+                  >
+                    <NiOpenEye />
+                  </span>
+
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveRow(activeRow === item.id ? null : item.id);
+                    }}
+                  >
+                    <NiDots />
+                  </span>
+
+                  {activeRow === item.id &&
+                    <div ref={ref} className="action-modal">
+                      <span>
+                        <NiEdit />{item.status === "active" ? "In Active" : "Active"}
+                      </span>
+                      <span>
+                        <NiDelete /> Delete
+                      </span>
+                    </div>
+                  }
+                </div>
+              </div>
+              <div className="user-card-bottom">
+                <span>{item.user}</span>
+                <span className={`status ${item.status}`}>
+                  {item.status === "active" ? "Active" : "In Active"}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="pagination">

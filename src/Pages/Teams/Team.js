@@ -39,11 +39,11 @@ const Teams = ({ mood }) => {
   return (
     <div className="plot-container">
       <div className="table-filters">
-        <h2>Team Management</h2>
+        <div className="page-head-title">
+          <h2>Team Management</h2>
+          <Breadcrumb />
+        </div>
       </div>
-
-      <Breadcrumb />
-
       <div className="dashboard-wrapper">
         {/* ================= STATS ================= */}
         <div className="dashboard-grid">

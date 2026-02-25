@@ -65,8 +65,33 @@
   width: 65%;
   height: 100%;
 }
+
+.dashboard-title-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dashboard-title-box .view-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 12px;
+  padding: 5px 10px;
+  margin-top: 1rem;
+  border-radius: 1.75rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: #9f9f9f;
+}
+.dashboard-title-box .view-all:hover {
+  background-color: #b5b5b51e;
+}
 .dashboard-box-left p {
   color: #9f9f9f;
+}
+.dashboard-box-left .user-card-box {
+  grid-template-columns: repeat(2, 1fr);
 }
 .dashboard-box-right {
   width: 35%;
@@ -147,7 +172,7 @@
 .dashboard-activity.table-head,
 .dashboard-activity.table-row {
   display: grid;
-  grid-template-columns: 50px 1fr 1fr 1fr 1fr;
+  grid-template-columns: 50px 1fr 1fr 1fr 1fr 80px;
 }
 
 .circular-chart-card {

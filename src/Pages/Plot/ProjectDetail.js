@@ -26,12 +26,14 @@ const ProjectDetail = ({ mood }) => {
   return (
     <div className="plot-container product-detail">
       <div className="table-filters">
-        <div className="page-tools">
-          <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
-          <h2>{project.name}</h2>
+        <div className="page-head-title">
+          <div className="page-tools">
+            <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
+            <h2>{project.name}</h2>
+          </div>
+          <Breadcrumb />
         </div>
       </div>
-      <Breadcrumb />
       <PlotDrawCard mood={mood} />
     </div>
   );
