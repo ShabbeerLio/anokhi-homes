@@ -11,6 +11,9 @@ import NiSearch from "../../icons/ni-search";
 import NiCard from "../../icons/ni-card";
 import NiList from "../../icons/ni-list";
 import { LucidePlus } from "lucide-react";
+import AddLocationModal from "../../components/Modals/AddLocationModal";
+import ActionModal from "../../components/Modals/ActionModal";
+import DeleteModal from "../../components/Modals/DeleteModal";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -18,111 +21,136 @@ const DATA = [
   {
     id: 472,
     user: "staff",
-    name: "Laura Ellis",
-    avatar: "https://i.pravatar.cc/40?img=1",
+    name: "Emily Ellis",
+    email: "laura@company.com",
+    phone: "9876543210",
+    avatar: "https://i.pravatar.cc/150?img=1",
     status: "active",
+    joined: "2024-01-12",
+    permissions: ["Manage Leads", "Access Reports"],
+    performance: null,
   },
+
   {
     id: 473,
     user: "agent",
     name: "Zoila Vittorino",
-    avatar: "https://i.pravatar.cc/40?img=2",
+    email: "zoila@company.com",
+    phone: "9876500001",
+    avatar: "https://i.pravatar.cc/150?img=2",
     status: "active",
+    joined: "2023-09-10",
+
+    performance: {
+      totalSales: 4500000,
+      totalBookings: 18,
+      propertiesSold: 15,
+      commissionEarned: 450000,
+      conversionRate: 42,
+      monthlySales: [
+        { month: "Jan", sales: 200000 },
+        { month: "Feb", sales: 350000 },
+        { month: "Mar", sales: 280000 },
+        { month: "Apr", sales: 400000 },
+      ],
+    },
+
+    permissions: [],
   },
+
   {
     id: 474,
     user: "user",
     name: "Travis Howard",
-    avatar: "https://i.pravatar.cc/40?img=3",
+    email: "travis@gmail.com",
+    phone: "9000000001",
+    avatar: "https://i.pravatar.cc/150?img=3",
     status: "active",
+    joined: "2025-02-05",
+    permissions: [],
+    performance: null,
   },
+
   {
     id: 475,
     user: "staff",
     name: "Cindy Baker",
-    avatar: "https://i.pravatar.cc/40?img=4",
+    email: "cindy@company.com",
+    phone: "9000000002",
+    avatar: "https://i.pravatar.cc/150?img=4",
     status: "inactive",
+    joined: "2022-05-11",
+    permissions: ["Manage Bookings"],
+    performance: null,
   },
+
   {
     id: 476,
     user: "agent",
     name: "Buck Rogers",
-    avatar: "https://i.pravatar.cc/40?img=5",
+    email: "buck@company.com",
+    phone: "9000000003",
+    avatar: "https://i.pravatar.cc/150?img=5",
     status: "inactive",
+    joined: "2023-03-18",
+
+    performance: {
+      totalSales: 3200000,
+      totalBookings: 12,
+      propertiesSold: 10,
+      commissionEarned: 320000,
+      conversionRate: 35,
+      monthlySales: [
+        { month: "Jan", sales: 120000 },
+        { month: "Feb", sales: 220000 },
+        { month: "Mar", sales: 150000 },
+      ],
+    },
+
+    permissions: [],
   },
+
   {
     id: 477,
     user: "user",
     name: "Emily Watson",
-    avatar: "https://i.pravatar.cc/40?img=6",
+    email: "emily@gmail.com",
+    phone: "9000000004",
+    avatar: "https://i.pravatar.cc/150?img=6",
     status: "active",
+    joined: "2025-01-22",
+    permissions: [],
+    performance: null,
   },
-  {
-    id: 478,
-    user: "staff",
-    name: "Daniel Moore",
-    avatar: "https://i.pravatar.cc/40?img=7",
-    status: "active",
-  },
-  {
-    id: 479,
-    user: "agent",
-    name: "Sophia Turner",
-    avatar: "https://i.pravatar.cc/40?img=8",
-    status: "inactive",
-  },
-  {
-    id: 480,
-    user: "user",
-    name: "Michael Johnson",
-    avatar: "https://i.pravatar.cc/40?img=9",
-    status: "active",
-  },
-  {
-    id: 481,
-    user: "staff",
-    name: "Olivia Brown",
-    avatar: "https://i.pravatar.cc/40?img=10",
-    status: "inactive",
-  },
+
   {
     id: 482,
     user: "agent",
     name: "Ethan Wilson",
-    avatar: "https://i.pravatar.cc/40?img=11",
+    email: "ethan@company.com",
+    phone: "9000000005",
+    avatar: "https://i.pravatar.cc/150?img=11",
     status: "active",
-  },
-  {
-    id: 483,
-    user: "user",
-    name: "Isabella Martinez",
-    avatar: "https://i.pravatar.cc/40?img=12",
-    status: "active",
-  },
-  {
-    id: 484,
-    user: "staff",
-    name: "Noah Anderson",
-    avatar: "https://i.pravatar.cc/40?img=13",
-    status: "inactive",
-  },
-  {
-    id: 485,
-    user: "agent",
-    name: "Ava Thompson",
-    avatar: "https://i.pravatar.cc/40?img=14",
-    status: "active",
-  },
-  {
-    id: 486,
-    user: "user",
-    name: "James Miller",
-    avatar: "https://i.pravatar.cc/40?img=15",
-    status: "inactive",
+    joined: "2023-11-01",
+
+    performance: {
+      totalSales: 5100000,
+      totalBookings: 22,
+      propertiesSold: 19,
+      commissionEarned: 510000,
+      conversionRate: 48,
+      monthlySales: [
+        { month: "Jan", sales: 400000 },
+        { month: "Feb", sales: 600000 },
+        { month: "Mar", sales: 520000 },
+      ],
+    },
+
+    permissions: [],
   },
 ];
 
-const Other = ({ mood }) => {
+const Other = ({ mood, setAlert }) => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -132,11 +160,45 @@ const Other = ({ mood }) => {
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
+  const [formData, setFormData] = useState({
+    user: "",
+    name: "",
+    avatar: "",
+    status: "",
+  });
 
-  const filteredData =
-    filter === "all" ? DATA : DATA.filter((d) => d.user === filter);
+  useEffect(() => {
+    if (selectedUser) {
+      setFormData(selectedUser);
+    } else {
+      setFormData({
+        user: "",
+        name: "",
+        avatar: "",
+        status: "",
+      });
+    }
+  }, [selectedUser]);
 
+  const filteredData = DATA.filter((item) => {
+    // Role filter
+    const matchesRole =
+      filter === "all" || item.user.toLowerCase() === filter.toLowerCase();
+
+    // Search filter
+    const searchValue = search.toLowerCase();
+
+    const matchesSearch =
+      item.name.toLowerCase().includes(searchValue) ||
+      item.email?.toLowerCase().includes(searchValue) ||
+      item.phone?.includes(searchValue) ||
+      item.id.toString().includes(searchValue) ||
+      item.user.toLowerCase().includes(searchValue);
+
+    return matchesRole && matchesSearch;
+  });
   // reset page when filter changes
   useEffect(() => {
     setCurrentPage(1);
@@ -162,6 +224,23 @@ const Other = ({ mood }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setActiveRow]);
+
+  const handleAddUser = () => {
+    console.log("Adding user:", formData);
+    setOpen(false);
+    setAlert({ message: "User added successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
+  const handleEditUser = () => {
+    console.log("Editing user:", formData);
+    setOpen(false);
+    setAlert({ message: "User updated successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
 
 
   return (
@@ -233,7 +312,7 @@ const Other = ({ mood }) => {
               <img src={item.avatar} alt="" />
               <span>{item.id}</span>
               <span className="title">{item.name}</span>
-              <span>{item.user}</span>
+              <span>{item.user === "staff" ? "Staff" : item.user === "agent" ? "Agent" : "User"}</span>
               <span className={`status ${item.status}`}>
                 {item.status === "active" ? "Active" : "In Active"}
               </span>
@@ -254,16 +333,20 @@ const Other = ({ mood }) => {
                   <NiDots />
                 </span>
 
-                {activeRow === item.id &&
-                  <div ref={ref} className="action-modal">
-                    <span>
-                      <NiEdit />{item.status === "active" ? "In Active" : "Active"}
-                    </span>
-                    <span>
-                      <NiDelete /> Delete
-                    </span>
-                  </div>
-                }
+                {activeRow === item.id && (
+                  <ActionModal
+                    item={item}
+                    onClose={() => setActiveRow(null)}
+                    onEdit={(booking) => {
+                      setSelectedUser(booking);
+                      setIsEditMode(true);
+                      setOpen(true);
+                    }}
+                    onDelete={() => {
+                      setDeleteOpen(true);
+                    }}
+                  />
+                )}
               </div>
             </div>
           ))}
@@ -296,20 +379,24 @@ const Other = ({ mood }) => {
                     <NiDots />
                   </span>
 
-                  {activeRow === item.id &&
-                    <div ref={ref} className="action-modal">
-                      <span>
-                        <NiEdit />{item.status === "active" ? "In Active" : "Active"}
-                      </span>
-                      <span>
-                        <NiDelete /> Delete
-                      </span>
-                    </div>
-                  }
+                  {activeRow === item.id && (
+                    <ActionModal
+                      item={item}
+                      onClose={() => setActiveRow(null)}
+                      onEdit={(booking) => {
+                        setSelectedUser(booking);
+                        setIsEditMode(true);
+                        setOpen(true);
+                      }}
+                      onDelete={() => {
+                        setDeleteOpen(true);
+                      }}
+                    />
+                  )}
                 </div>
               </div>
               <div className="user-card-bottom">
-                <span>{item.user}</span>
+                <span>{item.user === "staff" ? "Staff" : item.user === "agent" ? "Agent" : "User"}</span>
                 <span className={`status ${item.status}`}>
                   {item.status === "active" ? "Active" : "In Active"}
                 </span>
@@ -346,6 +433,110 @@ const Other = ({ mood }) => {
           </button>
         </div>
       )}
+      <AddLocationModal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={isEditMode ? "Edit User" : "Add User"}
+      >
+        <div className="field">
+          <label>User Type</label>
+          <select
+            value={formData.user}
+            onChange={(e) =>
+              setFormData({ ...formData, user: e.target.value })
+            }
+          >
+            <option value="">Select Type</option>
+            <option value="User">User</option>
+            <option value="Staff">Staff</option>
+            <option value="Agent">Agent</option>
+          </select>
+        </div>
+
+        <div className="field">
+          <label>Name</label>
+          <input
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder="Name"
+          />
+        </div>
+
+        <div className="field">
+          <label>Avatar</label>
+          <input
+            value={formData.avatar}
+            onChange={(e) =>
+              setFormData({ ...formData, avatar: e.target.value })
+            }
+            placeholder="Avatar URL"
+          />
+        </div>
+
+
+        <div className="field">
+          <label>Status</label>
+          <select
+            value={formData.status}
+            onChange={(e) =>
+              setFormData({ ...formData, status: e.target.value })
+            }
+          >
+            <option value="">Select Status</option>
+            <option value="Active">Active</option>
+            <option value="In Active">In Active</option>
+          </select>
+        </div>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        <div className="modal-actions">
+          <button
+            onClick={() => {
+              if (isEditMode) {
+                handleEditUser();
+              } else {
+                handleAddUser();
+              }
+              setOpen(false);
+            }}
+          >
+            {isEditMode ? "Update Booking" : "Add Booking"}
+          </button>
+        </div>
+      </AddLocationModal>
+      <DeleteModal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
+        <p>Are you sure you want to delete?</p>
+        <div className="modal-actions">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log("User deleted");
+
+              setDeleteOpen(false);
+
+              setAlert({
+                message: "User deleted successfully!",
+                status: "Success",
+              });
+
+              setTimeout(() => {
+                setAlert(null);
+              }, 5000);
+            }}
+          >
+            Yes
+          </button>
+
+          <button
+            className="btn-outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteOpen(false);
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </DeleteModal>
     </div>
   );
 };

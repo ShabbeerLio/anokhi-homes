@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Dashboard.css";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import AdminDashboard from "../../components/Dashboard/AdminDashboard";
@@ -8,9 +8,16 @@ import UserDashboard from "../../components/Dashboard/UserDashboard";
 import NiTool from "../../icons/ni-tool";
 import NiDashboardgph from "../../icons/NiDashboardgph";
 import { useNavigate } from "react-router-dom";
+import AddLocationModal from "../../components/Modals/AddLocationModal";
+import RenderFormFields from "./RenderFormFields";
 
 const Dashboard = ({ mood }) => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [actionType, setActionType] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const [formData, setFormData] = useState({});
 
   const renderDashboard = () => {
     switch (mood) {
@@ -26,23 +33,27 @@ const Dashboard = ({ mood }) => {
     }
   };
 
+  const renderFormFields = ({ actionType, formData, setFormData }) => {
+    return <RenderFormFields actionType={actionType} formData={formData} setFormData={setFormData} />;
+  }
+
   const quickActions = {
     admin: [
-      { label: "Add Agent", link: "/user" },
-      { label: "Add Plot", link: "/plot" },
-      { label: "Add Booking", link: "/bookings" },
-      { label: "Add Payment (Received)", link: "/payments" },
+      { label: "Add Agent / Staff / User" },
+      { label: "Add Project" },
+      { label: "Add Booking" },
+      { label: "Add Payment (Received)" },
     ],
     agent: [
-      { label: "Add Lead", link: "/management" },
-      { label: "Schedule Visit", link: "/site-visits" },
+      { label: "Add Lead" },
+      { label: "Schedule Visit" },
     ],
     staff: [
-      { label: "Approve Payment", link: "/payments" },
-      { label: "Verify Booking", link: "/bookings" },
+      { label: "Approve Payment" },
+      { label: "Verify Booking" },
     ],
     user: [
-      { label: "Download Receipt", link: "/bookings" },
+      { label: "Download Receipt" },
     ],
   };
 
@@ -74,7 +85,12 @@ const Dashboard = ({ mood }) => {
               <div
                 className="dashboard-box-item card"
                 key={i}
-                onClick={() => navigate(action.link)}
+                onClick={() => {
+                  setActionType(action.label);
+                  setFormData({});
+                  setIsEditMode(false);
+                  setOpen(true);
+                }}
                 style={{ cursor: "pointer" }}
               >
                 <div className="dashboard-box-item-left">
@@ -90,6 +106,23 @@ const Dashboard = ({ mood }) => {
         </div>
         {renderDashboard()}
       </div>
+      <AddLocationModal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={actionType}
+      >
+        {renderFormFields({ actionType, formData, setFormData })}
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing.</p>
+
+        <div className="modal-actions">
+          <button onClick={() => setOpen(false)}>
+            Cancel
+          </button>
+          <button onClick={() => setOpen(false)}>
+            Submit
+          </button>
+        </div>
+      </AddLocationModal>
     </div>
   );
 };

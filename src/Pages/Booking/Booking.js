@@ -7,16 +7,17 @@ import AddLocationModal from "../../components/Modals/AddLocationModal";
 import NiSearch from "../../icons/ni-search";
 import BookingCard from "../../components/Cards/BookingCard";
 import BookingData from "../../components/Data/BookingData";
+import Alert from "../../components/Alert/Alert";
 const ITEMS_PER_PAGE = 12;
 
-const Booking = ({ mood }) => {
+const Booking = ({ mood, setAlert }) => {
   const currentUser = { id: "user1", name: "Agent Smith" }; // Mocked current user
   const navigate = useNavigate();
-  
+
   const [open, setOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [search, setSearch] = useState()
+  const [search, setSearch] = useState();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -79,6 +80,23 @@ const Booking = ({ mood }) => {
     startIndex + ITEMS_PER_PAGE,
   );
 
+  const handleAddBooking = () => {
+    console.log("Adding booking:", formData);
+    setOpen(false);
+    setAlert({ message: "Booking added successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
+  const handleEditBooking = () => {
+    console.log("Editing booking:", formData);
+    setOpen(false);
+    setAlert({ message: "Booking updated successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
+
   return (
     <div className="plot-container">
       {/* Filters */}
@@ -111,7 +129,7 @@ const Booking = ({ mood }) => {
             />
           </div>
 
-          {["all", "Pending", "Closed", "Completed"].map((f) => (
+          {["all", "Confirmed", "Pending", "Rejected"].map((f) => (
             <button
               key={f}
               className={filter === f ? "active" : ""}
@@ -120,87 +138,13 @@ const Booking = ({ mood }) => {
               {f.toUpperCase()}
             </button>
           ))}
-          
         </div>
       </div>
-      {/* <div className="table card">
-        {currentData.length === 0 ? (
-          <p>No Bookings Found</p>
-        ) : (
-          <>
-            <div className="booking-table table-head">
-              <span>ID</span>
-              <span>Customer</span>
-              <span>Plot</span>
-              <span>Amount</span>
-              <span>Paid</span>
-              <span>Remaining</span>
-              <span>Status</span>
-              <span>Action</span>
-            </div>
-            {currentData.map((b) => {
-              const total = Number(b.amount.replace(/[₹,]/g, ""));
-              const paid = Number(b.amountPaid || 0);
-              const remaining = total - paid;
-              return (
-
-                <div
-                  key={b.id}
-                  className="booking-table table-row"
-                  style={{ cursor: "pointer" }}
-                >
-                  <span>{b.id}</span>
-                  <span className="title">{b.customerId}</span>
-                  <span>{b.plot}</span>
-                  <span>{b.amount}</span>
-                  <span>₹{b.amountPaid || 0}</span>
-                  <span>₹{remaining}</span>
-
-                  {b.status === "Paid" ? (
-                    <span className="status active">Paid</span>
-                  ) : b.status === "Pending" ? (
-                    <span className="status pending">Pending</span>
-                  ) : (
-                    <span className="status cancelled">Cancelled</span>
-                  )}
-
-                  <div className="dots">
-                    <span>
-                      <NiOpenEye />
-                    </span>
-                    {(mood !== "user" &&
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveRow(activeRow === b.id ? null : b.id);
-                        }}
-                      >
-                        <NiDots />
-                      </span>)}
-
-                    {activeRow === b.id && (
-                      <ActionModal
-                        item={b}
-                        onClose={() => setActiveRow(null)}
-                        onEdit={(booking) => {
-                          setSelectedBooking(booking);
-                          setIsEditMode(true);
-                          setOpen(true);
-                        }}
-                      />
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </>
-        )}
-      </div> */}
+      
       <div className="user-card-box">
         {currentData.length === 0 ? (
           <p>No Bookings Found</p>
         ) : (
-
           currentData.map((item) => (
             <BookingCard
               item={item}
@@ -208,9 +152,9 @@ const Booking = ({ mood }) => {
               setIsEditMode={setIsEditMode}
               setOpen={setOpen}
               mood={mood}
+              setAlert={setAlert}
             />
           ))
-
         )}
       </div>
       {/* Pagination */}
@@ -261,9 +205,7 @@ const Booking = ({ mood }) => {
           <label>Plot</label>
           <input
             value={formData.plot}
-            onChange={(e) =>
-              setFormData({ ...formData, plot: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, plot: e.target.value })}
             placeholder="Plot Number"
           />
         </div>
@@ -321,9 +263,9 @@ const Booking = ({ mood }) => {
           <button
             onClick={() => {
               if (isEditMode) {
-                console.log("Update Booking:", formData);
+                handleEditBooking();
               } else {
-                console.log("Add Booking:", formData);
+                handleAddBooking();
               }
               setOpen(false);
             }}

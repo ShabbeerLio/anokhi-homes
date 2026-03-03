@@ -3,7 +3,7 @@ import NiEdit from "../../icons/ni-edit";
 import NiDelete from "../../icons/ni-delete";
 import "./Modals.css";
 
-const ActionModal = ({ onClose, onEdit, item }) => {
+const ActionModal = ({ onClose, onEdit, onDelete, item }) => {
     const ref = useRef();
 
     useEffect(() => {
@@ -27,7 +27,12 @@ const ActionModal = ({ onClose, onEdit, item }) => {
             >
                 <NiEdit /> Edit
             </span>
-            <span>
+            <span
+                onClick={() => {
+                    onDelete(item);
+                    onClose();
+                }}
+            >
                 <NiDelete /> Delete
             </span>
         </div>

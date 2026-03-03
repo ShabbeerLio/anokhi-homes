@@ -13,7 +13,7 @@ const Charts = ({
   title,
   data,
   dataKey,
-  xKey = "name",
+  xKey = "month",
   color = "var(--mood-color)",
   height = 300,
   showGrid = true,

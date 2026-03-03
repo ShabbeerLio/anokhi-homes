@@ -14,7 +14,7 @@ const visits = [
   },
 ];
 
-const StaffSiteVisit = ({ staffType }) => {
+const StaffSiteVisit = ({ mood, staffType, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
 
@@ -40,7 +40,7 @@ const StaffSiteVisit = ({ staffType }) => {
 
       {staffType === "marketing" && (
         <>
-          <VisitTable data={visits} actions={[]} />
+          <VisitTable data={visits} actions={[]} setAlert={setAlert} />
         </>
       )}
 

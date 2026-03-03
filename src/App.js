@@ -26,6 +26,9 @@ import Management from "./Pages/Management/Management";
 import SiteVisit from "./Pages/SiteVisit/SiteVisit";
 import Payments from "./Pages/Payments/Payments";
 import TeamDetail from "./Pages/Teams/TeamDetail";
+import Alert from "./components/Alert/Alert";
+import Setting from "./Pages/Setting/Setting";
+import Logs from "./Pages/Logs/Logs";
 
 const LandingLayout = () => {
   return (
@@ -41,6 +44,7 @@ function App() {
   const [dark, setDark] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mood, setMood] = useState("staff");
+  const [alert, setAlert] = useState(null);
 
   return (
     <BrowserRouter>
@@ -85,47 +89,57 @@ function App() {
                   </div>
 
                   <div className="page-wrap">
+                    <Alert item={alert} />
                     <Routes>
                       <Route
                         path="/dashboard"
-                        element={<Dashboard mood={mood} />}
+                        element={<Dashboard mood={mood} setAlert={setAlert} />}
                       />
-                      <Route path="/user" element={<Other mood={mood}/>} />
+                      <Route path="/user" element={<Other mood={mood} setAlert={setAlert}/>} />
                       <Route
                         path="/bookings"
-                        element={<Booking mood={mood} />}
+                        element={<Booking mood={mood} setAlert={setAlert} />}
                       />
-                      <Route path="/teams" element={<Team mood={mood} />} />
+                      <Route path="/teams" element={<Team mood={mood} setAlert={setAlert}/>} />
                       <Route
                         path="/teams/:id"
                         element={
                           <TeamDetail
                             mood="agent"
                             currentUser={{ id: "amit", name: "Amit" }}
+                            setAlert={setAlert}
                           />
                         }
                       />
                       <Route
                         path="/management"
-                        element={<Management mood={mood} />}
+                        element={<Management mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/site-visits"
-                        element={<SiteVisit mood={mood} />}
+                        element={<SiteVisit mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/payments"
-                        element={<Payments mood={mood} />}
+                        element={<Payments mood={mood} setAlert={setAlert}/>}
                       />
-                      <Route path="/user/:id" element={<Profile />} />
-                      <Route path="/plot" element={<Plot mood={mood} />} />
+                      <Route
+                        path="/settings"
+                        element={<Setting mood={mood} setAlert={setAlert}/>}
+                      />
+                      <Route
+                        path="/logs"
+                        element={<Logs mood={mood} setAlert={setAlert}/>}
+                      />
+                      <Route path="/user/:id" element={<Profile mood={mood} setAlert={setAlert}/>} />
+                      <Route path="/plot" element={<Plot mood={mood} setAlert={setAlert}/>} />
                       <Route
                         path="/plot/:plotId"
-                        element={<Projects mood={mood} />}
+                        element={<Projects mood={mood} setAlert={setAlert}/>}
                       />
                       <Route
                         path="/plot/:plotId/:projectId"
-                        element={<ProjectDetail mood={mood} />}
+                        element={<ProjectDetail mood={mood} setAlert={setAlert}/>}
                       />
                     </Routes>
                   </div>

@@ -10,24 +10,27 @@ import DashboardCard from "../Cards/DashboardCard";
 import BookingData from "../Data/BookingData";
 import Charts from "./Charts";
 import { FaAngleRight } from "react-icons/fa6";
+import NiCross from "../../icons/ni-cross";
+import NiInfo from "../../icons/ni-info";
+import NiTick from "../../icons/ni-tick";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const revenueData = [
-    { name: "Mon", revenue: 500 },
-    { name: "Tue", revenue: 600 },
-    { name: "Wed", revenue: 500 },
-    { name: "Thu", revenue: 600 },
-    { name: "Fri", revenue: 750 },
-    { name: "Sat", revenue: 500 },
-    { name: "Sun", revenue: 800 },
+    { month: "Mon", revenue: 500 },
+    { month: "Tue", revenue: 600 },
+    { month: "Wed", revenue: 500 },
+    { month: "Thu", revenue: 600 },
+    { month: "Fri", revenue: 750 },
+    { month: "Sat", revenue: 500 },
+    { month: "Sun", revenue: 800 },
   ];
 
   const leadData = [
-    { name: "Jan", conversion: 20 },
-    { name: "Feb", conversion: 35 },
-    { name: "Mar", conversion: 28 },
-    { name: "Apr", conversion: 40 },
+    { month: "Jan", conversion: 20 },
+    { month: "Feb", conversion: 35 },
+    { month: "Mar", conversion: 28 },
+    { month: "Apr", conversion: 40 },
   ];
 
   const handleNavigate = () => {
@@ -131,9 +134,9 @@ const AdminDashboard = () => {
           <h6 style={{ margin: "1.5rem 0 .5rem 0" }}>System Alerts</h6>
           <div className="dashboard-alerts ">
             <ul>
-              <li className="alert-items danger card"> <NiSitevisit /> 3 Plots on hold expiring soon</li>
-              <li className="alert-items warning card"> <NiSitevisit /> 5 Overdue payments</li>
-              <li className="alert-items success card"><NiSitevisit /> 2 Unassigned leads</li>
+              <li className="alert-items danger card"> <NiCross /> 3 Plots on hold expiring soon</li>
+              <li className="alert-items warning card"> <NiInfo /> 5 Overdue payments</li>
+              <li className="alert-items success card"><NiTick /> 2 Unassigned leads</li>
             </ul>
           </div>
         </div>

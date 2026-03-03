@@ -6,15 +6,15 @@ import StaffPayments from "../../components/Payments/StaffPayments";
 import "./Payments.css";
 
 
-const Payments = ({ mood, staffType }) => {
+const Payments = ({ mood, staffType, setAlert }) => {
   const renderPage = () => {
     switch (mood) {
       case "admin":
-        return <AdminPayments mood={mood} />;
+        return <AdminPayments mood={mood} setAlert={setAlert}/>;
       case "agent":
-        return <AgentPayments />;
+        return <AgentPayments setAlert={setAlert}/>;
       case "staff":
-        return <StaffPayments staffType={"accounts"} />;
+        return <StaffPayments staffType={"accounts"} setAlert={setAlert}/>;
       default:
         return <div>Access Denied</div>;
     }

@@ -16,7 +16,7 @@ const visits = [
   },
 ];
 
-const AdminSiteVisit = ({ mood }) => {
+const AdminSiteVisit = ({ mood, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
       {/* ================= STATS ================= */}
@@ -41,15 +41,16 @@ const AdminSiteVisit = ({ mood }) => {
           "Convert Booking",
         ]}
         mood={mood}
+        setAlert={setAlert}
       />
       <h4>Monthly Revenue</h4>
       <div className="card">
         <Charts
           title="Monthly Visit Trend"
           data={[
-            { name: "Jan", visits: 20 },
-            { name: "Feb", visits: 35 },
-            { name: "Mar", visits: 28 },
+            { month: "Jan", visits: 20 },
+            { month: "Feb", visits: 35 },
+            { month: "Mar", visits: 28 },
           ]}
           dataKey="visits"
         />

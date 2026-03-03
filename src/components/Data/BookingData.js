@@ -6,7 +6,7 @@ const BookingData = [
       plot: "A-12",
       amount: "₹12,00,000",
       amountPaid: 50000,
-      status: "Paid",
+      status: "Confirmed",
     },
     {
       id: 2,
@@ -24,7 +24,7 @@ const BookingData = [
       plot: "C-8",
       amount: "₹10,00,000",
       amountPaid: 40000,
-      status: "Cancelled",
+      status: "Rejected",
     },
   ]; 
   export default BookingData;

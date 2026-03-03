@@ -319,6 +319,7 @@ body {
 .page-wrap {
   flex: 1;
   width: 100%;
+  position: relative;
 }
 .mobile-btn {
   display: none;
@@ -366,7 +367,7 @@ body {
   color: #fff;
 }
 .auth-card input {
-  width: 100%;
+  /* width: 100%; */
   padding: 10px;
   margin: 8px 0;
   border-radius: 1.125rem;
@@ -417,6 +418,17 @@ body {
 
 .auth-footer a {
   color: #f8a32a;
+}
+
+.password-field{
+  position: relative;
+}
+.password-field .password-eye{
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  transform: translate(0%, -50%);
+  cursor: pointer;
 }
 
 /* Mobile */

@@ -9,7 +9,7 @@ import PaymentCard from "../Cards/PaymentCard";
 
 const ITEMS_PER_PAGE = 6;
 
-const PaymentTable = ({ data, actions = [], mood }) => {
+const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
@@ -64,6 +64,23 @@ const PaymentTable = ({ data, actions = [], mood }) => {
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE,
   );
+
+  const handleAddPayments = () => {
+    console.log("Adding Payment:", formData);
+    setOpen(false);
+    setAlert({ message: "Payment added successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
+  const handleEditPayments = () => {
+    console.log("Editing Payment:", formData);
+    setOpen(false);
+    setAlert({ message: "Payment updated successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
 
   return (
     <div>
@@ -195,6 +212,7 @@ const PaymentTable = ({ data, actions = [], mood }) => {
               setIsEditMode={setIsEditMode}
               setOpen={setOpen}
               mood={mood}
+              setAlert={setAlert}
             />
           ))
         )}
@@ -327,9 +345,9 @@ const PaymentTable = ({ data, actions = [], mood }) => {
           <button
             onClick={() => {
               if (isEditMode) {
-                console.log("Update Payment:", formData);
+                handleEditPayments()
               } else {
-                console.log("Add Payment:", formData);
+                handleAddPayments()
               }
               setOpen(false);
             }}

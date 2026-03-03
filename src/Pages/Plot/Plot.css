@@ -9,6 +9,7 @@
   padding: 15px;
   cursor: pointer;
   transition: 0.3s;
+  position: relative;
 }
 
 .plot-card:hover {
@@ -55,6 +56,7 @@
   border-radius: 14px;
   margin-top: 10px;
   cursor: pointer;
+  position: relative;
 }
 
 .plot-container {
@@ -108,15 +110,29 @@
   height: 18px;
 }
 
-@media (max-width: 900px) {
-    .plot-grid {
-    grid-template-columns: repeat(1, 1fr);
+.plot-card-actions {
+  position: absolute;
+  top: 6%;
+  right: 5%;
+  background-color: white;
+  border-radius: 1.75rem;
+  padding: 5px;
+  z-index: 8;
 }
+.plot-card-actions span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+@media (max-width: 900px) {
+  .plot-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
   .plot-container {
-  overflow: auto;
-  height: 90%;
-}
+    overflow: auto;
+    height: 90%;
+  }
 }

@@ -10,7 +10,7 @@ import SiteVisitCard from "../Cards/SiteVisitCard";
 
 const ITEMS_PER_PAGE = 6;
 
-const VisitTable = ({ data, actions = [], mood }) => {
+const VisitTable = ({ data, actions = [], mood, setAlert }) => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
@@ -61,6 +61,23 @@ const VisitTable = ({ data, actions = [], mood }) => {
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE,
   );
+
+   const handleAddVisit = () => {
+    console.log("Adding visit:", formData);
+    setOpen(false);
+    setAlert({ message: "Visit added successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
+  const handleEditVisit = () => {
+    console.log("Editing visit:", formData);
+    setOpen(false);
+    setAlert({ message: "Visit updated successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
 
   return (
     <div>
@@ -191,6 +208,7 @@ const VisitTable = ({ data, actions = [], mood }) => {
               setIsEditMode={setIsEditMode}
               setOpen={setOpen}
               mood={mood}
+              setAlert={setAlert}
             />
           ))
         )}
@@ -309,9 +327,9 @@ const VisitTable = ({ data, actions = [], mood }) => {
           <button
             onClick={() => {
               if (isEditMode) {
-                console.log("Update Visit:", formData);
+                handleEditVisit()
               } else {
-                console.log("Add Visit:", formData);
+                handleAddVisit()
               }
               setOpen(false);
             }}

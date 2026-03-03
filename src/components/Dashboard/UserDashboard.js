@@ -23,6 +23,7 @@ const UserDashboard = ({ mood }) => {
       date: "2026-02-18",
     },
   ];
+
   const handleNavigate = () => {
     navigate("/bookings");
   };
@@ -103,6 +104,7 @@ const UserDashboard = ({ mood }) => {
                   // setIsEditMode={setIsEditMode}
                   // setOpen={setOpen}
                   mood={mood}
+                  dashboard={handleNavigate}
                 />
               ))
             )}

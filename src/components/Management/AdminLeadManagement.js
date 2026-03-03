@@ -4,7 +4,7 @@ import Charts from "../Dashboard/Charts";
 import DataTable from "./DataTable";
 import NiManagement from "../../icons/ni-management";
 
-const AdminLeadManagement = ({ mood }) => {
+const AdminLeadManagement = ({ mood, setAlert }) => {
     const leads = [
         {
             id: 1,
@@ -47,8 +47,9 @@ const AdminLeadManagement = ({ mood }) => {
             <h4>Leads</h4>
             <DataTable
                 data={leads}
-                actions={["Edit", "Delete", "Assign", "Convert", "Mark Lost"]}
                 mood={mood}
+                setAlert={setAlert}
+                dashboard={""}
             />
 
             {/* Performance Graph */}
@@ -57,10 +58,10 @@ const AdminLeadManagement = ({ mood }) => {
                 <Charts
                     title="Lead Performance"
                     data={[
-                        { name: "Mon", leads: 10 },
-                        { name: "Tue", leads: 15 },
-                        { name: "Wed", leads: 8 },
-                        { name: "Thu", leads: 20 },
+                        { month: "Mon", leads: 10 },
+                        { month: "Tue", leads: 15 },
+                        { month: "Wed", leads: 8 },
+                        { month: "Thu", leads: 20 },
                     ]}
                     dataKey="leads"
                 />

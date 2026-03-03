@@ -6,7 +6,7 @@
   gap: 1rem;
 }
 .team-leader-box-left {
-  width: 30%;
+  width: 15%;
 }
 .team-leader-box-left img{
   width: 100%;
@@ -15,7 +15,7 @@
   border-radius: 50%;
 }
 .team-leader-box-right {
-  width: 70%;
+  width: 85%;
 }
 .team-leader-box-right h4{
     margin: 0;

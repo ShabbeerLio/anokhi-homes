@@ -49,3 +49,21 @@
 .profile-nav span{
     cursor: pointer;
 }
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.report-box {
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.agent-overview {
+  margin-top: 20px;
+}

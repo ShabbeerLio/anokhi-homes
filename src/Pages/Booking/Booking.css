@@ -6,11 +6,22 @@
   padding: 12px 0;
 }
 
-.user-card-bottom-left{
-    font-size: 14px;
+.user-card-bottom-left {
+  font-size: 14px;
 }
 
-.user-card-bottom-right{
-    text-align: right;
-    font-size: 14px;
+.user-card-bottom-right {
+  text-align: right;
+  font-size: 14px;
+}
+
+.view-box {
+  width: 300px;
+  /* padding-bottom: 1rem; */
+}
+
+@media (max-width: 600px) {
+  .view-box {
+    width: 80vw;
+  }
 }

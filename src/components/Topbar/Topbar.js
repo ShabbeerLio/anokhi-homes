@@ -8,18 +8,22 @@ import { useNavigate } from "react-router-dom";
 import NotificationModal from "../Modals/NotificationModal";
 import SearchModal from "../Modals/SearchModal";
 import MainLogo from "../../icons/MainLogo";
-
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
+  const [currentUser, setCurrentUser] = useState({
+    id: 473,
+    user: "admin",
+    name: "Anokhi Homes",
+    email: "anokhihomes@company.com",
+    avatar: "https://i.pravatar.cc/150?img=2",
+    status: "active",
+  });
   const navigate = useNavigate();
   const [openProfile, setOpenProfile] = useState(false);
   const [openNotif, setOpenNotif] = useState(false);
-  // const [openSearch, setOpenSearch] = useState(false);
 
   const profileRef = useRef();
   const notifRef = useRef();
-  // const searchRef = useRef();
 
-  // close when click outside
   useEffect(() => {
     const handler = (e) => {
       if (
@@ -30,7 +34,6 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
       ) {
         setOpenProfile(false);
         setOpenNotif(false);
-        // setOpenSearch(false);
       }
     };
 
@@ -41,16 +44,20 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   const handleLogout = () => {
     navigate("/");
   };
+
   return (
     <div className="topbar">
       <div className="top-left">
         <button className="mobile-btn" onClick={() => setMobileOpen((v) => !v)}>
           ☰
         </button>
-        <span className="logo"><MainLogo /></span>
+        <span className="logo">
+          <MainLogo />
+        </span>
       </div>
 
       <div className="top-right">
+        {/* Role Switch (Demo Only) */}
         <select
           className="top-mood"
           value={mood}
@@ -61,75 +68,68 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
           <option value="staff">Staff</option>
           <option value="user">User</option>
         </select>
-        {/* <div
-          ref={searchRef}
-          onClick={() => {
-            setOpenSearch(!openSearch);
-            setOpenNotif(false);
-            setOpenProfile(false);
-          }}
-        >
-          <NiSearch />
 
-          {openSearch && <SearchModal />}
-        </div> */}
-        {/* <NiTool /> */}
+        {/* Notifications */}
         <div
           className="notif"
           ref={notifRef}
           onClick={() => {
             setOpenNotif(!openNotif);
-            // setOpenSearch(false);
             setOpenProfile(false);
           }}
         >
           <NiBell />
           <span>2</span>
-
           {openNotif && <NotificationModal />}
         </div>
 
+        {/* Dark Mode */}
         <button className="top-mood" onClick={() => setDark(!dark)}>
           {dark ? <NiSun /> : <NiMoon />}
         </button>
-        {/* Profile */}
+
+        {/* PROFILE */}
         <div
           className="profile"
           ref={profileRef}
           onClick={() => {
             setOpenProfile(!openProfile);
             setOpenNotif(false);
-            // setOpenSearch(false);
           }}
         >
-          <span>{mood}</span>
-          <img
-            src="https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=900&auto=format&fit=crop&q=60"
-            alt="profile"
-          />
+          <span>{currentUser?.user?.toUpperCase()}</span>
+
+          <img src={currentUser?.avatar} alt="profile" />
 
           {openProfile && (
             <div className="profile-modal">
               <div className="pm-header">
-                <img src="https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=900&auto=format&fit=crop&q=60" />
-                <h4>ANOKHI HOMES</h4>
-                <p>anokhihomes@gmail.com</p>
+                <img src={currentUser?.avatar} />
+                <h4>{currentUser?.name}</h4>
+                <p>{currentUser?.email}</p>
               </div>
 
-              <div className="pm-item">Overview</div>
-              <div className="pm-item">Profile</div>
-              <div className="pm-item">Issues</div>
-              <div className="pm-item">Projects</div>
-              <div className="pm-divider" />
+              <div
+                className="pm-item"
+                onClick={() =>
+                  navigate(`/user/${currentUser.id}`, {
+                    state: currentUser,
+                  })
+                }
+              >
+                My Profile
+              </div>
 
               <div className="pm-item">
-                Mode <span>{dark ? "Dark" : "Light"}</span>
+                Mode{" "}
+                <span onClick={() => setDark(!dark)}>
+                  {dark ? <NiSun /> : <NiMoon />}
+                </span>
               </div>
 
-              <div className="pm-divider" />
               <div className="pm-item">Help</div>
 
-              <button className="pm-logout" onClick={() => handleLogout()}>
+              <button className="pm-logout" onClick={handleLogout}>
                 Sign out
               </button>
             </div>

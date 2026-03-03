@@ -5,11 +5,11 @@ import AdminLeadManagement from "../../components/Management/AdminLeadManagement
 import AgentLeadManagement from "../../components/Management/AgentLeadManagement";
 import StaffLeadManagement from "../../components/Management/StaffLeadManagement";
 
-const Management = ({ mood, staffType }) => {
+const Management = ({ mood, setAlert }) => {
   const renderPage = () => {
     switch (mood) {
       case "admin":
-        return <AdminLeadManagement mood={mood} />;
+        return <AdminLeadManagement mood={mood} setAlert={setAlert} />;
       case "agent":
         return <AgentLeadManagement />;
       case "staff":

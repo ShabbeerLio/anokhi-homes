@@ -17,7 +17,7 @@ const payments = [
   },
 ];
 
-const AdminPayments = ({ mood }) => {
+const AdminPayments = ({ mood ,setAlert}) => {
   return (
     <div className="dashboard-wrapper">
       {/* ================= STATS ================= */}
@@ -41,21 +41,23 @@ const AdminPayments = ({ mood }) => {
           "Generate Receipt",
         ]}
         mood={mood}
+        setAlert={setAlert}
       />
       <h4>Collection Trend</h4>
       <div className="card">
         <Charts
           title="Collection Trend"
           data={[
-            { name: "Monday", revenue: 200000 },
-            { name: "Tuesday", revenue: 350000 },
-            { name: "Wednesday", revenue: 300000 },
-            { name: "Thursday", revenue: 250000 },
-            { name: "Friday", revenue: 300000 },
-            { name: "Saturday", revenue: 350000 },
-            { name: "Sunday", revenue: 400000 },
+            { month: "Monday", revenue: 200000 },
+            { month: "Tuesday", revenue: 350000 },
+            { month: "Wednesday", revenue: 300000 },
+            { month: "Thursday", revenue: 250000 },
+            { month: "Friday", revenue: 300000 },
+            { month: "Saturday", revenue: 350000 },
+            { month: "Sunday", revenue: 400000 },
           ]}
           dataKey="revenue"
+          setAlert={setAlert}
         />
         {/* Filters */}
       </div>

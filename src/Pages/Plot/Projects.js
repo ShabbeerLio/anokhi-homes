@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./Plot.css";
 import PlotCard from "../../components/Cards/PlotCard";
@@ -9,11 +9,52 @@ import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import AddLocationModal from "../../components/Modals/AddLocationModal";
 import NiSearch from "../../icons/ni-search";
 
-const Projects = ({ mood }) => {
+const Projects = ({ mood, setAlert }) => {
   const { plotId } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState();
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    id: "",
+    name: "",
+    price: "",
+    area: "",
+    details: "",
+    img: "",
+  });
+  useEffect(() => {
+    if (selectedProject) {
+      setFormData(selectedProject);
+    } else {
+      setFormData({
+        id: "",
+        name: "",
+        price: "",
+        area: "",
+        details: "",
+        img: "",
+      });
+    }
+  }, [selectedProject]);
+
+  const handleAddPlots = () => {
+    console.log("Adding plot:", formData);
+    setOpen(false);
+    setAlert({ message: "Plot added successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
+  const handleEditPlots = () => {
+    console.log("Editing plot:", formData);
+    setOpen(false);
+    setAlert({ message: "Plot updated successfully!", status: "Success" });
+    setTimeout(() => {
+      setAlert(null);
+    }, 5000);
+  };
 
   const plot = ProjectData.find((p) => p.id === plotId);
 
@@ -27,7 +68,7 @@ const Projects = ({ mood }) => {
             <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
             <h2>{plot.title} Projects</h2>
           </div>
-            <Breadcrumb />
+          <Breadcrumb />
         </div>
         <div className="page-tools">
           <div className="searchItem">
@@ -50,7 +91,15 @@ const Projects = ({ mood }) => {
 
       <div className="plot-grid ">
         {plot.plots.map((p) => (
-          <PlotCard p={p} plotId={plotId} />
+          <PlotCard
+            p={p}
+            plotId={plotId}
+            mood={mood}
+            setSelectedProject={setSelectedProject}
+            setIsEditMode={setIsEditMode}
+            setOpen={setOpen}
+            setAlert={setAlert}
+          />
         ))}
       </div>
 

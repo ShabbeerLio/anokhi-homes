@@ -7,16 +7,21 @@ import Charts from "./Charts";
 import BookingCard from "../Cards/BookingCard";
 import BookingData from "../Data/BookingData";
 import { FaAngleRight } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const salesData = [
-  { name: "Jan", sales: 2 },
-  { name: "Feb", sales: 5 },
-  { name: "Mar", sales: 3 },
-  { name: "Apr", sales: 6 },
+  { month: "Jan", sales: 2 },
+  { month: "Feb", sales: 5 },
+  { month: "Mar", sales: 3 },
+  { month: "Apr", sales: 6 },
 ];
 
 const AgentDashboard = () => {
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate("/bookings");
+  };
+
   return (
     <div className="dashboard-wrapper">
       <h4>Stats</h4>
@@ -84,7 +89,8 @@ const AgentDashboard = () => {
           </div> */}
           <div className="user-card-box">
             {BookingData.slice(0, 2).map((item) => (
-              <BookingCard item={item} />
+              <BookingCard item={item} 
+              dashboard={handleNavigate}/>
             ))}
           </div>
         </div>

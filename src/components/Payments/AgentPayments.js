@@ -16,7 +16,7 @@ const myPayments = [
   },
 ];
 
-const AgentPayments = () => {
+const AgentPayments = ({setAlert}) => {
   return (
     <div className="dashboard-wrapper">
 
@@ -34,6 +34,7 @@ const AgentPayments = () => {
           "Download Receipt",
           "Send Reminder",
         ]}
+        setAlert={setAlert}
       />
 
     </div>

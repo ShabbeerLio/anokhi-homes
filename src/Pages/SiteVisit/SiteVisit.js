@@ -5,19 +5,21 @@ import AgentSiteVisit from "../../components/SiteVisit/AgentSiteVisit";
 import StaffSiteVisit from "../../components/SiteVisit/StaffSiteVisit";
 import "./SiteVisit.css";
 
-const SiteVisit = ({ mood, staffType }) => {
+const SiteVisit = ({ mood, staffType, setAlert }) => {
   const renderPage = () => {
     switch (mood) {
       case "admin":
-        return <AdminSiteVisit mood={mood} />;
+        return <AdminSiteVisit mood={mood} setAlert={setAlert} />;
       case "agent":
-        return <AgentSiteVisit />;
+        return <AgentSiteVisit  mood={mood} setAlert={setAlert}/>;
       case "staff":
-        return <StaffSiteVisit staffType={"operations"} />;
+        return <StaffSiteVisit mood={mood} staffType={"operations"} setAlert={setAlert} />;
       default:
         return <div>Access Denied</div>;
     }
   };
+
+  console.log(mood,"mood222")
 
   return (
     <div className="plot-container">
