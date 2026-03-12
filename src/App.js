@@ -29,6 +29,7 @@ import TeamDetail from "./Pages/Teams/TeamDetail";
 import Alert from "./components/Alert/Alert";
 import Setting from "./Pages/Setting/Setting";
 import Logs from "./Pages/Logs/Logs";
+import OffersDiscounts from "./Pages/OffersDiscounts/OffersDiscounts";
 
 const LandingLayout = () => {
   return (
@@ -99,6 +100,10 @@ function App() {
                       <Route
                         path="/bookings"
                         element={<Booking mood={mood} setAlert={setAlert} />}
+                      />
+                      <Route
+                        path="/offers-discounts"
+                        element={<OffersDiscounts mood={mood} setAlert={setAlert} />}
                       />
                       <Route path="/teams" element={<Team mood={mood} setAlert={setAlert}/>} />
                       <Route

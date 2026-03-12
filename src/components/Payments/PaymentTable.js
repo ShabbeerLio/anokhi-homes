@@ -14,7 +14,6 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
-  const [activeRow, setActiveRow] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -27,6 +26,9 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
     mode: "",
     status: "",
     dueStatus: "",
+    paymentType: "",
+    validDays: "",
+    notes: "",
   });
 
   useEffect(() => {
@@ -42,6 +44,9 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
         mode: "",
         status: "",
         dueStatus: "",
+        paymentType: "",
+        validDays: "",
+        notes: "",
       });
     }
   }, [selectedPayment]);
@@ -132,78 +137,10 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             }}
           />
         </div>
-        
       </div>
-      {/* <div className=" card">
-        <div className="payment-table table-head">
-          <span>Date</span>
-          <span>Client</span>
-          <span>Phone</span>
-          <span>Project</span>
-          <span>Amount</span>
-          <span>Mode</span>
-          <span>Status</span>
-          <span>Due Status</span>
-          <span>Action</span>
-        </div>
-
-        {paginated.length > 0 ? (
-          paginated.map((item) => (
-            <div
-              key={item.id}
-              className="payment-table table-row"
-              style={{ cursor: "pointer" }}
-            >
-
-              <span className="title">{item.date}</span>
-              <span className="title">{item.client}</span>
-              <span>{item.phone}</span>
-              <span>{item.project}</span>
-              <span>₹{item.amount}</span>
-              <span>{item.mode}</span>
-
-              <span
-                className={`status ${item.status === "Approved" ? "active" : item.status === "Pending" ? "pending" : "failed"}`}
-              >
-                {item.status}
-              </span>
-              <span>{item.dueStatus}</span>
-
-              <div className="dots">
-                <span>
-                  <NiOpenEye />
-                </span>
-
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveRow(activeRow === item.id ? null : item.id);
-                  }}
-                >
-                  <NiDots />
-                </span>
-
-                {activeRow === item.id && (
-                  <ActionModal
-                    item={item}
-                    onClose={() => setActiveRow(null)}
-                    onEdit={(payment) => {
-                      setSelectedPayment(payment);
-                      setIsEditMode(true);
-                      setOpen(true);
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No Payment found</p>
-        )}
-      </div> */}
       <div className="user-card-box">
         {paginated.length === 0 ? (
-          <p>No Bookings Found</p>
+          <p>No Payment Found</p>
         ) : (
           paginated.map((item) => (
             <PaymentCard
@@ -310,6 +247,36 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             <option value="Bank Transfer">Bank Transfer</option>
           </select>
         </div>
+        <div className="field">
+          <label>Payment Type</label>
+
+          <select
+            value={formData.paymentType}
+            onChange={(e) =>
+              setFormData({ ...formData, paymentType: e.target.value })
+            }
+          >
+            <option value="">Select Payment Type</option>
+            {/* <option value="booking">Booking Amount (10%)</option> */}
+            <option value="agreement">Agreement Amount (20-30%)</option>
+            <option value="full">Full Payment</option>
+          </select>
+        </div>
+        {(formData.paymentType === "agreement" ||
+          formData.paymentType === "full") && (
+          <div className="field">
+            <label>Valid Days</label>
+
+            <input
+              type="number"
+              placeholder="Enter valid days (eg: 30 / 90)"
+              value={formData.validDays}
+              onChange={(e) =>
+                setFormData({ ...formData, validDays: e.target.value })
+              }
+            />
+          </div>
+        )}
 
         <div className="field">
           <label>Status</label>
@@ -325,29 +292,25 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             <option value="Rejected">Rejected</option>
           </select>
         </div>
-
         <div className="field">
-          <label>Due Status</label>
-          <select
-            value={formData.dueStatus}
+          <label>Notes</label>
+
+          <textarea
+            placeholder="Example: 35% cancellation charges"
+            value={formData.notes}
             onChange={(e) =>
-              setFormData({ ...formData, dueStatus: e.target.value })
+              setFormData({ ...formData, notes: e.target.value })
             }
-          >
-            <option value="">Select Due Status</option>
-            <option value="Paid">Paid</option>
-            <option value="Partially Paid">Partially Paid</option>
-            <option value="Overdue">Overdue</option>
-          </select>
+          />
         </div>
         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
         <div className="modal-actions">
           <button
             onClick={() => {
               if (isEditMode) {
-                handleEditPayments()
+                handleEditPayments();
               } else {
-                handleAddPayments()
+                handleAddPayments();
               }
               setOpen(false);
             }}

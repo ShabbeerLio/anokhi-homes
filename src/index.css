@@ -53,6 +53,8 @@ body {
   position: fixed;
   width: 100%;
 }
+.app.dark .ss-dropdown ,
+.app.dark .plot-card-actions ,
 .app.dark .contact-socail-box ,
 .app.dark {
   background: #202022;

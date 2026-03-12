@@ -10,45 +10,113 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
         { id: "C003", name: "Arjun Mehta", phone: "9988776655" },
     ];
 
+    const ProjectsLocations = [
+        { id: "L1", name: "Rajgir", location: "Bihar" },
+        { id: "L2", name: "Patna", location: "Bihar" },
+    ];
     const Projects = [
-        { id: "P101", name: "SunShine Colony", location: "Mumbai" },
-        { id: "P102", name: "Moon Colony", location: "Delhi" },
+        { id: "PJ101", name: "SunShine Colony", location: "Mumbai" },
+        { id: "PJ102", name: "Moon Colony", location: "Delhi" },
     ];
     const plots = [
-        { id: "P101", name: "Plot A-12", price: "1200000", status: "Vacant" },
-        { id: "P102", name: "Plot B-07", price: "2300000", status: "Hold(12/4/2026)" },
+        {
+            id: "P101",
+            name: "Plot A-12",
+            projectId: "PJ101",
+            price: 1200000,
+            status: "Vacant",
+        },
+        {
+            id: "P102",
+            name: "Plot B-07",
+            projectId: "PJ102",
+            price: 2300000,
+            status: "Hold",
+        },
+    ];
+
+    const bookings = [
+        {
+            id: "B001",
+            customerId: "C001",
+            projectId: "PJ101",
+            plotId: "P101",
+            totalAmount: 500000,
+            payments: [
+                { amount: 100000, type: "Token" },
+                { amount: 150000, type: "Installment" },
+            ],
+        },
+    ];
+
+    const staffPositions = [
+        "Manager",
+        "Lead Manager",
+        "Sales Manager",
+        "Plot Manager",
+        "Finance Manager",
     ];
 
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [selectedProjects, setSelectedProjects] = useState(null);
+    const [selectedProject, setSelectedProject] = useState(null);
     const [selectedPlot, setSelectedPlot] = useState(null);
-    console.log(selectedCustomer, "selectedCustomer")
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    // console.log(selectedCustomer, "selectedCustomer")
     const totalAmount = Number(selectedPlot?.price || 0);
     const paidAmount = Number(formData.amountPaid || 0);
     const remainingAmount = totalAmount - paidAmount;
 
+    const [amountInfo, setAmountInfo] = useState({
+        total: 0,
+        paid: 0,
+        remaining: 0,
+        remainingType: "",
+    });
+
+    const customerBookings = bookings.filter(
+        (b) => b.customerId === selectedCustomer?.id
+    );
+
+    const customerProjects = Projects.filter((project) =>
+        customerBookings.some((b) => b.projectId === project.id)
+    );
+
+    const customerPlots = plots.filter(
+        (plot) =>
+            plot.projectId === selectedProject?.id &&
+            customerBookings.some((b) => b.plotId === plot.id)
+    );
+
     switch (actionType) {
-        case "Add Agent / Staff / User":
+        case "Add Agent / Staff / Customer":
             return (
                 <>
+                    {/* USER TYPE */}
                     <div className="field">
                         <label>User Type</label>
                         <select
                             value={formData.userType || ""}
                             onChange={(e) =>
-                                setFormData({ ...formData, userType: e.target.value })
+                                setFormData({
+                                    ...formData,
+                                    userType: e.target.value,
+                                    position: "",
+                                })
                             }
                         >
                             <option value="">Select Type</option>
-                            <option value="User">User</option>
+                            <option value="User">Customer</option>
                             <option value="Staff">Staff</option>
                             <option value="Agent">Agent</option>
                         </select>
                     </div>
 
+                    {/* NAME */}
                     <div className="field">
                         <label>Name</label>
                         <input
+                            placeholder="Full Name"
                             value={formData.name || ""}
                             onChange={(e) =>
                                 setFormData({ ...formData, name: e.target.value })
@@ -56,14 +124,87 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
                         />
                     </div>
 
+                    {/* EMAIL */}
                     <div className="field">
-                        <label>Avatar</label>
+                        <label>Email</label>
                         <input
+                            type="email"
+                            placeholder="Email"
+                            value={formData.email || ""}
+                            onChange={(e) =>
+                                setFormData({ ...formData, email: e.target.value })
+                            }
+                        />
+                    </div>
+
+                    {/* PHONE */}
+                    <div className="field">
+                        <label>Phone Number</label>
+                        <input
+                            placeholder="Phone Number"
+                            value={formData.phone || ""}
+                            onChange={(e) =>
+                                setFormData({ ...formData, phone: e.target.value })
+                            }
+                        />
+                    </div>
+
+                    {/* ADDRESS */}
+                    <div className="field">
+                        <label>Address</label>
+                        <input
+                            placeholder="Address"
+                            value={formData.address || ""}
+                            onChange={(e) =>
+                                setFormData({ ...formData, address: e.target.value })
+                            }
+                        />
+                    </div>
+
+                    {/* STAFF POSITION */}
+                    {formData.userType === "Staff" && (
+                        <div className="field">
+                            <label>Staff Position</label>
+                            <select
+                                value={formData.position || ""}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, position: e.target.value })
+                                }
+                            >
+                                <option value="">Select Position</option>
+                                {staffPositions.map((pos) => (
+                                    <option key={pos} value={pos}>
+                                        {pos}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    {/* AGENT COMMISSION */}
+                    {formData.userType === "Agent" && (
+                        <div className="field">
+                            <label>Commission %</label>
+                            <input
+                                type="number"
+                                placeholder="Commission Percentage"
+                                value={formData.commission || ""}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, commission: e.target.value })
+                                }
+                            />
+                        </div>
+                    )}
+
+                    {/* AVATAR */}
+                    <div className="field">
+                        <label>Avatar (Profile Image)</label>
+                        <input
+                            placeholder="Image URL"
                             value={formData.avatar || ""}
                             onChange={(e) =>
                                 setFormData({ ...formData, avatar: e.target.value })
                             }
-                            placeholder="Image URL"
                         />
                     </div>
                 </>
@@ -72,26 +213,24 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
         case "Add Project":
             return (
                 <>
-                    {/* Project Location */}
                     <div className="field">
-                        <label>Project Location</label>
-                        <select
-                            value={formData.location || ""}
-                            onChange={(e) => {
-                                setFormData({
-                                    ...formData,
-                                    location: e.target.value,
-                                    plot: "", // reset plot when location changes
-                                });
+                        <SearchSelect
+                            label="Project Location"
+                            placeholder="Search Project Location"
+                            options={ProjectsLocations}
+                            value={selectedLocation}
+                            onChange={(selected) => {
+                                setSelectedLocation(selected);
+                                setFormData({ ...formData, location: selected.id });
                             }}
-                        >
-                            <option value="">Select Location</option>
-                            {ProjectData.map((project) => (
-                                <option key={project.id} value={project.id}>
-                                    {project.title}
-                                </option>
-                            ))}
-                        </select>
+                            displayKey="name"
+                            searchKeys={["name", "location"]}
+                            renderOption={(c) => (
+                                <div>
+                                    <b>{c.name}</b> ({c.location})
+                                </div>
+                            )}
+                        />
                     </div>
 
                     <div className="field">
@@ -105,7 +244,7 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
                         />
                     </div>
                     <div className="field">
-                        <label>Image URL</label>
+                        <label>Image </label>
                         <input
                             placeholder="Image URL"
                             value={formData.image || ""}
@@ -249,7 +388,7 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
                         />
                     </div>
 
-                    <div className="field">
+                    {/* <div className="field">
                         <label>Amount Type</label>
                         <select
                             value={formData.amountType || ""}
@@ -259,154 +398,28 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
                         >
                             <option value="">Select Type</option>
                             <option value="Token">Token</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Pending">Pending</option>
+                            <option value="Partial">Partial</option>
+                            <option value="Full">Full</option>
                         </select>
-                    </div>
+                    </div> */}
                 </>
             );
 
         case "Add Payment (Received)":
             return (
                 <>
+                    {/* DATE */}
                     <div className="field">
                         <label>Date</label>
                         <input
                             type="date"
                             value={formData.date || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, date: e.target.value })
-                            }
+                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                         />
-                    </div>
-                    <div className="field">
-                        <SearchSelect
-                            label="Client Name"
-                            placeholder="Search name or number"
-                            options={customers}
-                            value={selectedCustomer}
-                            onChange={(selected) => {
-                                setSelectedCustomer(selected);
-                                setFormData({ ...formData, client: selected.client });
-                            }}
-                            displayKey="name"
-                            searchKeys={["name", "phone"]}
-                            renderOption={(c) => (
-                                <div>
-                                    <b>{c.name}</b> ({c.phone})
-                                </div>
-                            )}
-                        />
-                    </div>
-                    <div className="field">
-                        <label>Phone</label>
-                        <input
-                            placeholder="Phone"
-                            value={selectedCustomer?.phone || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, phone: e.target.value })
-                            }
-                        />
-                    </div>
-                    {/* Project Location */}
-                    <div className="field">
-                        <label>Project Location</label>
-                        <select
-                            value={formData.location || ""}
-                            onChange={(e) => {
-                                setFormData({
-                                    ...formData,
-                                    location: e.target.value,
-                                    plot: "", // reset plot when location changes
-                                });
-                            }}
-                        >
-                            <option value="">Select Location</option>
-                            {ProjectData.map((project) => (
-                                <option key={project.id} value={project.id}>
-                                    {project.title}
-                                </option>
-                            ))}
-                        </select>
                     </div>
 
-                    {/* Plot Dropdown */}
-                    <div className="field">
-                        <label>Plot</label>
-                        <select
-                            value={formData.plot || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, plot: e.target.value })
-                            }
-                            disabled={!formData.location}
-                        >
-                            <option value="">Select Plot</option>
 
-                            {ProjectData.find((p) => p.id === formData.location)?.plots.map(
-                                (plot) => (
-                                    <option key={plot.id} value={plot.id}>
-                                        {plot.name}
-                                    </option>
-                                ),
-                            )}
-                        </select>
-                    </div>
-                    <div className="field">
-                        <label>Amount</label>
-                        <input
-                            placeholder="Amount"
-                            value={formData.amount || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, amount: e.target.value })
-                            }
-                        />
-                    </div>
-                    <div className="field">
-                        <label>Payment Mode</label>
-                        <select
-                            value={formData.paymentMode || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, paymentMode: e.target.value })
-                            }
-                        >
-                            <option value="">Payment Mode</option>
-                            <option value="Cash">Cash</option>
-                            <option value="UPI">UPI</option>
-                            <option value="Bank Transfer">Bank Transfer</option>
-                        </select>
-                    </div>
-                    {/* <div className="field">
-                        <label>Payment Status</label>
-                        <select
-                            value={formData.status || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, status: e.target.value })
-                            }
-                        >
-                            <option value="">Status</option>
-                            <option value="Received">Received</option>
-                            <option value="Pending">Pending</option>
-                        </select>
-                    </div> */}
-                    <div className="field">
-                        <label>Due Status</label>
-                        <select
-                            value={formData.dueStatus || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, dueStatus: e.target.value })
-                            }
-                        >
-                            <option value="">Due Status</option>
-                            <option value="Clear">Clear</option>
-                            <option value="Partial Due">Partial Due</option>
-                            <option value="Full Due">Full Due</option>
-                        </select>
-                    </div>
-                </>
-            );
-        case "Add Lead":
-            return (
-                <>
+                    {/* CUSTOMER */}
                     <div className="field">
                         <SearchSelect
                             label="Customer Name"
@@ -415,7 +428,7 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
                             value={selectedCustomer}
                             onChange={(selected) => {
                                 setSelectedCustomer(selected);
-                                setFormData({ ...formData, customerName: selected.customerName });
+                                setSelectedPlot(null);
                             }}
                             displayKey="name"
                             searchKeys={["name", "phone"]}
@@ -427,6 +440,156 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
                         />
                     </div>
 
+
+                    {/* PHONE */}
+                    <div className="field">
+                        <label>Phone</label>
+                        <input value={selectedCustomer?.phone || ""} disabled />
+                    </div>
+
+                    <div className="field">
+                        <SearchSelect
+                            label="Project"
+                            placeholder="Select Customer Project"
+                            options={customerProjects}
+                            value={selectedProject}
+                            onChange={(selected) => {
+                                setSelectedProject(selected);
+                                setSelectedPlot(null);
+                            }}
+                            displayKey="name"
+                            searchKeys={["name", "location"]}
+                            renderOption={(p) => (
+                                <div>
+                                    <b>{p.name}</b>
+                                    <small style={{ display: "block", color: "#666" }}>
+                                        {p.location}
+                                    </small>
+                                </div>
+                            )}
+                        />
+                    </div>
+                    <div className="field">
+                        <SearchSelect
+                            label="Plot"
+                            placeholder="Select Booked Plot"
+                            options={customerPlots}
+                            value={selectedPlot}
+                            onChange={(selected) => {
+                                setSelectedPlot(selected);
+
+                                const booking = customerBookings.find(
+                                    (b) => b.plotId === selected.id
+                                );
+
+                                if (booking) {
+                                    const paid = booking.payments.reduce(
+                                        (sum, p) => sum + p.amount,
+                                        0
+                                    );
+
+                                    const remaining = booking.totalAmount - paid;
+
+                                    let type = "Installment";
+                                    if (paid === 0) type = "Token";
+                                    if (remaining === 0) type = "Completed";
+
+                                    setAmountInfo({
+                                        total: booking.totalAmount,
+                                        paid,
+                                        remaining,
+                                        remainingType: type,
+                                    });
+                                }
+                            }}
+                            displayKey="name"
+                            searchKeys={["name"]}
+                            renderOption={(p) => (
+                                <div>
+                                    <b>{p.name}</b>
+                                    <small style={{ display: "block", color: "#666" }}>
+                                        {p.status}
+                                    </small>
+                                </div>
+                            )}
+                        />
+                    </div>
+
+
+                    {selectedPlot && (
+                        <div className="report-view-box-right active">
+
+                            <p>
+                                <strong>Total Amount</strong> ₹{amountInfo.total}
+                            </p>
+
+                            <p>
+                                <strong>Amount Paid</strong> ₹{amountInfo.paid}
+                            </p>
+
+                            <p>
+                                <strong>Remaining Amount</strong> ₹{amountInfo.remaining}
+                            </p>
+
+                            <p>
+                                <strong>Remaining Type</strong> {amountInfo.remainingType}
+                            </p>
+
+                        </div>
+                    )}
+                    <div className="field">
+                        <label>Payment Type</label>
+                        <select
+                            value={formData.dueStatus || ""}
+                            onChange={(e) => setFormData({ ...formData, dueStatus: e.target.value })}
+                        >
+                            <option value="">Choose Payment Type</option>
+                            <option value="Partial Due">Partial Payment</option>
+                            <option value="Full Due">Full Payment</option>
+                        </select>
+                    </div>
+
+                    {/* PAYMENT AMOUNT */}
+                    <div className="field">
+                        <label>Amount</label>
+                        <input
+                            placeholder="Amount"
+                            value={formData.amount || ""}
+                            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                        />
+                    </div>
+
+
+                    {/* PAYMENT MODE */}
+                    <div className="field">
+                        <label>Payment Mode</label>
+                        <select
+                            value={formData.paymentMode || ""}
+                            onChange={(e) => setFormData({ ...formData, paymentMode: e.target.value })}
+                        >
+                            <option value="">Payment Mode</option>
+                            <option value="Cash">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+
+                </>
+            );
+        case "Add Lead":
+            return (
+                <>
+                    <div className="field">
+                        <label>Customer Name</label>
+                        <input
+                            placeholder="Customer Name"
+                            value={selectedCustomer?.name || ""}
+                            onChange={(e) =>
+                                setFormData({ ...formData, name: e.target.value })
+                            }
+                        />
+                    </div>
+
                     <div className="field">
                         <label>Phone</label>
                         <input
@@ -434,6 +597,26 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
                             value={selectedCustomer?.phone || ""}
                             onChange={(e) =>
                                 setFormData({ ...formData, phone: e.target.value })
+                            }
+                        />
+                    </div>
+                    <div className="field">
+                        <label>Email</label>
+                        <input
+                            placeholder="Email"
+                            value={selectedCustomer?.email || ""}
+                            onChange={(e) =>
+                                setFormData({ ...formData, email: e.target.value })
+                            }
+                        />
+                    </div>
+                    <div className="field">
+                        <label>Location</label>
+                        <input
+                            placeholder="Location"
+                            value={selectedCustomer?.location || ""}
+                            onChange={(e) =>
+                                setFormData({ ...formData, location: e.target.value })
                             }
                         />
                     </div>
@@ -468,7 +651,7 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
                     </div> */}
                 </>
             );
-        case "Schedule Visit":
+        case "Schedule Site Visit":
             return (
                 <>
                     <div className="field">

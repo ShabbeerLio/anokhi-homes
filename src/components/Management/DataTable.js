@@ -2,11 +2,7 @@ import { LucidePlus } from "lucide-react";
 import React, { useState, useMemo, useEffect } from "react";
 import NiSearch from "../../icons/ni-search";
 import AddLocationModal from "../Modals/AddLocationModal";
-import NiOpenEye from "../../icons/ni-openEye";
-import NiDots from "../../icons/ni-dots";
-import ActionModal from "../Modals/ActionModal";
 import ManagementCard from "../Cards/ManagementCard";
-import DeleteModal from "../Modals/DeleteModal";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -26,23 +22,20 @@ const DataTable = ({ data, mood, setAlert }) => {
     status: "",
     agent: "",
   });
+
   useEffect(() => {
-    if (selectedLead) {
-      setFormData({
-        name: selectedLead.name,
-        phone: selectedLead.phone,
-        status: selectedLead.status,
-        agent: selectedLead.agent,
-      });
-    } else {
-      setFormData({
-        name: "",
-        phone: "",
-        status: "",
-        agent: "",
-      });
-    }
-  }, [selectedLead]);
+    setFormData({
+      name: selectedLead?.name || "",
+      phone: selectedLead?.phone || "",
+      status: selectedLead?.status || "",
+      agent: mood === "agent" ? "Amit" : selectedLead?.agent || "",
+    });
+    console.log(mood, "mood");
+  }, [selectedLead, mood]);
+
+  useEffect(() => {
+    console.log(formData, "Updated formdata");
+  }, [formData]);
 
   // 🔥 FILTER LOGIC
   const filteredData = useMemo(() => {
@@ -89,7 +82,7 @@ const DataTable = ({ data, mood, setAlert }) => {
   return (
     <div>
       <div className="filter-grid page-tools table-filters">
-        {mood === "admin" && (
+        {mood !== "user" && (
           <button
             className="add-button"
             onClick={() => {
@@ -152,71 +145,8 @@ const DataTable = ({ data, mood, setAlert }) => {
             }}
           />
         </div>
-        {/* <button className="add-button">
-                    <LucidePlus />
-                </button> */}
       </div>
-      {/* <div className=" card">
-                <div className="management-table table-head">
-                    <span>Date</span>
-                    <span>Name</span>
-                    <span>Phone</span>
-                    <span>Status</span>
-                    <span>Agent</span>
-                    <span>Actions</span>
-                </div>
 
-                {paginatedData.length > 0 ? (
-                    paginatedData.map((item) => (
-                        <div
-                            key={item.id}
-                            className="management-table table-row"
-                            style={{ cursor: "pointer" }}
-                        >
-
-                            <span className="title">{item.date}</span>
-                            <span className="title">{item.name}</span>
-                            <span>{item.phone}</span>
-
-                            <span
-                                className={`status ${item.status === "New" ? "active" : item.status === "Converted" ? "pending" : "failed"}`}
-                            >
-                                {item.status}
-                            </span>
-                            <span>{item.agent}</span>
-
-                            <div className="dots">
-                                <span>
-                                    <NiOpenEye />
-                                </span>
-
-                                <span
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setActiveRow(activeRow === item.id ? null : item.id);
-                                    }}
-                                >
-                                    <NiDots />
-                                </span>
-
-                                {activeRow === item.id && (
-                                    <ActionModal
-                                        item={item}
-                                        onClose={() => setActiveRow(null)}
-                                        onEdit={(lead) => {
-                                            setSelectedLead(lead);
-                                            setIsEditMode(true);
-                                            setOpen(true);
-                                        }}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No leads found</p>
-                )}
-            </div> */}
       <div className="user-card-box">
         {paginatedData.length === 0 ? (
           <p>No Bookings Found</p>
@@ -278,24 +208,28 @@ const DataTable = ({ data, mood, setAlert }) => {
             placeholder="Phone Number"
           />
         </div>
-        <div className="field">
-          <label>Status</label>
-          <select
-            value={formData.status}
-            onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value })
-            }
-          >
-            <option value="">Select Status</option>
-            <option value="New">New</option>
-            <option value="Converted">Converted</option>
-            <option value="Lost">Lost</option>
-          </select>
-        </div>
+        {mood === "admin" && (
+          <div className="field">
+            <label>Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
+            >
+              <option value="">Select Status</option>
+              <option value="New">New</option>
+              <option value="Converted">Converted</option>
+              <option value="Lost">Lost</option>
+            </select>
+          </div>
+        )}
+
         <div className="field">
           <label>Agent</label>
           <select
             value={formData.agent}
+            disabled={mood === "agent"}
             onChange={(e) =>
               setFormData({ ...formData, agent: e.target.value })
             }
@@ -322,7 +256,6 @@ const DataTable = ({ data, mood, setAlert }) => {
           </button>
         </div>
       </AddLocationModal>
-      
     </div>
   );
 };

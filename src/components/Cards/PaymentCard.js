@@ -24,6 +24,15 @@ const PaymentCard = ({
       setShowReport(false);
     }
   }, [viewOpen]);
+
+  const total = item.totalAmount || item.amount || 0;
+  const paid = item.paidAmount || 0;
+
+  const bookingAmount = total * 0.1;
+  const agreementAmount = total * 0.25;
+  const fullAmount = total - bookingAmount - agreementAmount;
+  const progress = total ? (paid / total) * 100 : 0;
+
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
       <div className="user-card-top">
@@ -84,16 +93,14 @@ const PaymentCard = ({
           <p>Project</p>
           <p>Amount</p>
           <p>Mode</p>
-          <p>Status</p>
           <p>Due Status</p>
         </div>
         <div className="user-card-bottom-right">
           <p>{item.date}</p>
           <p>{item.phone}</p>
           <p>{item.project}</p>
-          <p>₹{item.amount}</p>
+          <p>₹{paid.toLocaleString()}</p>
           <p>{item.mode}</p>
-          <p>{item.status}</p>
           <p>{item.dueStatus}</p>
         </div>
       </div>
@@ -151,7 +158,7 @@ const PaymentCard = ({
             <p>{item.date}</p>
             <p>{item.phone}</p>
             <p>{item.project}</p>
-            <p>₹{item.amount}</p>
+            <p>₹{item.paidAmount}</p>
             <p>{item.mode}</p>
             <p>{item.status}</p>
             <p>{item.dueStatus}</p>
@@ -177,12 +184,10 @@ const PaymentCard = ({
               <p>Due Status</p>
             </div>
             <div className="user-card-bottom-right">
-              <p>₹{item.totalAmount || item.amount}</p>
-              <p>₹{item.paidAmount || 200000}</p>
-              <p>₹
-                {(item.totalAmount || item.amount) -
-                  (item.paidAmount || 200000)}</p>
-                  <p>{item.dueStatus}</p>
+              <p>₹{total}</p>
+              <p>₹{paid}</p>
+              <p>₹{total - paid}</p>
+              <p>{item.dueStatus}</p>
             </div>
           </div>
           {/* PAYMENT DETAILS */}
@@ -215,39 +220,38 @@ const PaymentCard = ({
           <div className="installment-box">
             <h5>Installment Timeline</h5>
 
-            <div className="installment paid">
-              <span>Installment 1</span>
-              <span>₹1,00,000</span>
-              <span>Paid</span>
+            <div className="installment">
+              <span>Booking (10%)</span>
+              <span>₹{bookingAmount.toLocaleString()}</span>
             </div>
 
-            <div className="installment partial">
-              <span>Installment 2</span>
-              <span>₹50,000</span>
-              <span>Partial</span>
+            <div className="installment">
+              <span>Agreement (25%)</span>
+              <span>₹{agreementAmount.toLocaleString()}</span>
             </div>
 
-            <div className="installment pending">
-              <span>Installment 3</span>
-              <span>₹50,000</span>
-              <span>Pending</span>
+            <div className="installment">
+              <span>Full Payment</span>
+              <span>₹{fullAmount.toLocaleString()}</span>
             </div>
           </div>
+          
 
           {/* PAYMENT PROGRESS */}
           <div className="payment-progress">
             <h5>Payment Progress</h5>
+
             <div className="progress-bar">
               <div
                 className="progress-fill"
-                style={{
-                  width: `${((item.paidAmount || 200000) /
-                      (item.totalAmount || item.amount)) *
-                    100
-                    }%`,
-                }}
+                style={{ width: `${progress}%` }}
               />
             </div>
+
+            <p>{Math.floor(progress)}% Paid</p>
+          </div>
+          <div className="payment-note">
+            <strong>Note:</strong> 35% cancellation charges applicable.
           </div>
         </div>
       </ViewModal>

@@ -11,7 +11,7 @@ const Management = ({ mood, setAlert }) => {
       case "admin":
         return <AdminLeadManagement mood={mood} setAlert={setAlert} />;
       case "agent":
-        return <AgentLeadManagement />;
+        return <AgentLeadManagement mood={mood} setAlert={setAlert}/>;
       case "staff":
         return <StaffLeadManagement staffType={"marketing"} />;
       default:
