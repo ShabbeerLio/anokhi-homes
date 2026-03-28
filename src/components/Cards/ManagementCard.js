@@ -5,7 +5,6 @@ import ActionModal from "../Modals/ActionModal";
 import DeleteModal from "../Modals/DeleteModal";
 import ViewModal from "../Modals/ViewModal";
 import NiReport from "../../icons/ni-report";
-import NiSearch from "../../icons/ni-search";
 import NiCross from "../../icons/ni-cross";
 import NiUser from "../../icons/ni-user";
 import SearchSelect from "../SearchItems/SearchSelect";
@@ -15,21 +14,21 @@ const agents = [
     name: "Amit",
     phone: "9876543210",
     location: "Mumbai",
-    avatar: "https://i.pravatar.cc/40?img=11"
+    avatar: "https://i.pravatar.cc/40?img=11",
   },
   {
     id: 2,
     name: "Sana",
     phone: "9123456789",
     location: "Delhi",
-    avatar: "https://i.pravatar.cc/40?img=12"
+    avatar: "https://i.pravatar.cc/40?img=12",
   },
   {
     id: 3,
     name: "Raj",
     phone: "9988776655",
     location: "Pune",
-    avatar: "https://i.pravatar.cc/40?img=13"
+    avatar: "https://i.pravatar.cc/40?img=13",
   },
 ];
 
@@ -76,11 +75,53 @@ const ManagementCard = ({
 
     setTimeout(() => setAlert(null), 3000);
   };
+  const handleReAssignAgent = (leadId, agentName) => {
+    console.log("Reassigning", agentName, "to lead", leadId);
 
-  const filteredAgents = agents.filter(a =>
-    a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
-    a.phone.includes(agentSearch)
+    // Update lead logic here
+    // If using state leads:
+    // setLeads(prev =>
+    //   prev.map(l => l.id === leadId ? { ...l, agent: agentName } : l)
+    // );
+
+    setAlert({
+      message: "Agent Ressigned Successfully",
+      status: "Success",
+    });
+
+    setTimeout(() => setAlert(null), 3000);
+  };
+
+  const filteredAgents = agents.filter(
+    (a) =>
+      a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
+      a.phone.includes(agentSearch),
   );
+
+  const Projects = [
+    { id: "PJ101", name: "SunShine Colony", location: "Mumbai" },
+    { id: "PJ102", name: "Moon Colony", location: "Delhi" },
+  ];
+
+  const plots = [
+    {
+      id: "P101",
+      name: "Plot A-12",
+      projectId: "PJ101",
+      price: 1200000,
+      status: "Vacant",
+    },
+    {
+      id: "P102",
+      name: "Plot B-07",
+      projectId: "PJ102",
+      price: 2300000,
+      status: "Hold",
+    },
+  ];
+
+  const [selectedProjects, setSelectedProjects] = useState(null);
+  const [selectedPlot, setSelectedPlot] = useState(null);
 
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
@@ -91,7 +132,7 @@ const ManagementCard = ({
               {item.name}
               {/* <span>({item.phone})</span> */}
               <span
-                className={`status ${item.status === "New" ? "active" : item.status === "Converted" ? "pending" : "failed"}`}
+                className={`status ${item.status === "New" ? "active2" : item.status === "Converted" ? "active" : item.status === "Processing" ? "pending" : item.status === "Booking" ? "pending2" : "failed"}`}
               >
                 {item.status}
               </span>
@@ -194,20 +235,32 @@ const ManagementCard = ({
             <p>Agent</p>
             {item.status === "Converted" ? (
               <p>Report</p>
-            ) : item.status === "Lost" ?
-              <p>Report</p> : ""
-            }
+            ) : item.status === "Lost" ? (
+              <p>Report</p>
+            ) : item.status === "Processing" && mood === "admin" ? (
+              <div className="table-filters">
+                <button
+                  className="view-report-btn"
+                  onClick={() => setPanelMode("reassign")}
+                >
+                  <NiUser />
+                  Reassign
+                </button>
+              </div>
+            ) : ""}
           </div>
           <div className="user-card-bottom-right">
             <p>{item.date}</p>
             <p>{item.status}</p>
             <p>{item.phone}</p>
-            {/* AGENT FIELD LOGIC */}
 
             {item.status === "New" && mood === "admin" ? (
               <>
                 <div className="table-filters">
-                  <button className="view-report-btn" onClick={() => setPanelMode("assign")}>
+                  <button
+                    className="view-report-btn"
+                    onClick={() => setPanelMode("assign")}
+                  >
                     <NiUser />
                     Assign
                   </button>
@@ -215,39 +268,52 @@ const ManagementCard = ({
               </>
             ) : (
               <>
-                <p>
-                  {item.agent || ""}
-                </p>
+                <p>{item.agent || ""}</p>
               </>
-            )
-            }
+            )}
 
             <div className="table-filters">
-              {item.status === "Processing" && (
-                <button className="view-report-btn" onClick={() => setPanelMode("notes")}>
+              {(item.status === "Processing" || item.status === "Booking") && (
+                <button
+                  className="view-report-btn"
+                  onClick={() => setPanelMode("notes")}
+                >
                   <NiReport /> Add Notes
                 </button>
               )}
 
               {item.status === "Lost" && (
-                <button className="view-report-btn" onClick={() => setPanelMode("lost")}>
+                <button
+                  className="view-report-btn"
+                  onClick={() => setPanelMode("lost")}
+                >
                   <NiReport /> Lost Reason
                 </button>
               )}
 
               {item.status === "Converted" && (
-                <button className="view-report-btn" onClick={() => setPanelMode("report")}>
+                <button
+                  className="view-report-btn"
+                  onClick={() => setPanelMode("report")}
+                >
                   <NiReport /> View
                 </button>
               )}
             </div>
           </div>
         </div>
+        {mood === "agent" && item.status === "Processing" && (
+          <div className="modal-actions">
+            <button
+              onClick={() => setPanelMode("siteVisit")}
+            >
+              Request Site Visit
+            </button>
+          </div>
+        )}
         {/* STATUS BASED ACTIONS */}
 
-
         <div className={`report-view-box-right ${panelMode ? "active" : ""}`}>
-
           {/* ASSIGN AGENT PANEL */}
           {panelMode === "assign" && (
             <>
@@ -285,14 +351,18 @@ const ManagementCard = ({
                     <div className="notif-item">
                       <img src={selectedAgent.avatar} alt="" />
                       <div>
-                        <p>{selectedAgent.name}({selectedAgent.phone})</p>
+                        <p>
+                          {selectedAgent.name}({selectedAgent.phone})
+                        </p>
                         <p>{selectedAgent.location}</p>
                       </div>
                     </div>
-                    <span onClick={() => {
-                      setSelectedAgent(null);
-                      setAgentSearch("");
-                    }}>
+                    <span
+                      onClick={() => {
+                        setSelectedAgent(null);
+                        setAgentSearch("");
+                      }}
+                    >
                       <NiCross />
                     </span>
                   </div>
@@ -303,7 +373,7 @@ const ManagementCard = ({
                         handleAssignAgent(item.id, selectedAgent.name);
                         setPanelMode(null);
                         setSelectedAgent(null);
-                        setViewOpen(false)
+                        setViewOpen(false);
                       }}
                     >
                       Save
@@ -313,11 +383,159 @@ const ManagementCard = ({
               )}
             </>
           )}
+          {panelMode === "reassign" && (
+            <>
+              <h4>Reassign Agent</h4>
+
+              {/* IF NO AGENT SELECTED → SHOW SEARCH + LIST */}
+              {!selectedAgent && (
+                <>
+                  <div className="field">
+                    <SearchSelect
+                      label=""
+                      placeholder="Search name or number"
+                      options={agents}
+                      value={selectedAgent}
+                      onChange={(selected) => {
+                        setSelectedAgent(selected);
+                        setFormData({ ...formData, name: selected.name });
+                      }}
+                      displayKey="name"
+                      searchKeys={["name", "phone"]}
+                      renderOption={(c) => (
+                        <div>
+                          <b>{c.name}</b> ({c.phone})
+                        </div>
+                      )}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* IF AGENT SELECTED → SHOW ONLY SELECTED CARD */}
+              {selectedAgent && (
+                <div className="agent-list">
+                  <div className="selected-agent-card">
+                    <div className="notif-item">
+                      <img src={selectedAgent.avatar} alt="" />
+                      <div>
+                        <p>
+                          {selectedAgent.name}({selectedAgent.phone})
+                        </p>
+                        <p>{selectedAgent.location}</p>
+                      </div>
+                    </div>
+                    <span
+                      onClick={() => {
+                        setSelectedAgent(null);
+                        setAgentSearch("");
+                      }}
+                    >
+                      <NiCross />
+                    </span>
+                  </div>
+                  <div class="field">
+                    <textarea
+                      placeholder="Add reason or note of re-assigning"
+                      value={noteText}
+                      onChange={(e) => setNoteText(e.target.value)}
+                    />
+                  </div>
+                  <p>Reassinging agent will move lead to processing</p>
+                  <div className="modal-actions">
+                    <button
+                      onClick={() => {
+                        handleReAssignAgent(item.id, selectedAgent.name);
+                        setPanelMode(null);
+                        setSelectedAgent(null);
+                        setViewOpen(false);
+                      }}
+                    >
+                      Reassign
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+          {panelMode === "siteVisit" && (
+            <>
+              <h4>Request Site Visit</h4>
+
+              <div className="field">
+                <label>Date of Visit</label>
+                <input
+                  type="date"
+                  value={formData.visitDate || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, visitDate: e.target.value })
+                  }
+                />
+              </div>
+              <div className="field">
+                <SearchSelect
+                  label="Site"
+                  placeholder="Search Project or location"
+                  options={Projects}
+                  value={selectedProjects}
+                  onChange={(selected) => {
+                    setSelectedProjects(selected);
+                    setFormData({ ...formData, Project: selected.name });
+                  }}
+                  displayKey="name"
+                  searchKeys={["name", "location"]}
+                  renderOption={(p) => (
+                    <div>
+                      <b>{p.name}</b>
+                      <small style={{ display: "block", color: "#666" }}>
+                        {p.location}
+                      </small>
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button
+                  onClick={() => {
+                    console.log("Site Visit Requested", formData);
+
+                    setAlert({
+                      message: "Site visit request submitted",
+                      status: "Success",
+                    });
+
+                    setTimeout(() => setAlert(null), 3000);
+
+                    setViewOpen(null);
+                    setFormData({});
+                  }}
+                >
+                  Submit Request
+                </button>
+              </div>
+            </>
+          )}
 
           {/* PROCESSING → NOTES */}
           {panelMode === "notes" && (
             <>
               <h4>Notes</h4>
+              <div className="note-history">
+                {[...notes].reverse().map((n, i) => (
+                  <div key={i} className="note-item">
+                    <small>
+                      <span
+                        className={`${n.by === "Admin" ? "comment admin" : "comment agent"}`}
+                      >
+                        {n.by}
+                      </span>{" "}
+                      {n.date}
+                    </small>
+                    <p>{n.text}</p>
+                  </div>
+                ))}
+              </div>
 
               <div class="field">
                 <textarea
@@ -330,23 +548,20 @@ const ManagementCard = ({
               <div className="modal-actions">
                 <button
                   onClick={() => {
-                    setNotes([...notes, noteText]);
+                    const newNote = {
+                      text: noteText,
+                      date: new Date().toLocaleString(),
+                      by: mood === "admin" ? "Admin" : "Agent",
+                    };
+
+                    setNotes([...notes, newNote]);
                     setNoteText("");
                   }}
                 >
                   Add Note
                 </button>
               </div>
-              <div className="note-history">
-                {notes.map((n, i) => (
-                  <div key={i} className="note-item">
-                    <p>{n.text}</p>
-                    <small>
-                      {n.date} — {n.by}
-                    </small>
-                  </div>
-                ))}
-              </div>
+
             </>
           )}
 
@@ -354,7 +569,6 @@ const ManagementCard = ({
           {/* LOST */}
           {panelMode === "lost" && (
             <>
-
               {/* EXISTING NOTES */}
               <h5>Notes History</h5>
 
@@ -410,22 +624,27 @@ const ManagementCard = ({
             <>
               <h4>Lead Conversion Report</h4>
 
-              <p><strong>Converted By:</strong> {item.agent}</p>
-              <p><strong>Conversion Date:</strong> {item.date}</p>
-              <p><strong>Revenue:</strong> ₹5,00,000</p>
+              <p>
+                <strong>Converted By:</strong> {item.agent}
+              </p>
+              <p>
+                <strong>Conversion Date:</strong> {item.date}
+              </p>
+              <p>
+                <strong>Revenue:</strong> ₹5,00,000
+              </p>
 
               <h5>Notes History</h5>
               {notes.map((n, i) => (
                 <div key={i} className="note-item">
-                  <p>{n.text}</p>
                   <small>
-                    {n.date} — {n.by}
+                    <span>{n.by}</span> {n.date}
                   </small>
+                  <p>{n.text}</p>
                 </div>
               ))}
             </>
           )}
-
         </div>
       </ViewModal>
     </div>

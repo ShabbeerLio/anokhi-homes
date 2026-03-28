@@ -29,7 +29,7 @@ const PaymentCard = ({
   const paid = item.paidAmount || 0;
 
   const bookingAmount = total * 0.1;
-  const agreementAmount = total * 0.25;
+  const agreementAmount = total * 0.3;
   const fullAmount = total - bookingAmount - agreementAmount;
   const progress = total ? (paid / total) * 100 : 0;
 
@@ -190,6 +190,7 @@ const PaymentCard = ({
               <p>{item.dueStatus}</p>
             </div>
           </div>
+
           {/* PAYMENT DETAILS */}
           <div className="payment-details">
             <h5>Transaction Details</h5>
@@ -206,7 +207,8 @@ const PaymentCard = ({
               <strong>Status:</strong> {item.status}
             </p>
             <p>
-              <strong>Transaction ID:</strong> TXN123456
+              <strong>Transaction ID:</strong>{" "}
+              {item.payments?.[0]?.transactionId || "-"}
             </p>
             <p>
               <strong>Approved By:</strong> Admin
@@ -215,6 +217,37 @@ const PaymentCard = ({
               <strong>Date:</strong> {item.date}
             </p>
           </div>
+
+          {/* <div className="payment-history">
+            <h5>Payment History</h5>
+
+            {item.payments.map((p, i) => (
+              <div key={i} className="payment-row">
+                <p>
+                  <strong>Type:</strong> {p.type}
+                </p>
+                <p>
+                  <strong>Amount:</strong> ₹{p.amount}
+                </p>
+                <p>
+                  <strong>Mode:</strong> {p.mode}
+                </p>
+                <p>
+                  <strong>Date:</strong> {p.date}
+                </p>
+                <p>
+                  <strong>Txn ID:</strong> {p.transactionId}
+                </p>
+                <p>
+                  <strong>Status:</strong> {p.status}
+                </p>
+                <p>
+                  <strong>Attachment:</strong>{" "}
+                  {p.attachment ? "View File" : "N/A"}
+                </p>
+              </div>
+            ))}
+          </div> */}
 
           {/* INSTALLMENT TIMELINE */}
           <div className="installment-box">
@@ -226,7 +259,7 @@ const PaymentCard = ({
             </div>
 
             <div className="installment">
-              <span>Agreement (25%)</span>
+              <span>Agreement (30%)</span>
               <span>₹{agreementAmount.toLocaleString()}</span>
             </div>
 
@@ -235,7 +268,6 @@ const PaymentCard = ({
               <span>₹{fullAmount.toLocaleString()}</span>
             </div>
           </div>
-          
 
           {/* PAYMENT PROGRESS */}
           <div className="payment-progress">

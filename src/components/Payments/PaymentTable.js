@@ -29,6 +29,9 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
     paymentType: "",
     validDays: "",
     notes: "",
+    transactionId: "",
+    attachment: null,
+    totalAmount: "", // IMPORTANT for % calc
   });
 
   useEffect(() => {
@@ -47,6 +50,9 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
         paymentType: "",
         validDays: "",
         notes: "",
+        transactionId: "",
+        attachment: null,
+        totalAmount: "",
       });
     }
   }, [selectedPayment]);
@@ -252,13 +258,25 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
 
           <select
             value={formData.paymentType}
-            onChange={(e) =>
-              setFormData({ ...formData, paymentType: e.target.value })
-            }
+            onChange={(e) => {
+              const type = e.target.value;
+              const total = Number(formData.totalAmount);
+
+              let autoAmount = "";
+
+              if (type === "booking") autoAmount = total * 0.1;
+              if (type === "agreement") autoAmount = total * 0.3;
+
+              setFormData({
+                ...formData,
+                paymentType: type,
+                amount: autoAmount || formData.amount,
+              });
+            }}
           >
             <option value="">Select Payment Type</option>
-            {/* <option value="booking">Booking Amount (10%)</option> */}
-            <option value="agreement">Agreement Amount (20-30%)</option>
+            <option value="booking">Booking (10%)</option>
+            <option value="agreement">Agreement (30%)</option>
             <option value="full">Full Payment</option>
           </select>
         </div>
@@ -277,6 +295,26 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             />
           </div>
         )}
+        <div className="field">
+          <label>Transaction ID *</label>
+          <input
+            placeholder="Enter Transaction ID"
+            value={formData.transactionId}
+            onChange={(e) =>
+              setFormData({ ...formData, transactionId: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="field">
+          <label>Attachment *</label>
+          <input
+            type="file"
+            onChange={(e) =>
+              setFormData({ ...formData, attachment: e.target.files[0] })
+            }
+          />
+        </div>
 
         <div className="field">
           <label>Status</label>

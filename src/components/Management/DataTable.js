@@ -30,11 +30,11 @@ const DataTable = ({ data, mood, setAlert }) => {
       status: selectedLead?.status || "",
       agent: mood === "agent" ? "Amit" : selectedLead?.agent || "",
     });
-    console.log(mood, "mood");
+    // console.log(mood, "mood");
   }, [selectedLead, mood]);
 
   useEffect(() => {
-    console.log(formData, "Updated formdata");
+    // console.log(formData, "Updated formdata");
   }, [formData]);
 
   // 🔥 FILTER LOGIC
@@ -116,24 +116,27 @@ const DataTable = ({ data, mood, setAlert }) => {
             <option value="">All Status</option>
             <option value="New">New</option>
             <option value="Processing">Processing</option>
+            <option value="Booking">Booking</option>
             <option value="Converted">Converted</option>
             <option value="Lost">Lost</option>
           </select>
         </div>
-        <div className="searchItem">
-          <select
-            value={agentFilter}
-            onChange={(e) => {
-              setAgentFilter(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">Agent</option>
-            <option value="Amit">Amit</option>
-            <option value="Sana">Sana</option>
-            <option value="Raj">Raj</option>
-          </select>
-        </div>
+        {mood !== "agent" && (
+          <div className="searchItem">
+            <select
+              value={agentFilter}
+              onChange={(e) => {
+                setAgentFilter(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">Agent</option>
+              <option value="Amit">Amit</option>
+              <option value="Sana">Sana</option>
+              <option value="Raj">Raj</option>
+            </select>
+          </div>
+        )}
 
         <div className="searchItem">
           <input

@@ -6,9 +6,10 @@ import "./Setting.css";
 import StaffPermission from "../../components/Permissions/StaffPermission";
 import NiEdit from "../../icons/ni-edit";
 import ActivityLogs from "../../components/Permissions/ActivityLogs";
+import CommissionSetting from "../../components/Permissions/CommissionSetting";
 
 /* Dummy Components */
-const ProfileSettings = () => (
+const ProfileSettings = ({setAlert}) => (
   <div>
     <h4>Profile Settings</h4>
     <p>
@@ -17,14 +18,15 @@ const ProfileSettings = () => (
   </div>
 );
 
-const StaffPermissionManagement = () => (
+const StaffPermissionManagement = ({setAlert}) => (
   <div>
     <h4>Staff Permissions Management</h4>
     <StaffPermission />
   </div>
 );
 
-const Setting = ({ mood }) => {
+const Setting = ({ mood , setAlert}) => {
+     console.log(setAlert,"setAlert")
   const navigate = useNavigate();
 
   /* ================= ROLE BASED TABS ================= */
@@ -36,7 +38,7 @@ const Setting = ({ mood }) => {
           "Profile",
           "Staff Permissions",
           "Logs",
-          // "Notifications",
+          "Commission Settings",
         ];
 
       case "staff":
@@ -58,16 +60,19 @@ const Setting = ({ mood }) => {
   const renderContent = () => {
     switch (activeTab) {
       case "Profile":
-        return <ProfileSettings />;
+        return <ProfileSettings setAlert={setAlert} />;
 
       case "Staff Permissions":
-        return mood === "admin" ? <StaffPermissionManagement /> : null;
+        return mood === "admin" ? <StaffPermissionManagement setAlert={setAlert} /> : null;
+
+      case "Commission Settings":
+        return mood === "admin" ? <CommissionSetting setAlert={setAlert} /> : null;
 
       case "Logs":
-        return mood === "admin" ? <ActivityLogs /> : null;
+        return mood === "admin" ? <ActivityLogs setAlert={setAlert} /> : null;
 
       default:
-        return <ProfileSettings />;
+        return <ProfileSettings setAlert={setAlert} />;
     }
   };
 

@@ -156,7 +156,7 @@ const Other = ({ mood, setAlert }) => {
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [activeRow, setActiveRow] = useState(null);
-  const [viewItem, setViewItem] = useState(false)
+  const [viewItem, setViewItem] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -242,7 +242,6 @@ const Other = ({ mood, setAlert }) => {
     }, 5000);
   };
 
-
   return (
     <div className="plot-container">
       {/* Filters */}
@@ -286,13 +285,21 @@ const Other = ({ mood, setAlert }) => {
             ))}
           </div>
           <div className="page-toggle">
-            <span className={`${viewItem === false ? "active" : ""}`} onClick={() => setViewItem(false)}><NiList /></span>
-            <span className={`${viewItem === true ? "active" : ""}`} onClick={() => setViewItem(true)}><NiCard /></span>
+            <span
+              className={`${viewItem === false ? "active" : ""}`}
+              onClick={() => setViewItem(false)}
+            >
+              <NiList />
+            </span>
+            <span
+              className={`${viewItem === true ? "active" : ""}`}
+              onClick={() => setViewItem(true)}
+            >
+              <NiCard />
+            </span>
           </div>
-
         </div>
       </div>
-
 
       {/* Table */}
       {viewItem === false ? (
@@ -307,12 +314,17 @@ const Other = ({ mood, setAlert }) => {
           </div>
 
           {currentData.map((item) => (
-
             <div key={item.id} className="table-row">
               <img src={item.avatar} alt="" />
               <span>{item.id}</span>
               <span className="title">{item.name}</span>
-              <span>{item.user === "staff" ? "Staff" : item.user === "agent" ? "Agent" : "User"}</span>
+              <span>
+                {item.user === "staff"
+                  ? "Staff"
+                  : item.user === "agent"
+                    ? "Agent"
+                    : "User"}
+              </span>
               <span className={`status ${item.status}`}>
                 {item.status === "active" ? "Active" : "In Active"}
               </span>
@@ -365,7 +377,9 @@ const Other = ({ mood, setAlert }) => {
                 </div>
                 <div className="dots">
                   <span
-                    onClick={() => navigate(`/user/${item.id}`, { state: item })}
+                    onClick={() =>
+                      navigate(`/user/${item.id}`, { state: item })
+                    }
                   >
                     <NiOpenEye />
                   </span>
@@ -396,7 +410,13 @@ const Other = ({ mood, setAlert }) => {
                 </div>
               </div>
               <div className="user-card-bottom">
-                <span>{item.user === "staff" ? "Staff" : item.user === "agent" ? "Agent" : "User"}</span>
+                <span>
+                  {item.user === "staff"
+                    ? "Staff"
+                    : item.user === "agent"
+                      ? "Agent"
+                      : "User"}
+                </span>
                 <span className={`status ${item.status}`}>
                   {item.status === "active" ? "Active" : "In Active"}
                 </span>
@@ -442,9 +462,7 @@ const Other = ({ mood, setAlert }) => {
           <label>User Type</label>
           <select
             value={formData.user}
-            onChange={(e) =>
-              setFormData({ ...formData, user: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, user: e.target.value })}
           >
             <option value="">Select Type</option>
             <option value="User">User</option>
@@ -463,8 +481,10 @@ const Other = ({ mood, setAlert }) => {
         </div>
 
         <div className="field">
-          <label>Avatar</label>
+          <label>Image(profile)</label>
           <input
+            type="file"
+            accept="image/*"
             value={formData.avatar}
             onChange={(e) =>
               setFormData({ ...formData, avatar: e.target.value })
@@ -472,7 +492,6 @@ const Other = ({ mood, setAlert }) => {
             placeholder="Avatar URL"
           />
         </div>
-
 
         <div className="field">
           <label>Status</label>

@@ -172,6 +172,15 @@
   color: #34bb53;
 }
 
+.status.active2 {
+  background: #e6f1f7;
+  color: #3477bb;
+}
+.status.pending2 {
+  background: #f2e6f7;
+  color: #9734bb;
+}
+
 .search-footer {
   text-align: center;
   color: var(--mood-color);
@@ -252,7 +261,7 @@
   border-radius: 1.25rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 8px 0;
-  width: 120px;
+  width: 140px;
   z-index: 10;
   padding: 5px;
 }
@@ -271,4 +280,9 @@
 
 .app.dark .action-modal {
   background-color: #252528;
+}
+
+.dashboard-wrapper .modal .modal-body{
+max-height: 80vh ;
+overflow: auto;
 }

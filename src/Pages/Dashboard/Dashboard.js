@@ -140,13 +140,14 @@ const Dashboard = ({ mood }) => {
                       {/* Dates */}
                       <div className="offer-dates">
                         <p>
-                          <strong>From:</strong> {item.startDate} to {item.endDate} (
+                          <strong>From:</strong> {item.startDate} to{" "}
+                          {item.endDate} (
                           <span className="countdown">
                             {getRemainingDays(item.endDate)}
                           </span>
                           )
                         </p>
-{/* 
+                        {/* 
                         <p>
                           <strong>End:</strong> {item.endDate}
                         </p>
@@ -198,10 +199,12 @@ const Dashboard = ({ mood }) => {
         title={actionType}
       >
         {renderFormFields({ actionType, formData, setFormData })}
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing.</p>
+        {/* <p style={{ color: "#9f9f9f" }}>
+          Simple modal to create or modify item information.
+        </p> */}
 
         <div className="modal-actions">
-          <button onClick={() => setOpen(false)}>Cancel</button>
+          {/* <button onClick={() => setOpen(false)}>Cancel</button> */}
           <button onClick={() => setOpen(false)}>Submit</button>
         </div>
       </AddLocationModal>

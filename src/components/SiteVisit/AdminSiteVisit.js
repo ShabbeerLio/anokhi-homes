@@ -9,10 +9,20 @@ const visits = [
     customer: "Rahul",
     phone: "9876543210",
     agent: "Amit",
-    site: "B-198, Goa Colony",
+    site: "Goa Colony, Mumbai",
     date: "2026-02-18",
     status: "Completed",
-    interest: "High",
+    visitDate : "2026-02-20, 08:30 A.M"
+  },
+  {
+    id: 2,
+    customer: "Rahul2",
+    phone: "9876543210",
+    agent: "Amit",
+    site: " Goa Colony, Mumbai",
+    date: "2026-02-18",
+    status: "Approval",
+    visitDate : "2026-02-20, 08:30 A.M"
   },
 ];
 
@@ -22,12 +32,12 @@ const AdminSiteVisit = ({ mood, setAlert }) => {
       {/* ================= STATS ================= */}
       <div className="dashboard-grid">
         <DashboardCard title="Total Visits" value="120" icons = <NiSitevisit /> />
-        <DashboardCard title="Today's Visits" value="12" icons = <NiSitevisit /> />
+        {/* <DashboardCard title="Today's Visits" value="12" icons = <NiSitevisit /> /> */}
         <DashboardCard title="Total Completed" value="80" icons = <NiSitevisit /> />
         <DashboardCard title="Total Resheduled" value="5" icons = <NiSitevisit /> />
         <DashboardCard title="Total Cancelled" value="10" icons = <NiSitevisit /> />
-        <DashboardCard title="Conversion %" value="45%" icons = <NiSitevisit /> />
-        <DashboardCard title="Agent-wise Visits" value="8 Agents" icons = <NiSitevisit /> />
+        {/* <DashboardCard title="Conversion %" value="45%" icons = <NiSitevisit /> /> */}
+        {/* <DashboardCard title="Agent-wise Visits" value="8 Agents" icons = <NiSitevisit /> /> */}
       </div>
       {/* Filters */}
       <h4>Site Visits</h4>

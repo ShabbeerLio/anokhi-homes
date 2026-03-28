@@ -67,3 +67,10 @@
 .agent-overview {
   margin-top: 20px;
 }
+
+.referral-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}

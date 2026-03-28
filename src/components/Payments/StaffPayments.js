@@ -1,5 +1,6 @@
 import NiPayments from "../../icons/ni-payments";
 import DashboardCard from "../Cards/DashboardCard";
+import PaymentsData from "./PaymentData";
 import PaymentTable from "./PaymentTable";
 
 const payments = [
@@ -16,7 +17,7 @@ const payments = [
   },
 ];
 
-const StaffPayments = ({ staffType, setAlert }) => {
+const StaffPayments = ({mood, staffType, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
       {staffType === "accounts" && (
@@ -37,7 +38,7 @@ const StaffPayments = ({ staffType, setAlert }) => {
 
       {(staffType === "marketing" || staffType === "operations") && (
         <>
-          <PaymentTable data={payments} actions={[]} setAlert={setAlert}/>
+          <PaymentTable data={PaymentsData} mood={mood}  setAlert={setAlert}/>
         </>
       )}
     </div>

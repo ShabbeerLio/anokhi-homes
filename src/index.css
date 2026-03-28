@@ -361,14 +361,30 @@ body {
   text-align: center;
 }
 
+.auth-header{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 .auth-card h2 {
-  margin-bottom: 10px;
+  margin: 0;
+}
+.auth-card p {
+      font-weight: 500;
+    color: #9f9f9f;
+    margin: 0 !important;
+    padding: 10px 0;
+    font-size: 14px;
 }
 
 .app.dark .auth-card input {
   color: #fff;
 }
-.auth-card input {
+.auth-card input ,
+.auth-card select {
   /* width: 100%; */
   padding: 10px;
   margin: 8px 0;

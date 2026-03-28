@@ -12,9 +12,9 @@ const Payments = ({ mood, staffType, setAlert }) => {
       case "admin":
         return <AdminPayments mood={mood} setAlert={setAlert}/>;
       case "agent":
-        return <AgentPayments setAlert={setAlert}/>;
+        return <AgentPayments mood={mood} setAlert={setAlert}/>;
       case "staff":
-        return <StaffPayments staffType={"accounts"} setAlert={setAlert}/>;
+        return <StaffPayments mood={mood} staffType={"accounts"} setAlert={setAlert}/>;
       default:
         return <div>Access Denied</div>;
     }

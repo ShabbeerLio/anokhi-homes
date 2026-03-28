@@ -10,7 +10,18 @@ const myVisits = [
     agent: "Me",
     date: "2026-02-18",
     status: "Scheduled",
-    interest: "Medium",
+    site: "Goa Colony, Mumbai",
+    visitDate : "2026-02-20, 08:30 A.M"
+  },
+  {
+    id: 2,
+    customer: "Rahul2",
+    phone: "9876543210",
+    agent: "Amit",
+    site: " Goa Colony, Mumbai",
+    date: "2026-02-18",
+    status: "Approval",
+    visitDate : "2026-02-22, 08:30 A.M"
   },
 ];
 
@@ -18,19 +29,19 @@ const AgentSiteVisit = ({ mood, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-grid">
-        <DashboardCard title="My Visits" value="25" icons=<NiSitevisit /> />
-        <DashboardCard title="Today's Visits" value="4" icons=<NiSitevisit /> />
-        <DashboardCard title="Completed" value="15" icons=<NiSitevisit /> />
-        <DashboardCard title="Cancelled" value="2" icons=<NiSitevisit /> />
+        <DashboardCard title="My Visits" value="25" icons={<NiSitevisit />} />
+        <DashboardCard title="Today's Visits" value="4" icons={<NiSitevisit />} />
+        <DashboardCard title="Completed" value="15" icons={<NiSitevisit />} />
+        <DashboardCard title="Cancelled" value="2" icons={<NiSitevisit />} />
         <DashboardCard
           title="Conversion Rate"
           value="40%"
-          icons=<NiSitevisit />
+          icons={<NiSitevisit />}
         />
         <DashboardCard
           title="Upcoming Visits"
           value="3"
-          icons=<NiSitevisit />
+          icons={<NiSitevisit />}
         />
       </div>
       <h4>Site Visits</h4>

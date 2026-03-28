@@ -6,6 +6,7 @@ import NiOpenEye from "../../icons/ni-openEye";
 import NiDots from "../../icons/ni-dots";
 import ActionModal from "../Modals/ActionModal";
 import SiteVisitCard from "../Cards/SiteVisitCard";
+import SearchSelect from "../SearchItems/SearchSelect";
 // import "./SiteVisit.css";
 
 const ITEMS_PER_PAGE = 6;
@@ -62,7 +63,7 @@ const VisitTable = ({ data, actions = [], mood, setAlert }) => {
     page * ITEMS_PER_PAGE,
   );
 
-   const handleAddVisit = () => {
+  const handleAddVisit = () => {
     console.log("Adding visit:", formData);
     setOpen(false);
     setAlert({ message: "Visit added successfully!", status: "Success" });
@@ -78,6 +79,42 @@ const VisitTable = ({ data, actions = [], mood, setAlert }) => {
       setAlert(null);
     }, 5000);
   };
+
+  const customers = [
+    { id: "C001", name: "Rahul Sharma", phone: "9876543210" },
+    { id: "C002", name: "Imran Khan", phone: "9123456789" },
+    { id: "C003", name: "Arjun Mehta", phone: "9988776655" },
+  ];
+
+  const ProjectsLocations = [
+    { id: "L1", name: "Rajgir", location: "Bihar" },
+    { id: "L2", name: "Patna", location: "Bihar" },
+  ];
+  const Projects = [
+    { id: "PJ101", name: "SunShine Colony", location: "Mumbai" },
+    { id: "PJ102", name: "Moon Colony", location: "Delhi" },
+  ];
+  const plots = [
+    {
+      id: "P101",
+      name: "Plot A-12",
+      projectId: "PJ101",
+      price: 1200000,
+      status: "Vacant",
+    },
+    {
+      id: "P102",
+      name: "Plot B-07",
+      projectId: "PJ102",
+      price: 2300000,
+      status: "Hold",
+    },
+  ];
+
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedProjects, setSelectedProjects] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedPlot, setSelectedPlot] = useState(null);
 
   return (
     <div>
@@ -114,10 +151,10 @@ const VisitTable = ({ data, actions = [], mood, setAlert }) => {
             }}
           >
             <option value="">Status</option>
+            <option value="Approval">Approval</option>
             <option value="Scheduled">Scheduled</option>
             <option value="Completed">Completed</option>
             <option value="Cancelled">Cancelled</option>
-            <option value="Postponed">Postponed</option>
           </select>
         </div>
         <div className="searchItem">
@@ -130,73 +167,7 @@ const VisitTable = ({ data, actions = [], mood, setAlert }) => {
             // }}
           />
         </div>
-        
       </div>
-      {/* <div className=" card">
-        <div className="sitevisit-table table-head">
-          <span>Date</span>
-          <span>Customer</span>
-          <span>Phone</span>
-          <span>Agent</span>
-          <span>Site</span>
-          <span>Status</span>
-          <span>Interest</span>
-          <span>Actions</span>
-        </div>
-
-        {paginated.length > 0 ? (
-          paginated.map((item) => (
-            <div
-              key={item.id}
-              className="sitevisit-table table-row"
-              style={{ cursor: "pointer" }}
-            >
-
-              <span className="title">{item.date}</span>
-              <span className="title">{item.customer}</span>
-              <span>{item.phone}</span>
-              <span>{item.agent}</span>
-              <span>{item.site}</span>
-
-              <span
-                className={`status ${item.status === "New" ? "active" : item.status === "Converted" ? "pending" : "failed"}`}
-              >
-                {item.status}
-              </span>
-              <span>{item.interest || "-"}</span>
-
-              <div className="dots">
-                <span>
-                  <NiOpenEye />
-                </span>
-
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveRow(activeRow === item.id ? null : item.id);
-                  }}
-                >
-                  <NiDots />
-                </span>
-
-                {activeRow === item.id && (
-                  <ActionModal
-                    item={item}
-                    onClose={() => setActiveRow(null)}
-                    onEdit={(visit) => {
-                      setSelectedVisit(visit);
-                      setIsEditMode(true);
-                      setOpen(true);
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No Visits found</p>
-        )}
-      </div> */}
       <div className="user-card-box">
         {paginated.length === 0 ? (
           <p>No Bookings Found</p>
@@ -244,67 +215,94 @@ const VisitTable = ({ data, actions = [], mood, setAlert }) => {
           <label>Date of Visit</label>
           <input
             type="date"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            value={formData.visitDate || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, visitDate: e.target.value })
+            }
           />
         </div>
 
         <div className="field">
-          <label>Customer Name</label>
-          <input
-            value={formData.customer}
-            onChange={(e) =>
-              setFormData({ ...formData, customer: e.target.value })
-            }
-            placeholder="Customer Name"
+          <SearchSelect
+            label="Customer Name"
+            placeholder="Search name or number"
+            options={customers}
+            value={selectedCustomer}
+            onChange={(selected) => {
+              setSelectedCustomer(selected);
+              setFormData({
+                ...formData,
+                customerName: selected.customerName,
+              });
+            }}
+            displayKey="name"
+            searchKeys={["name", "phone"]}
+            renderOption={(c) => (
+              <div>
+                <b>{c.name}</b> ({c.phone})
+              </div>
+            )}
           />
         </div>
 
         <div className="field">
           <label>Phone</label>
           <input
-            value={formData.phone}
+            value={selectedCustomer?.phone}
             onChange={(e) =>
               setFormData({ ...formData, phone: e.target.value })
             }
             placeholder="Phone Number"
           />
         </div>
-
         <div className="field">
-          <label>Site</label>
-          <input
-            value={formData.site}
-            onChange={(e) => setFormData({ ...formData, site: e.target.value })}
-            placeholder="Site Name"
+          <SearchSelect
+            label="Site"
+            placeholder="Search Project or location"
+            options={Projects}
+            value={selectedProjects}
+            onChange={(selected) => {
+              setSelectedProjects(selected);
+              setFormData({ ...formData, Project: selected.name });
+            }}
+            displayKey="name"
+            searchKeys={["name", "location"]}
+            renderOption={(p) => (
+              <div>
+                <b>{p.name}</b>
+                <small style={{ display: "block", color: "#666" }}>
+                  {p.location}
+                </small>
+              </div>
+            )}
           />
         </div>
-
         <div className="field">
-          <label>Interest</label>
-          <input
-            value={formData.interest}
-            onChange={(e) =>
-              setFormData({ ...formData, interest: e.target.value })
-            }
-            placeholder="Interest"
+          <SearchSelect
+            label="Plots"
+            placeholder="Search Plot..."
+            options={plots}
+            value={selectedPlot}
+            onChange={(selected) => {
+              setSelectedPlot(selected);
+
+              setFormData({
+                ...formData,
+                plotId: selected.id,
+                amount: selected.price,
+              });
+            }}
+            displayKey="name"
+            searchKeys={["name", "location"]}
+            renderOption={(p) => (
+              <div>
+                <b>{p.name}</b>
+                <small style={{ display: "block", color: "#666" }}>
+                  {p.status}
+                </small>
+              </div>
+            )}
           />
-        </div>
-
-        <div className="field">
-          <label>Status</label>
-          <select
-            value={formData.status}
-            onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value })
-            }
-          >
-            <option value="">Select Status</option>
-            <option value="Scheduled">Scheduled</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
-            <option value="Postponed">Postponed</option>
-          </select>
         </div>
 
         <div className="field">
@@ -327,9 +325,9 @@ const VisitTable = ({ data, actions = [], mood, setAlert }) => {
           <button
             onClick={() => {
               if (isEditMode) {
-                handleEditVisit()
+                handleEditVisit();
               } else {
-                handleAddVisit()
+                handleAddVisit();
               }
               setOpen(false);
             }}

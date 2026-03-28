@@ -1,5 +1,6 @@
 import NiPayments from "../../icons/ni-payments";
 import DashboardCard from "../Cards/DashboardCard";
+import PaymentsData from "./PaymentData";
 import PaymentTable from "./PaymentTable";
 
 const myPayments = [
@@ -16,7 +17,7 @@ const myPayments = [
   },
 ];
 
-const AgentPayments = ({setAlert}) => {
+const AgentPayments = ({mood, setAlert}) => {
   return (
     <div className="dashboard-wrapper">
 
@@ -28,12 +29,8 @@ const AgentPayments = ({setAlert}) => {
       </div>
 <h4>Payments</h4>
       <PaymentTable
-        data={myPayments}
-        actions={[
-          "View Details",
-          "Download Receipt",
-          "Send Reminder",
-        ]}
+        data={PaymentsData} 
+        mood={mood}
         setAlert={setAlert}
       />
 

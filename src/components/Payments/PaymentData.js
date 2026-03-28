@@ -15,6 +15,8 @@ const PaymentsData = [
         mode: "UPI",
         date: "2026-02-18",
         status: "Approved",
+        transactionId: "TXN001",
+        attachment: "receipt1.pdf",
       },
       {
         type: "agreement",
@@ -22,6 +24,8 @@ const PaymentsData = [
         mode: "Bank Transfer",
         date: "2026-03-01",
         status: "Approved",
+        transactionId: "TXN002",
+        attachment: "receipt2.pdf",
       },
     ],
 
@@ -47,6 +51,8 @@ const PaymentsData = [
         mode: "Cash",
         date: "2026-01-10",
         status: "Approved",
+        transactionId: "TXN001",
+        attachment: "receipt1.pdf",
       },
     ],
 
@@ -72,6 +78,8 @@ const PaymentsData = [
         mode: "UPI",
         date: "2026-02-01",
         status: "Approved",
+        transactionId: "TXN001",
+        attachment: "receipt1.pdf",
       },
       {
         type: "agreement",
@@ -79,6 +87,8 @@ const PaymentsData = [
         mode: "UPI",
         date: "2026-02-20",
         status: "Approved",
+        transactionId: "TXN001",
+        attachment: "receipt1.pdf",
       },
       {
         type: "full",
@@ -86,6 +96,8 @@ const PaymentsData = [
         mode: "Bank Transfer",
         date: "2026-03-05",
         status: "Approved",
+        transactionId: "TXN001",
+        attachment: "receipt1.pdf",
       },
     ],
 

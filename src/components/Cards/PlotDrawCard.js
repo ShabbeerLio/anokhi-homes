@@ -65,6 +65,34 @@ const PlotDrawCard = ({ mood }) => {
     if (fresh) setSelectedPlot(fresh);
   }, [plots]);
 
+  const saveLayout = async () => {
+  try {
+
+    const layout = {
+      mainPlot,
+      plots
+    };
+
+    // const res = await fetch(
+    //   `http://localhost:8000/api/colony/layout/${projectId}`,
+    //   {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify({ layout })
+    //   }
+    // );
+
+    // const data = await res.json();
+
+    console.log("Layout Saved", layout);
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
   return (
     <>
       <AdminPanel
@@ -90,6 +118,7 @@ const PlotDrawCard = ({ mood }) => {
         selectedType={selectedType}
         onSelectPlot={setSelectedPlot}
         updatePlot={updatePlot}
+         saveLayout={saveLayout}
       />
 
       {selectedPlot && (

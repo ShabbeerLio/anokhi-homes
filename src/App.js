@@ -30,6 +30,7 @@ import Alert from "./components/Alert/Alert";
 import Setting from "./Pages/Setting/Setting";
 import Logs from "./Pages/Logs/Logs";
 import OffersDiscounts from "./Pages/OffersDiscounts/OffersDiscounts";
+import Commission from "./Pages/Commission/Commission";
 
 const LandingLayout = () => {
   return (
@@ -50,6 +51,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className={`app ${dark ? "dark" : ""} mood-${mood}`}>
+            <Alert item={alert} />
         <Routes>
           <Route element={<LandingLayout />}>
             <Route path="/" element={<Home />} />
@@ -64,7 +66,7 @@ function App() {
           </Route>
           <Route path="/role" element={<RoleSelect setMood={setMood} />} />
           <Route path="/login" element={<Login mood={mood} />} />
-          <Route path="/signup" element={<Signup mood={mood} />} />
+          <Route path="/signup" element={<Signup mood={mood} setAlert={setAlert} />} />
           <Route
             path="/*"
             element={
@@ -90,7 +92,7 @@ function App() {
                   </div>
 
                   <div className="page-wrap">
-                    <Alert item={alert} />
+                    {/* <Alert item={alert} /> */}
                     <Routes>
                       <Route
                         path="/dashboard"
@@ -131,6 +133,10 @@ function App() {
                       <Route
                         path="/settings"
                         element={<Setting mood={mood} setAlert={setAlert}/>}
+                      />
+                      <Route
+                        path="/commission"
+                        element={<Commission mood={mood} setAlert={setAlert}/>}
                       />
                       <Route
                         path="/logs"

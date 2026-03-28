@@ -29,6 +29,7 @@ function Sidebar({ closeMobile, mood }) {
     user: [
       { path: "/plot", label: "Plots", icon: <NiTool /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
+      { path: "/site-visits", label: "Follow Up", icon: <NiSitevisit /> },
     ],
     admin: [
       { path: "/management", label: "Lead Mgnt.", icon: <NiManagement /> },
@@ -38,7 +39,12 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/offers-discounts", label: "Offers & Discounts", icon: <NiPayments /> },
+      { path: "/commission", label: "Commission", icon: <NiPayments /> },
+      {
+        path: "/offers-discounts",
+        label: "Offers & Discounts",
+        icon: <NiPayments />,
+      },
     ],
     staff: [
       { path: "/management", label: "Lead Mgnt.", icon: <NiManagement /> },
@@ -48,7 +54,12 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/offers-discounts", label: "Offers & Discounts", icon: <NiPayments /> },
+      { path: "/commission", label: "Commission", icon: <NiPayments /> },
+      {
+        path: "/offers-discounts",
+        label: "Offers & Discounts",
+        icon: <NiPayments />,
+      },
     ],
     agent: [
       { path: "/management", label: "Lead Mgnt.", icon: <NiManagement /> },
@@ -57,7 +68,12 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/offers-discounts", label: "Offers & Discounts", icon: <NiPayments /> },
+      { path: "/commission", label: "Commission", icon: <NiPayments /> },
+      {
+        path: "/offers-discounts",
+        label: "Offers & Discounts",
+        icon: <NiPayments />,
+      },
     ],
   };
 

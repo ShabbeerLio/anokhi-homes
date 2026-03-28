@@ -9,9 +9,21 @@ const AgentLeadManagement = ({ mood, setAlert }) => {
       id: 1,
       name: "Rahul",
       phone: "9876543210",
-      status: "New",
+      status: "Processing",
       agent: "Me",
       date: "2026-02-18",
+      notes: [
+        {
+          text: "Client scheduled site visit",
+          date: "3/14/2026, 5:27:34 PM",
+          by: "Admin",
+        },
+        {
+          text: "Waiting for client confirmation",
+          date: "3/15/2026, 5:27:34 PM",
+          by: "Me",
+        },
+      ],
     },
   ];
 
@@ -35,6 +47,7 @@ const AgentLeadManagement = ({ mood, setAlert }) => {
       <DataTable
         data={myLeads}
         mood={mood}
+        setAlert={setAlert}
       />
 
       {/* Agent Actions */}

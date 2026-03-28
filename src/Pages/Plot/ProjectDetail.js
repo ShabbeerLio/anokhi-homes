@@ -34,7 +34,7 @@ const ProjectDetail = ({ mood }) => {
           <Breadcrumb />
         </div>
       </div>
-      <PlotDrawCard mood={mood} />
+      <PlotDrawCard mood={mood}/>
     </div>
   );
 };

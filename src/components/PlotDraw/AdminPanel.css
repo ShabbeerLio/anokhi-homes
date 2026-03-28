@@ -49,6 +49,7 @@
   padding: 1.5rem;
   border-radius: 1.75rem;
   position: relative;
+  min-width: 30%;
 }
 .modal h3{
   margin: 0;
