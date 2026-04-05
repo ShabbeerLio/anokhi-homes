@@ -26,6 +26,7 @@ const DATA = [
     phone: "9876543210",
     avatar: "https://i.pravatar.cc/150?img=1",
     status: "active",
+    position: "Manager",
     joined: "2024-01-12",
     permissions: ["Manage Leads", "Access Reports"],
     performance: null,
@@ -33,14 +34,18 @@ const DATA = [
 
   {
     id: 473,
-    user: "agent",
+    user: "associate",
     name: "Zoila Vittorino",
     email: "zoila@company.com",
     phone: "9876500001",
     avatar: "https://i.pravatar.cc/150?img=2",
     status: "active",
+    
     joined: "2023-09-10",
-
+    referral: {
+      code: "REF123",
+      name: "Amit Kumar",
+    },
     performance: {
       totalSales: 4500000,
       totalBookings: 18,
@@ -69,6 +74,10 @@ const DATA = [
     joined: "2025-02-05",
     permissions: [],
     performance: null,
+    connected: {
+      name: "Rahul",
+      number: "9876543210",
+    },
   },
 
   {
@@ -79,6 +88,7 @@ const DATA = [
     phone: "9000000002",
     avatar: "https://i.pravatar.cc/150?img=4",
     status: "inactive",
+     position: "Plot Manager",
     joined: "2022-05-11",
     permissions: ["Manage Bookings"],
     performance: null,
@@ -86,14 +96,18 @@ const DATA = [
 
   {
     id: 476,
-    user: "agent",
+    user: "associate",
     name: "Buck Rogers",
     email: "buck@company.com",
     phone: "9000000003",
     avatar: "https://i.pravatar.cc/150?img=5",
     status: "inactive",
     joined: "2023-03-18",
-
+   
+    referral: {
+      code: "REF123",
+      name: "rahul Kumar",
+    },
     performance: {
       totalSales: 3200000,
       totalBookings: 12,
@@ -121,18 +135,50 @@ const DATA = [
     joined: "2025-01-22",
     permissions: [],
     performance: null,
+    connected: {
+      name: "Rahul",
+      number: "9876543210",
+    },
   },
+  {
+    id: 483,
+    user: "associate",
+    name: "Ethan Wilson",
+    email: "ethan@company.com",
+    phone: "9000000005",
+    avatar: "https://i.pravatar.cc/150?img=11",
+    status: "pending",
+    joined: "2026-01-21",
+    position: "",
+    referral: {
+      code: "REF123",
+      name: "Amit Kumar",
+    },
+    performance: {
+      totalSales: 0,
+      totalBookings: 0,
+      propertiesSold: 0,
+      commissionEarned: 0,
+      conversionRate: 0,
+      monthlySales: [],
+    },
 
+    permissions: [],
+  },
   {
     id: 482,
-    user: "agent",
+    user: "associate",
     name: "Ethan Wilson",
     email: "ethan@company.com",
     phone: "9000000005",
     avatar: "https://i.pravatar.cc/150?img=11",
     status: "active",
     joined: "2023-11-01",
-
+   
+    referral: {
+      code: "REF123",
+      name: "Amit Kumar",
+    },
     performance: {
       totalSales: 5100000,
       totalBookings: 22,
@@ -274,7 +320,7 @@ const Other = ({ mood, setAlert }) => {
             />
           </div>
           <div className="filter-buttons">
-            {["all", "user", "staff", "agent"].map((f) => (
+            {["all", "user", "staff", "associate"].map((f) => (
               <button
                 key={f}
                 className={filter === f ? "active" : ""}
@@ -306,9 +352,10 @@ const Other = ({ mood, setAlert }) => {
         <div className="table card">
           <div className="table-head">
             <span>Image</span>
-            <span>ID</span>
-            <span>Name</span>
             <span>Role</span>
+            <span>Name</span>
+            <span>Connected</span>
+            <span>Referral</span>
             <span>Status</span>
             <span>Actions</span>
           </div>
@@ -316,18 +363,36 @@ const Other = ({ mood, setAlert }) => {
           {currentData.map((item) => (
             <div key={item.id} className="table-row">
               <img src={item.avatar} alt="" />
-              <span>{item.id}</span>
-              <span className="title">{item.name}</span>
               <span>
                 {item.user === "staff"
                   ? "Staff"
-                  : item.user === "agent"
-                    ? "Agent"
+                  : item.user === "associate"
+                    ? "Associate"
                     : "User"}
               </span>
-              <span className={`status ${item.status}`}>
-                {item.status === "active" ? "Active" : "In Active"}
+              <span className="title">
+                {item.name} {item.position && `(${item.position})`}
               </span>
+              <span className="title">{item.connected?.name || "-"}</span>
+              <span className="title">{item.referral?.name || "-"}</span>
+
+              {(item.status !== "pending" && mood === "admin" && (
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    checked={item.status === "active"}
+                    onChange={() => {
+                      item.status =
+                        item.status === "active" ? "inactive" : "active";
+                    }}
+                  />
+                  <span className="slider"></span>
+                </label>
+              )) || (
+                <span className={`status ${item.status}`}>
+                  {item.status === "pending" && "Pending"}
+                </span>
+              )}
 
               <div className="dots">
                 <span
@@ -371,7 +436,7 @@ const Other = ({ mood, setAlert }) => {
                 <div className="user-card-title">
                   <img src={item.avatar} alt="" />
                   <div className="user-card-detail">
-                    <h4>{item.name}</h4>
+                    <h4>{item.name} <span>{item.position && `(${item.position})`}</span></h4>
                     <p>{item.id}</p>
                   </div>
                 </div>
@@ -413,13 +478,30 @@ const Other = ({ mood, setAlert }) => {
                 <span>
                   {item.user === "staff"
                     ? "Staff"
-                    : item.user === "agent"
-                      ? "Agent"
+                    : item.user === "associate"
+                      ? "Associate"
                       : "User"}
                 </span>
-                <span className={`status ${item.status}`}>
-                  {item.status === "active" ? "Active" : "In Active"}
+                <span className="title">
+                  {item.connected?.name || item.referral?.name || "-"}
                 </span>
+                {(item.status !== "pending" && mood === "admin" && (
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      checked={item.status === "active"}
+                      onChange={() => {
+                        item.status =
+                          item.status === "active" ? "inactive" : "active";
+                      }}
+                    />
+                    <span className="slider"></span>
+                  </label>
+                )) || (
+                  <span className={`status ${item.status}`}>
+                    {item.status === "pending" && "Pending"}
+                  </span>
+                )}
               </div>
             </div>
           ))}
@@ -467,7 +549,7 @@ const Other = ({ mood, setAlert }) => {
             <option value="">Select Type</option>
             <option value="User">User</option>
             <option value="Staff">Staff</option>
-            <option value="Agent">Agent</option>
+            <option value="Associate">Associate</option>
           </select>
         </div>
 
@@ -481,15 +563,23 @@ const Other = ({ mood, setAlert }) => {
         </div>
 
         <div className="field">
-          <label>Image(profile)</label>
+          <label>Image (profile)</label>
+
+          {/* Preview existing image */}
+          {formData.avatar && typeof formData.avatar === "string" && (
+            <img
+              src={formData.avatar}
+              alt="preview"
+              style={{ width: 40, height: 40, borderRadius: "50%" }}
+            />
+          )}
+
           <input
             type="file"
             accept="image/*"
-            value={formData.avatar}
             onChange={(e) =>
-              setFormData({ ...formData, avatar: e.target.value })
+              setFormData({ ...formData, avatar: e.target.files[0] })
             }
-            placeholder="Avatar URL"
           />
         </div>
 
@@ -504,6 +594,7 @@ const Other = ({ mood, setAlert }) => {
             <option value="">Select Status</option>
             <option value="Active">Active</option>
             <option value="In Active">In Active</option>
+            <option value="Pending">Pending</option>
           </select>
         </div>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>

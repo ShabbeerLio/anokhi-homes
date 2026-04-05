@@ -132,7 +132,7 @@ const ManagementCard = ({
               {item.name}
               {/* <span>({item.phone})</span> */}
               <span
-                className={`status ${item.status === "New" ? "active2" : item.status === "Converted" ? "active" : item.status === "Processing" ? "pending" : item.status === "Booking" ? "pending2" : "failed"}`}
+                className={`status ${item.status === "New" ? "active2" : item.status === "Converted" ? "active" : item.status === "Assigned" ? "pending" : item.status === "Unassigned" ? "pending2" : "failed"}`}
               >
                 {item.status}
               </span>
@@ -180,7 +180,7 @@ const ManagementCard = ({
         <div className="user-card-bottom-left">
           <p>Date</p>
           <p>Phone No.</p>
-          <p>Agent</p>
+          <p>Associate</p>
         </div>
         <div className="user-card-bottom-right">
           <p>{item.date}</p>
@@ -188,6 +188,48 @@ const ManagementCard = ({
           <p>{item.agent}</p>
         </div>
       </div>
+      {mood === "admin" &&
+        (item.status === "New" ? (
+          <div className="modal-actions">
+            <button
+              className="view-report-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setViewOpen(true);
+                setPanelMode("assign")
+              }}
+            >
+              <NiUser /> Assign Associate
+            </button>
+          </div>
+        ) : item.status === "Unassigned" ? (
+          <div className="modal-actions">
+            <button
+              className=" view-report-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setViewOpen(true);
+                setPanelMode("reassign")
+              }}
+            >
+              <NiUser /> Re-assign Associate
+            </button>
+          </div>
+        ) : "")
+      }
+      {mood === "agent" && item.status === "Assigned" && (
+        <div className="modal-actions">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewOpen(true);
+              setPanelMode("siteVisit")
+            }}
+          >
+            Request Site Visit
+          </button>
+        </div>
+      )}
       <DeleteModal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
@@ -221,7 +263,9 @@ const ManagementCard = ({
             Cancel
           </button>
         </div>
+
       </DeleteModal>
+
       <ViewModal
         open={viewOpen}
         onClose={() => setViewOpen(false)}
@@ -232,12 +276,12 @@ const ManagementCard = ({
             <p>Date</p>
             <p>Status</p>
             <p>Phone No.</p>
-            <p>Agent</p>
+            <p>Associate</p>
             {item.status === "Converted" ? (
               <p>Report</p>
             ) : item.status === "Lost" ? (
               <p>Report</p>
-            ) : item.status === "Processing" && mood === "admin" ? (
+            ) : item.status === "Assigned" && mood === "admin" ? (
               <div className="table-filters">
                 <button
                   className="view-report-btn"
@@ -273,12 +317,12 @@ const ManagementCard = ({
             )}
 
             <div className="table-filters">
-              {(item.status === "Processing" || item.status === "Booking") && (
+              {(item.status === "Assigned" || item.status === "Unassigned") && (
                 <button
                   className="view-report-btn"
                   onClick={() => setPanelMode("notes")}
                 >
-                  <NiReport /> Add Notes
+                  <NiReport /> Notes
                 </button>
               )}
 
@@ -302,22 +346,30 @@ const ManagementCard = ({
             </div>
           </div>
         </div>
-        {mood === "agent" && item.status === "Processing" && (
+        {mood === "agent" && item.status === "Assigned" && (
           <div className="modal-actions">
             <button
               onClick={() => setPanelMode("siteVisit")}
             >
               Request Site Visit
             </button>
+            <button
+              className="status failed"
+              style={{ border: "none" }}
+              onClick={() => setPanelMode("lostReason")}
+            >
+              Mark as Lost
+            </button>
           </div>
         )}
+
         {/* STATUS BASED ACTIONS */}
 
         <div className={`report-view-box-right ${panelMode ? "active" : ""}`}>
           {/* ASSIGN AGENT PANEL */}
           {panelMode === "assign" && (
             <>
-              <h4>Assign Agent</h4>
+              <h4>Assign Associate</h4>
 
               {/* IF NO AGENT SELECTED → SHOW SEARCH + LIST */}
               {!selectedAgent && (
@@ -352,9 +404,9 @@ const ManagementCard = ({
                       <img src={selectedAgent.avatar} alt="" />
                       <div>
                         <p>
-                          {selectedAgent.name}({selectedAgent.phone})
+                          {selectedAgent.name} ({selectedAgent.phone})
                         </p>
-                        <p>{selectedAgent.location}</p>
+                        <p className="associate-location">{selectedAgent.location}</p>
                       </div>
                     </div>
                     <span
@@ -366,7 +418,7 @@ const ManagementCard = ({
                       <NiCross />
                     </span>
                   </div>
-                  <p>Assinging agent will move lead to processing</p>
+                  <p className="associate-note">Assinging agent will move lead to assigned</p>
                   <div className="modal-actions">
                     <button
                       onClick={() => {
@@ -376,7 +428,7 @@ const ManagementCard = ({
                         setViewOpen(false);
                       }}
                     >
-                      Save
+                      Assign
                     </button>
                   </div>
                 </div>
@@ -441,7 +493,7 @@ const ManagementCard = ({
                       onChange={(e) => setNoteText(e.target.value)}
                     />
                   </div>
-                  <p>Reassinging agent will move lead to processing</p>
+                  <p>Reassinging agent will move lead to assigned</p>
                   <div className="modal-actions">
                     <button
                       onClick={() => {
@@ -464,6 +516,8 @@ const ManagementCard = ({
 
               <div className="field">
                 <label>Date of Visit</label>
+
+                {/* Date */}
                 <input
                   type="date"
                   value={formData.visitDate || ""}
@@ -471,6 +525,35 @@ const ManagementCard = ({
                     setFormData({ ...formData, visitDate: e.target.value })
                   }
                 />
+
+                {/* Hour Dropdown */}
+                <select
+                  value={formData.visitHour || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, visitHour: e.target.value })
+                  }
+                >
+                  <option value="">Select Hour</option>
+                  {[...Array(12)].map((_, i) => {
+                    const hour = i + 1;
+                    return (
+                      <option key={hour} value={hour}>
+                        {hour}
+                      </option>
+                    );
+                  })}
+                </select>
+
+                {/* AM / PM */}
+                <select
+                  value={formData.visitPeriod || "AM"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, visitPeriod: e.target.value })
+                  }
+                >
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
               </div>
               <div className="field">
                 <SearchSelect
@@ -516,8 +599,41 @@ const ManagementCard = ({
               </div>
             </>
           )}
+          {panelMode === "lostReason" && mood === "agent" && (
+            <>
+              <h4>Lost Reason</h4>
+              <div className="field">
+                <label>Notes</label>
+                <textarea
+                  placeholder="Add Notes..."
+                  value={formData.notes || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                  }
+                />
+              </div>
 
-          {/* PROCESSING → NOTES */}
+              <div className="modal-actions">
+                <button
+                  onClick={() => {
+                    setAlert({
+                      message: "Marked as Lost",
+                      status: "Success",
+                    });
+
+                    setViewOpen(null);
+                    setFormData({});
+
+                    setTimeout(() => setAlert(null), 3000);
+                  }}
+                >
+                  Mark as Lost
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* ASSIGNED → NOTES */}
           {panelMode === "notes" && (
             <>
               <h4>Notes</h4>

@@ -5,6 +5,8 @@ import ActionModal from "../Modals/ActionModal";
 import DeleteModal from "../Modals/DeleteModal";
 import ViewModal from "../Modals/ViewModal";
 import NiReport from "../../icons/ni-report";
+import NiTick from "../../icons/ni-tick";
+import NiCross from "../../icons/ni-cross";
 
 const PaymentCard = ({
   item,
@@ -104,6 +106,38 @@ const PaymentCard = ({
           <p>{item.dueStatus}</p>
         </div>
       </div>
+      {mood === "admin" &&
+        (item.status === "Pending") && (
+          <div className="modal-actions">
+            <button
+              className="site-visit-approval status active"
+              onClick={() => {
+                setAlert({
+                  message: "Payment approved",
+                  status: "Success",
+                });
+
+                setTimeout(() => setAlert(null), 3000);
+              }}
+            >
+              <NiTick /> Approve
+            </button>
+
+            <button
+              className="site-visit-approval status failed"
+              onClick={() => {
+                setAlert({
+                  message: "Payment disapproved",
+                  status: "failed",
+                });
+
+                setTimeout(() => setAlert(null), 3000);
+              }}
+            >
+              <NiCross /> Disapprove
+            </button>
+          </div>
+        )}
       <DeleteModal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">

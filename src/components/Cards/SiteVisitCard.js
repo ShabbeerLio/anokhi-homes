@@ -164,6 +164,20 @@ const SiteVisitCard = ({
           </button>
         </div>
       )}
+      {mood === "agent" && item.status === "Scheduled" && (
+        <div className="modal-actions">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewOpen(true);
+              setPanelMode("booking");
+              setShowReport(false);
+            }}
+          >
+            Request Booking
+          </button>
+        </div>
+      )}
       {/* {mood === "agent" && item.status === "Scheduled" && (
           <div className="modal-actions">
             <button
@@ -372,7 +386,7 @@ const SiteVisitCard = ({
               </div>
 
               <div className="field">
-                <label>Total Amount</label>
+                <label>Total Amount <small style={{ fontSize: "12px", color: "green" }}>₹550 * 1200 sq.ft</small></label>
                 <input
                   placeholder="Total Amount"
                   value={selectedPlot?.price || ""}
@@ -381,16 +395,16 @@ const SiteVisitCard = ({
               </div>
 
               <div className="field">
-                <label>Amount Request
-                  {selectedPlot && (
+                <label>Amount Request in sq.ft
+                  {/* {selectedPlot && (
                     <small style={{ fontSize: "12px", color: "#ff6969" }}>
                       Allowed Range: ₹{selectedPlot.priceRange.min} - ₹{selectedPlot.priceRange.max}
                     </small>
-                  )}
+                  )} */}
                 </label>
                 <input
                   type="number"
-                  placeholder="Amount request"
+                  placeholder="Amount request in sq.ft"
                   value={formData.amountPaid || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, amountPaid: e.target.value })
@@ -405,7 +419,7 @@ const SiteVisitCard = ({
                   Number(formData.amountPaid) > selectedPlot.priceRange.max) && (
                   <div className="field">
                     <label>
-                      Notes <span style={{ color: "red" }}>*</span>
+                      Notes <small style={{ fontSize: "12px", color: "#ff6969" }}>(Price Doesn't Match Allowed Range)</small><span style={{ color: "red" }}>*</span>
                     </label>
                     <textarea
                       placeholder="Enter reason for requesting amount outside allowed range"

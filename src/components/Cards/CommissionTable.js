@@ -63,6 +63,7 @@ const CommissionTable = ({ item, exportToExcel, mood }) => {
             <p>Bonus</p>
             <p>TDS</p>
             <p>Admin Charge</p>
+            <p>Total</p>
           </div>
           <div className="user-card-bottom-right">
             <p>{item.calc.base}</p>
@@ -71,6 +72,7 @@ const CommissionTable = ({ item, exportToExcel, mood }) => {
             <p>₹{item.calc.topBonus}</p>
             <p>-₹{item.calc.tds}</p>
             <p>-₹{item.calc.adminCharge}</p>
+            <p style={{borderTop:"1px solid gray"}}> ₹{item.calc.final.toFixed(0)}</p>
           </div>
         </div>
         {mood === "admin" && (

@@ -174,3 +174,14 @@ select:focus {
 .comment.agent {
   color: #00c0eb;
 }
+
+
+.associate-location{
+  font-size: 12px !important;
+  color: #9f9f9f;
+  padding: 0 !important;
+}
+
+.associate-note{
+  padding-bottom: 10px !important;
+}

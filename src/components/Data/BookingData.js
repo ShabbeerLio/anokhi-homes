@@ -1,14 +1,14 @@
 const BookingData = [
   {
     id: 1,
-    customerId: "user1",
-    agentId: "agent1",
-    plot: "A-12",
+    customerId: "Rahul",
+    agentId: "Associate1",
+    plot: "A-12, Rajgir-colony, Bihar",
 
     totalAmount: 1200000,
     amountPaid: 120000,
 
-    status: "Confirmed",
+    status: "Pending",
 
     paymentSchedule: {
       booking: {
@@ -38,9 +38,9 @@ const BookingData = [
 
   {
     id: 2,
-    customerId: "user2",
-    agentId: "agent2",
-    plot: "B-5",
+    customerId: "Irfan",
+    agentId: "Associate2",
+    plot: "B-5, Rajgir-colony, Bihar",
 
     totalAmount: 850000,
     amountPaid: 0,
@@ -75,9 +75,9 @@ const BookingData = [
 
   {
     id: 3,
-    customerId: "user3",
-    agentId: "agent3",
-    plot: "C-8",
+    customerId: "Safiya",
+    agentId: "Associate3",
+    plot: "C-8, Mumbai-colony, Mumbai",
 
     totalAmount: 1000000,
     amountPaid: 40000,
@@ -110,41 +110,55 @@ const BookingData = [
     },
   },
   {
-  id: 4,
-  customerId: "user4",
-  agentId: "agent4",
-  plot: "D-10",
+    id: 4,
+    customerId: "Amit",
+    agentId: "Associate4",
+    plot: "D-10, Rajgir-colony, Bihar",
 
-  totalAmount: 1500000,
-  amountPaid: 525000,
+    totalAmount: 1500000,
+    amountPaid: 1500000,
 
-  status: "Confirmed",
+    status: "Confirmed",
 
-  paymentSchedule: {
-    booking: {
-      percent: 10,
-      amount: 150000,
-      paid: true,
-      date: "2026-02-10",
-    },
+    paymentSchedule: {
+      booking: {
+        percent: 10,
+        amount: 150000,
+        paid: true,
+        date: "2026-02-10",
+      },
 
-    agreement: {
-      percent: 25,
-      amount: 375000,
-      dueDays: 30,
-      paid: true,
-      date: "2026-03-05",
-    },
+      agreement: {
+        percent: 25,
+        amount: 375000,
+        dueDays: 30,
+        paid: true,
+        date: "2026-03-05",
+      },
 
-    full: {
-      percent: 65,
-      amount: 975000,
-      dueDays: 90,
-      paid: false,
-      date: null,
+      full: {
+        percent: 65,
+        amount: 975000,
+        dueDays: 90,
+        paid: true,
+        date: "2026-04-05",
+      },
     },
   },
-}
+  {
+    id: 5,
+    customerId: "Shanaya",
+    agentId: "Associate5",
+    plot: "D-10, Rajgir-colony, Bihar",
+    area:"1200 sqft",
+
+    totalAmount: 1500000,
+    amountPaid: 525000,
+
+    status: "Approval",
+    amountRequested: 500,
+    pricePerSqft: 700,
+  },
 ];
 
 export default BookingData;

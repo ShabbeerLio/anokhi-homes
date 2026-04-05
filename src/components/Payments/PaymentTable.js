@@ -295,41 +295,35 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             />
           </div>
         )}
-        <div className="field">
-          <label>Transaction ID *</label>
-          <input
-            placeholder="Enter Transaction ID"
-            value={formData.transactionId}
-            onChange={(e) =>
-              setFormData({ ...formData, transactionId: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="field">
-          <label>Attachment *</label>
-          <input
-            type="file"
-            onChange={(e) =>
-              setFormData({ ...formData, attachment: e.target.files[0] })
-            }
-          />
-        </div>
-
-        <div className="field">
-          <label>Status</label>
-          <select
-            value={formData.status}
-            onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value })
-            }
-          >
-            <option value="">Select Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-          </select>
-        </div>
+        {(formData.mode === "UPI" || formData.mode === "Bank Transfer") && (
+          <div className="field">
+            <label>Transaction ID *</label>
+            <input
+              placeholder="Enter Transaction ID"
+              value={formData.transactionId}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  transactionId: e.target.value,
+                })
+              }
+            />
+          </div>
+        )}
+        {(formData.mode === "UPI" || formData.mode === "Bank Transfer") && (
+          <div className="field">
+            <label>Attachment *</label>
+            <input
+              type="file"
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  attachment: e.target.files[0],
+                })
+              }
+            />
+          </div>
+        )}
         <div className="field">
           <label>Notes</label>
 

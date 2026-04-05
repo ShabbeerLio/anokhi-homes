@@ -99,7 +99,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
         return (
           <>
             <h4>Overview</h4>
-            <Overview userData={userData} />
+            <Overview userData={userData} mood={mood} setAlert={setAlert}/>
           </>
         );
     }

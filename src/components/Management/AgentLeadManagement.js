@@ -9,7 +9,7 @@ const AgentLeadManagement = ({ mood, setAlert }) => {
       id: 1,
       name: "Rahul",
       phone: "9876543210",
-      status: "Processing",
+      status: "Assigned",
       agent: "Me",
       date: "2026-02-18",
       notes: [

@@ -7,7 +7,6 @@ import AddLocationModal from "../../components/Modals/AddLocationModal";
 import NiSearch from "../../icons/ni-search";
 import BookingCard from "../../components/Cards/BookingCard";
 import BookingData from "../../components/Data/BookingData";
-import Alert from "../../components/Alert/Alert";
 import SearchSelect from "../../components/SearchItems/SearchSelect";
 const ITEMS_PER_PAGE = 12;
 
@@ -25,8 +24,9 @@ const Booking = ({ mood, setAlert }) => {
     customer: "",
     plot: "",
     amount: "",
-    amountPaid: "",
+    // amountPaid: "",
     status: "",
+    amountRequested: "",
   });
 
   useEffect(() => {
@@ -38,8 +38,9 @@ const Booking = ({ mood, setAlert }) => {
         customer: "",
         plot: "",
         amount: "",
-        amountPaid: "",
+        // amountPaid: "",
         status: "",
+        amountRequested: "",
       });
     }
   }, [selectedBooking]);
@@ -172,7 +173,7 @@ const Booking = ({ mood, setAlert }) => {
             />
           </div>
 
-          {["all", "Confirmed", "Pending", "Rejected"].map((f) => (
+          {["all", "Confirmed", "Pending","Approval", "Rejected"].map((f) => (
             <button
               key={f}
               className={filter === f ? "active" : ""}
@@ -313,7 +314,7 @@ const Booking = ({ mood, setAlert }) => {
           />
         </div>
 
-        <div className="field">
+        {/* <div className="field">
           <label>Amount Paid</label>
           <input
             placeholder="Amount Paid"
@@ -322,17 +323,17 @@ const Booking = ({ mood, setAlert }) => {
               setFormData({ ...formData, amountPaid: e.target.value })
             }
           />
-        </div>
+        </div> */}
         <div className="field">
-          <label>Amount Remaining</label>
+          <label>Amount Requested</label>
           <input
-            placeholder="Amount Remaining"
-            value={remainingAmount || 0}
+            placeholder="Amount Requested"
+            value={formData.amountRequested || 0 }
             disabled
           />
         </div>
 
-        {mood === "admin" && (
+        {/* {mood === "admin" && (
           <div className="field">
             <label>Status</label>
             <select
@@ -346,7 +347,7 @@ const Booking = ({ mood, setAlert }) => {
               <option value="Full">Rejected</option>
             </select>
           </div>
-        )}
+        )} */}
 
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
         <div className="modal-actions">

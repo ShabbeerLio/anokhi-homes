@@ -52,7 +52,7 @@
 .table-head,
 .table-row {
   display: grid;
-  grid-template-columns: 60px 80px 1fr 140px 140px 60px;
+  grid-template-columns: 60px 100px 1fr 1fr 1fr 100px 60px;
   align-items: center;
   padding: 12px 0;
 }
@@ -188,6 +188,7 @@
 }
 .user-card-title img {
   border-radius: 1.75rem;
+  width: 15%;
 }
 
 .user-card-top p {

@@ -74,3 +74,9 @@
   align-items: center;
   position: relative;
 }
+
+.agent-mini-stats h4{
+  border-bottom: 1px solid #d4d4d4;
+  padding-bottom: 5px;
+  margin-bottom: 0;
+}

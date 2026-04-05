@@ -11,6 +11,8 @@ import NiUser from "../../icons/ni-user";
 import NiSetting from "../../icons/ni-setting";
 import NiSitevisit from "../../icons/ni-sitevisit";
 import NiPayments from "../../icons/ni-payments";
+import NiDiscount from "../../icons/ni-discount";
+import NiCommission from "../../icons/ni-commission";
 
 function Sidebar({ closeMobile, mood }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -39,11 +41,11 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/commission", label: "Commission", icon: <NiPayments /> },
+      { path: "/commission", label: "Commission", icon: <NiCommission /> },
       {
         path: "/offers-discounts",
         label: "Offers & Discounts",
-        icon: <NiPayments />,
+        icon: <NiDiscount />,
       },
     ],
     staff: [
@@ -54,11 +56,11 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/commission", label: "Commission", icon: <NiPayments /> },
+      { path: "/commission", label: "Commission", icon: <NiCommission /> },
       {
         path: "/offers-discounts",
         label: "Offers & Discounts",
-        icon: <NiPayments />,
+        icon: <NiDiscount />,
       },
     ],
     agent: [
@@ -68,11 +70,11 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/commission", label: "Commission", icon: <NiPayments /> },
+      { path: "/commission", label: "Commission", icon: <NiCommission /> },
       {
         path: "/offers-discounts",
         label: "Offers & Discounts",
-        icon: <NiPayments />,
+        icon: <NiDiscount />,
       },
     ],
   };

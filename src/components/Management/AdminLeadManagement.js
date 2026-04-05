@@ -16,6 +16,51 @@ const AdminLeadManagement = ({ mood, setAlert }) => {
     },
     {
       id: 2,
+      name: "Arjun",
+      phone: "9988776655",
+      status: "Unassigned",
+      notes: [
+        {
+          text: "Client selected plot B12",
+          date: "3/14/2026, 5:27:34 PM",
+          by: "Amit",
+        },
+        {
+          text: "Booking amount discussion in progress",
+          date: "3/15/2026, 5:27:34 PM",
+          by: "Admin",
+        },
+      ],
+      agent: "Amit",
+      date: "2026-02-17",
+    },
+    {
+      id: 4,
+      name: "Arjun",
+      phone: "9988776655",
+      status: "Assigned",
+      notes: [
+        {
+          text: "Client scheduled site visit",
+          date: "3/14/2026, 5:27:34 PM",
+          by: "Amit",
+        },
+        {
+          text: "Waiting for client confirmation",
+          date: "3/15/2026, 3:27:34 PM",
+          by: "Amit",
+        },
+        {
+          text: "Waiting for client confirmation",
+          date: "3/15/2026, 3:27:34 PM",
+          by: "Admin",
+        },
+      ],
+      agent: "Amit",
+      date: "2026-02-17",
+    },
+    {
+      id: 5,
       name: "Imran",
       phone: "9123456789",
       status: "Converted",
@@ -54,51 +99,8 @@ const AdminLeadManagement = ({ mood, setAlert }) => {
       agent: "Amit",
       date: "2026-02-17",
     },
-    {
-      id: 4,
-      name: "Arjun",
-      phone: "9988776655",
-      status: "Processing",
-      notes: [
-        {
-          text: "Client scheduled site visit",
-          date: "3/14/2026, 5:27:34 PM",
-          by: "Amit",
-        },
-        {
-          text: "Waiting for client confirmation",
-          date: "3/15/2026, 3:27:34 PM",
-          by: "Amit",
-        },
-        {
-          text: "Waiting for client confirmation",
-          date: "3/15/2026, 3:27:34 PM",
-          by: "Admin",
-        },
-      ],
-      agent: "Amit",
-      date: "2026-02-17",
-    },
-    {
-      id: 5,
-      name: "Arjun",
-      phone: "9988776655",
-      status: "Booking",
-      notes: [
-        {
-          text: "Client selected plot B12",
-          date: "3/14/2026, 5:27:34 PM",
-          by: "Amit",
-        },
-        {
-          text: "Booking amount discussion in progress",
-          date: "3/15/2026, 5:27:34 PM",
-          by: "Admin",
-        },
-      ],
-      agent: "Amit",
-      date: "2026-02-17",
-    },
+    
+    
   ];
   return (
     <div className="dashboard-wrapper">

@@ -5,6 +5,8 @@ import ActionModal from "../Modals/ActionModal";
 import DeleteModal from "../Modals/DeleteModal";
 import ViewModal from "../Modals/ViewModal";
 import NiReport from "../../icons/ni-report";
+import NiCross from "../../icons/ni-cross";
+import NiTick from "../../icons/ni-tick";
 
 const BookingCard = ({
   item,
@@ -19,6 +21,9 @@ const BookingCard = ({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [disapproveOpen, setDisapproveOpen] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [panelMode, setPanelMode] = useState(null);
 
   useEffect(() => {
     if (!viewOpen) setShowReport(false);
@@ -51,6 +56,48 @@ const BookingCard = ({
     return remaining > 0 ? remaining : 0;
   };
 
+  const isApproval = item.status === "Approval";
+
+  // Example: requested amount = next pending installment
+  const requestedAmount = (() => {
+    if (!bookingPaid) return bookingAmount;
+    if (bookingPaid && !agreementPaid) return agreementAmount;
+    if (agreementPaid && !fullPaid) return fullAmount;
+    return 0;
+  })();
+  const pricePerSqft = item.plotArea ? Math.round(total / item.plotArea) : 0;
+
+  useEffect(() => {
+    if (!viewOpen) {
+      setPanelMode(null);
+      setShowReport(false);
+    }
+  }, [viewOpen]);
+
+  const currentStage = (() => {
+    if (!bookingPaid) return "booking";
+    if (bookingPaid && !agreementPaid) return "agreement";
+    if (agreementPaid && !fullPaid) return "full";
+    return "completed";
+  })();
+
+  useEffect(() => {
+    if (panelMode === "payment") {
+      let autoAmount = "";
+
+      if (currentStage === "booking") autoAmount = bookingAmount;
+      if (currentStage === "agreement") autoAmount = agreementAmount;
+      if (currentStage === "full") autoAmount = fullAmount;
+
+      setFormData((prev) => ({
+        ...prev,
+        paymentType: currentStage,
+        amount: autoAmount,
+        totalAmount: total,
+      }));
+    }
+  }, [panelMode]);
+
   return (
     <>
       {/* ================= CARD ================= */}
@@ -61,7 +108,7 @@ const BookingCard = ({
             <div className="user-card-name">
               <h4>
                 {item.customerId}
-                <span>({item.id})</span>
+                <span>({item.agentId})</span>
 
                 <span
                   className={`status ${
@@ -69,7 +116,9 @@ const BookingCard = ({
                       ? "active"
                       : item.status === "Pending"
                         ? "pending"
-                        : "rejected"
+                        : item.status === "Approval"
+                          ? "pending2"
+                          : "rejected"
                   }`}
                 >
                   {item.status}
@@ -99,7 +148,7 @@ const BookingCard = ({
               </span>
             )}
 
-            {activeRow === item.id && mood === "admin" &&  (
+            {activeRow === item.id && mood === "admin" && (
               <ActionModal
                 item={item}
                 onClose={() => setActiveRow(null)}
@@ -119,10 +168,22 @@ const BookingCard = ({
         <div className="user-card-bottom">
           <div className="user-card-bottom-left">
             <p>Plot</p>
-            <p>Total Amount</p>
-            <p>Paid</p>
-            <p>Remaining</p>
-            {item.status !== "Rejected" && (
+            {!isApproval ? (
+              <>
+                <p>Final Rate</p>
+                <p>Total Amount</p>
+                <p>Paid</p>
+                <p>Remaining</p>
+              </>
+            ) : (
+              <>
+                <p>Price/Sqft</p>
+                <p>Req. Rate</p>
+                <p>Total Amount</p>
+              </>
+            )}
+            {/* <p>Total Amount</p> */}
+            {item.status !== "Rejected" && !isApproval && (
               <p className="countdown">
                 {(() => {
                   if (!bookingPaid) {
@@ -144,11 +205,23 @@ const BookingCard = ({
           </div>
 
           <div className="user-card-bottom-right">
-            <p>{item.plot}</p>
-            <p>₹{total.toLocaleString()}</p>
-            <p>₹{paid.toLocaleString()}</p>
-            <p>₹{remaining.toLocaleString()}</p>
-            {item.status !== "Rejected" && (
+            <p>{item.plot} {item.area}</p>
+            {!isApproval ? (
+              <>
+                <p>₹500/sqft</p>
+                <p>₹{total.toLocaleString()}</p>
+                <p>₹{paid.toLocaleString()}</p>
+                <p>₹{remaining.toLocaleString()}</p>
+              </>
+            ) : (
+              <>
+                <p>₹500 - ₹{item.pricePerSqft}/sqft</p>
+                <p>₹{item.amountRequested}/sqft</p>
+                <p>₹{total.toLocaleString()}</p>
+              </>
+            )}
+            {/* <p>₹{total.toLocaleString()}</p> */}
+            {item.status !== "Rejected" && !isApproval && (
               <p className="countdown">
                 {(() => {
                   if (!bookingPaid) {
@@ -179,7 +252,80 @@ const BookingCard = ({
             )}
           </div>
         </div>
+        {mood === "admin" &&
+          (item.status === "Scheduled" || item.status === "Approval") && (
+            <div className="modal-actions">
+              <button
+                className="site-visit-approval status active"
+                onClick={() => {
+                  setAlert({
+                    message: "Booking approved",
+                    status: "Success",
+                  });
+
+                  setTimeout(() => setAlert(null), 3000);
+                }}
+              >
+                <NiTick /> Approve
+              </button>
+
+              <button
+                className="site-visit-approval status failed"
+                onClick={() => setDisapproveOpen(true)}
+              >
+                <NiCross /> Disapprove
+              </button>
+            </div>
+          )}
+           {item.status === "Pending" && (
+          <div class="modal-actions">
+            <button
+              onClick={(e) => {
+                 e.stopPropagation();
+                setViewOpen(true);
+                setPanelMode("payment");
+                setShowReport(false);
+              }}
+            >
+              Book Now
+            </button>
+          </div>
+        )}
       </div>
+
+      <DeleteModal
+        open={disapproveOpen}
+        onClose={() => setDisapproveOpen(false)}
+      >
+        <h4>Disapprove Booking</h4>
+        <div className="field">
+          <label>Notes</label>
+          <textarea
+            placeholder="Add Notes..."
+            value={formData.notes || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, notes: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="modal-actions">
+          <button
+            onClick={() => {
+              setAlert({
+                message: "Site visit disapproved",
+                status: "Success",
+              });
+
+              setDisapproveOpen(false);
+
+              setTimeout(() => setAlert(null), 3000);
+            }}
+          >
+            Disapprove
+          </button>
+        </div>
+      </DeleteModal>
 
       {/* ================= DELETE MODAL ================= */}
 
@@ -247,7 +393,10 @@ const BookingCard = ({
               <div className="table-filters">
                 <button
                   className={`view-report-btn ${showReport ? "active" : ""}`}
-                  onClick={() => setShowReport(!showReport)}
+                  onClick={() => {
+                    setPanelMode("report");
+                    setShowReport(true);
+                  }}
                 >
                   <NiReport /> {showReport ? "Hide" : "View"}
                 </button>
@@ -255,99 +404,251 @@ const BookingCard = ({
             )}
           </div>
         </div>
+        {item.status === "Pending" && (
+          <div class="modal-actions">
+            <button
+              onClick={() => {
+                setPanelMode("payment");
+                setShowReport(false);
+              }}
+            >
+              Pay Now
+            </button>
+          </div>
+        )}
 
         {/* ================= REPORT ================= */}
+        <div className={`report-view-box-right ${panelMode ? "active" : ""}`}>
+          {panelMode === "payment" && (
+            <>
+              <h4>Payment</h4>
 
-        <div className={`report-view-box-right ${showReport ? "active" : ""}`}>
-          <h4>Payment Timeline</h4>
-
-          <div className="installment-box">
-            {/* BOOKING */}
-
-            <div className={`installment ${bookingPaid ? "paid" : "pending"}`}>
-              <span>Booking Amount (10%)</span>
-              <span>
-                ₹{bookingAmount.toLocaleString()}(
-                {bookingPaid ? "Paid" : "Pending"})
-              </span>
-            </div>
-
-            {/* AGREEMENT */}
-
-            {bookingPaid && (
-              <div
-                className={`installment ${agreementPaid ? "paid" : "pending"}`}
-              >
-                <span>Agreement Amount (25%)</span>
-                <span>
-                  ₹{agreementAmount.toLocaleString()} (
-                  {agreementPaid ? "paid" : "pending"})
-                </span>
+              <div className="field">
+                <label>Payment Mode</label>
+                <select
+                  value={formData.mode}
+                  onChange={(e) =>
+                    setFormData({ ...formData, mode: e.target.value })
+                  }
+                >
+                  <option value="">Select Mode</option>
+                  <option value="Cash">Cash</option>
+                  <option value="UPI">UPI</option>
+                  <option value="Cheque">Cheque</option>
+                  <option value="Bank Transfer">Bank Transfer</option>
+                </select>
               </div>
-            )}
-            {bookingPaid && (
-              <div
-                className={`installment ${agreementPaid ? "paid" : "pending"}`}
-              >
-                <span></span>
-                <span>
-                  {agreementPaid
-                    ? ""
-                    : `${getRemainingDays(
-                        item.paymentSchedule?.booking?.date,
-                        item.paymentSchedule?.agreement?.dueDays || 30,
-                      )} days remaining`}
-                </span>
+              <div className="field">
+                <label>Payment Type</label>
+
+                <select
+                  value={formData.paymentType}
+                  disabled={currentStage !== "booking"} // 🔥 lock for agreement & full
+                  onChange={(e) => {
+                    const type = e.target.value;
+                    const total = Number(formData.totalAmount);
+
+                    let autoAmount = "";
+
+                    if (type === "booking") autoAmount = total * 0.1;
+                    if (type === "agreement") autoAmount = total * 0.25;
+                    if (type === "full") autoAmount = total;
+
+                    setFormData({
+                      ...formData,
+                      paymentType: type,
+                      amount: autoAmount || formData.amount,
+                    });
+                  }}
+                >
+                  <option value="">Select Payment Type</option>
+                  <option value="booking">Booking (10%)</option>
+                  <option value="agreement">Agreement (30%)</option>
+                  <option value="full">Full Payment</option>
+                </select>
               </div>
-            )}
-
-            {/* FULL */}
-
-            {agreementPaid && (
-              <div className={`installment ${fullPaid ? "paid" : "pending"}`}>
-                <span>Full Payment</span>
-                <span>
-                  ₹{fullAmount.toLocaleString()}({fullPaid ? "paid" : "pending"}
-                  )
-                </span>
+              <div className="field">
+                <label>Amount</label>
+                <input
+                  type="number"
+                  value={formData.amount}
+                  disabled={currentStage !== "booking"} // lock amount also
+                />
               </div>
-            )}
-            {agreementPaid && (
-              <div className={`installment ${fullPaid ? "paid" : "pending"}`}>
-                <span></span>
-                <span>
-                  {fullPaid
-                    ? ""
-                    : `${getRemainingDays(
-                        item.paymentSchedule?.agreement?.date ||
-                          item.paymentSchedule?.booking?.date,
-                        item.paymentSchedule?.full?.dueDays || 90,
-                      )} days remaining`}
-                </span>
+                <div className="field">
+                  <label>Valid Days for next payment</label>
+
+                  <input
+                    type="number"
+                    placeholder="Enter valid days (eg: 30 / 90)"
+                    value={formData.validDays}
+                    onChange={(e) =>
+                      setFormData({ ...formData, validDays: e.target.value })
+                    }
+                  />
+                </div>
+              {/* {(formData.paymentType === "agreement" ||
+                formData.paymentType === "full") && (
+              )} */}
+              {(formData.mode === "UPI" ||
+                formData.mode === "Bank Transfer") && (
+                <div className="field">
+                  <label>Transaction ID *</label>
+                  <input
+                    placeholder="Enter Transaction ID"
+                    value={formData.transactionId}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        transactionId: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              )}
+              {(formData.mode === "UPI" || formData.mode === "Cash" || formData.mode === "Cheque" || formData.mode === "Bank Transfer") && (
+                <div className="field">
+                  <label>Attachment *</label>
+                  <input
+                    type="file"
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        attachment: e.target.files[0],
+                      })
+                    }
+                  />
+                </div>
+              )}
+              <div className="field">
+                <label>Notes</label>
+
+                <textarea
+                  placeholder="Example: 35% cancellation charges"
+                  value={formData.notes}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                  }
+                />
               </div>
-            )}
-          </div>
+              <div className="modal-actions">
+                <button
+                  onClick={() => {
+                    setAlert({
+                      message: "Payment submitted",
+                      status: "Success",
+                    });
 
-          {/* NOTE */}
+                    setTimeout(() => setAlert(null), 3000);
 
-          <div className="payment-note">
-            <strong>Note:</strong> 35% cancellation charges applicable
-          </div>
+                    setViewOpen(null);
+                  }}
+                >
+                  Pay
+                </button>
+              </div>
+            </>
+          )}
 
-          {/* PROGRESS */}
+          {panelMode === "report" && (
+            <>
+              <h4>Payment Timeline</h4>
 
-          <div className="payment-progress">
-            <h5>Payment Progress</h5>
+              <div className="installment-box">
+                {/* BOOKING */}
 
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+                <div
+                  className={`installment ${bookingPaid ? "paid" : "pending"}`}
+                >
+                  <span>Booking Amount (10%)</span>
+                  <span>
+                    ₹{bookingAmount.toLocaleString()}(
+                    {bookingPaid ? "Paid" : "Pending"})
+                  </span>
+                </div>
 
-            <p>{Math.floor(progress)}% Paid</p>
-          </div>
+                {/* AGREEMENT */}
+
+                {bookingPaid && (
+                  <div
+                    className={`installment ${agreementPaid ? "paid" : "pending"}`}
+                  >
+                    <span>Agreement Amount (25%)</span>
+                    <span>
+                      ₹{agreementAmount.toLocaleString()} (
+                      {agreementPaid ? "paid" : "pending"})
+                    </span>
+                  </div>
+                )}
+                {bookingPaid && (
+                  <div
+                    className={`installment ${agreementPaid ? "paid" : "pending"}`}
+                  >
+                    <span></span>
+                    <span>
+                      {agreementPaid
+                        ? ""
+                        : `${getRemainingDays(
+                            item.paymentSchedule?.booking?.date,
+                            item.paymentSchedule?.agreement?.dueDays || 30,
+                          )} days remaining`}
+                    </span>
+                  </div>
+                )}
+
+                {/* FULL */}
+
+                {agreementPaid && (
+                  <div
+                    className={`installment ${fullPaid ? "paid" : "pending"}`}
+                  >
+                    <span>Full Payment</span>
+                    <span>
+                      ₹{fullAmount.toLocaleString()}(
+                      {fullPaid ? "paid" : "pending"})
+                    </span>
+                  </div>
+                )}
+                {agreementPaid && (
+                  <div
+                    className={`installment ${fullPaid ? "paid" : "pending"}`}
+                  >
+                    <span></span>
+                    <span>
+                      {fullPaid
+                        ? ""
+                        : `${getRemainingDays(
+                            item.paymentSchedule?.agreement?.date ||
+                              item.paymentSchedule?.booking?.date,
+                            item.paymentSchedule?.full?.dueDays || 90,
+                          )} days remaining`}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* NOTE */}
+
+              <div className="payment-note">
+                <strong>Note:</strong> 35% cancellation charges applicable
+              </div>
+
+              {/* PROGRESS */}
+
+              <div className="payment-progress">
+                <h5>Payment Progress</h5>
+
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+
+                <p>{Math.floor(progress)}% Paid</p>
+              </div>
+            </>
+          )}
         </div>
       </ViewModal>
     </>

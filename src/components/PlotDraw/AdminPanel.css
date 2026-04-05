@@ -51,7 +51,7 @@
   position: relative;
   min-width: 30%;
 }
-.modal h3{
+.modal h3 {
   margin: 0;
   padding-bottom: 5px;
   margin-bottom: 1rem;
@@ -79,6 +79,33 @@
   top: 5%;
   right: 3%;
   z-index: 5;
+}
+.plot-colors {
+  position: absolute;
+  bottom: 3%;
+  right: 2%;
+  z-index: 5;
+  border: 1px solid #9f9f9f;
+  border-radius: 1.75rem;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+}
+.plot-colors span {
+  border-radius: 1.75rem;
+  padding: 5px 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 12px;
+}
+.plot-colors span svg {
+  width: 14px !important;
+  height: 14px !important;
 }
 
 .plot-compass img {
@@ -110,7 +137,7 @@
 }
 
 .plot-modal .field select,
-.plot-modal .field input ,
+.plot-modal .field input,
 .plot-modal .field textarea {
   /* width: 100%; */
   padding: 10px;
@@ -130,20 +157,23 @@
   color: white;
   cursor: pointer;
   border: 1px solid var(--mood-color);
+  display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-actions {
   display: flex;
   gap: 10px;
 }
-.modal-actions .close-btn{
- background-color: transparent;
- color: black;
- border: none;
- position: absolute;
- top: 2%;
- right: 2%;
- width: auto;
+.modal-actions .close-btn {
+  background-color: transparent;
+  color: black;
+  border: none;
+  position: absolute;
+  top: 2%;
+  right: 2%;
+  width: auto;
 }
 
 .btn.sale {

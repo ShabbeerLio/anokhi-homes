@@ -3,6 +3,8 @@ import "./Commission.css";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import NiSearch from "../../icons/ni-search";
 import CommissionTable from "../../components/Cards/CommissionTable";
+import NiExport from "../../icons/ni-export";
+import ViewModal from "../../components/Modals/ViewModal";
 
 const ITEMS_PER_PAGE = 15;
 const commissionData = [
@@ -68,6 +70,14 @@ const Commission = ({ mood }) => {
     const [dateFilter, setDateFilter] = useState("");
     const [cycleFilter, setCycleFilter] = useState("");
     const [page, setPage] = useState(1);
+    const [monthFilter, setMonthFilter] = useState("");
+    const [agentFilter, setAgentFilter] = useState("");
+    const [exportOpen, setExportOpen] = useState(false);
+    const [exportFilters, setExportFilters] = useState({
+        agent: "",
+        month: "",
+        cycle: "",
+    });
 
     const modalRef = useRef(null);
 
@@ -170,29 +180,43 @@ const Commission = ({ mood }) => {
             const matchDate = !dateFilter || item.date === dateFilter;
             const matchCycle = !cycleFilter || item.cycle === cycleFilter;
 
+            // 🔥 Month filter (YYYY-MM)
+            const matchMonth =
+                !monthFilter || item.date.startsWith(monthFilter);
+
+            // 🔥 Agent filter
+            const matchAgent =
+                !agentFilter || item.agent === agentFilter;
+
             if (mood === "agent") {
                 return (
                     item.agent === "Rahul Sharma" &&
                     matchSearch &&
                     matchDate &&
-                    matchCycle
+                    matchCycle &&
+                    matchMonth &&
+                    matchAgent
                 );
             }
 
-            return matchSearch && matchDate && matchCycle;
+            return (
+                matchSearch &&
+                matchDate &&
+                matchCycle &&
+                matchMonth &&
+                matchAgent
+            );
         });
 
-        // 🔥 attach calculation
         result = result.map((item) => ({
             ...item,
             calc: calculateCommission(item, commissionData),
         }));
 
-        // 🔥 sort by highest commission %
         result.sort((a, b) => b.calc.final - a.calc.final);
 
         return result;
-    }, [search, dateFilter, cycleFilter, mood]);
+    }, [search, dateFilter, cycleFilter, monthFilter, agentFilter, mood]);
 
     // Pagination
     const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
@@ -204,7 +228,9 @@ const Commission = ({ mood }) => {
 
 
     /* ================= EXPORT EXCEL ================= */
-    const exportToExcel = (rowsData = filteredData) => {
+    const exportToExcel = (rowsData = filteredData, type = "filtered") => {
+        if (!rowsData.length) return alert("No data to export");
+
         const headers = [
             "Date",
             "Agent",
@@ -214,6 +240,9 @@ const Commission = ({ mood }) => {
             "Commission",
             "Cycle",
             "Status",
+            "Final",
+            "Level",
+            "Reward",
         ];
 
         const rows = rowsData.map((item) => [
@@ -221,10 +250,13 @@ const Commission = ({ mood }) => {
             item.agent,
             item.project,
             item.saleAmount,
-            item.commissionPercent,
-            item.commissionAmount,
+            item.calc.percent,
+            item.calc.base,
             item.cycle,
             item.status,
+            item.calc.final,
+            item.calc.levelName,
+            item.calc.reward,
         ]);
 
         const csv =
@@ -233,8 +265,45 @@ const Commission = ({ mood }) => {
 
         const link = document.createElement("a");
         link.href = encodeURI(csv);
-        link.download = `commission_${new Date().toISOString().slice(0, 10)}.csv`;
+
+        // 🔥 Dynamic file name
+        let name = "commission";
+
+        if (agentFilter) name += `_${agentFilter}`;
+        if (monthFilter) name += `_${monthFilter}`;
+        if (cycleFilter) name += `_${cycleFilter}`;
+
+        link.download = `${name}.csv`;
         link.click();
+    };
+
+    const handleExportSubmit = () => {
+        let data = commissionData;
+
+        // Apply filters
+        if (exportFilters.agent) {
+            data = data.filter((i) => i.agent === exportFilters.agent);
+        }
+
+        if (exportFilters.month) {
+            data = data.filter((i) =>
+                i.date.startsWith(exportFilters.month)
+            );
+        }
+
+        if (exportFilters.cycle) {
+            data = data.filter((i) => i.cycle === exportFilters.cycle);
+        }
+
+        // Attach calculations
+        data = data.map((item) => ({
+            ...item,
+            calc: calculateCommission(item, commissionData),
+        }));
+
+        exportToExcel(data);
+
+        setExportOpen(false);
     };
 
     return (
@@ -272,6 +341,13 @@ const Commission = ({ mood }) => {
                             <option value="16th">16th Cycle</option>
                         </select>
                     </div>
+                    <button
+                        className="add-button"
+                        onClick={() => setExportOpen(true)}
+                    >
+                        <NiExport /> Export
+                    </button>
+                    {/* Month Filter */}
                 </div>
             </div>
             {/* ================= TABLE ================= */}
@@ -318,6 +394,77 @@ const Commission = ({ mood }) => {
                     Next
                 </button>
             </div>
+            <ViewModal
+                open={exportOpen}
+                onClose={() => setExportOpen(false)}
+                title="Export Commission"
+            >
+                <div className="field">
+                    <label>Agent</label>
+                    <select
+                        value={exportFilters.agent}
+                        onChange={(e) =>
+                            setExportFilters({
+                                ...exportFilters,
+                                agent: e.target.value,
+                            })
+                        }
+                    >
+                        <option value="">All Agents</option>
+                        {[...new Set(commissionData.map((i) => i.agent))].map(
+                            (agent) => (
+                                <option key={agent} value={agent}>
+                                    {agent}
+                                </option>
+                            )
+                        )}
+                    </select>
+                </div>
+
+                <div className="field">
+                    <label>Month</label>
+                    <input
+                        type="month"
+                        value={exportFilters.month}
+                        onChange={(e) =>
+                            setExportFilters({
+                                ...exportFilters,
+                                month: e.target.value,
+                            })
+                        }
+                    />
+                </div>
+
+                <div className="field">
+                    <label>Cycle</label>
+                    <select
+                        value={exportFilters.cycle}
+                        onChange={(e) =>
+                            setExportFilters({
+                                ...exportFilters,
+                                cycle: e.target.value,
+                            })
+                        }
+                    >
+                        <option value="">All</option>
+                        <option value="1st">1st Cycle</option>
+                        <option value="16th">16th Cycle</option>
+                    </select>
+                </div>
+
+                <div className="modal-actions">
+                    <button onClick={handleExportSubmit}>
+                        Export Now
+                    </button>
+
+                    <button
+                        className="btn-outline"
+                        onClick={() => setExportOpen(false)}
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </ViewModal>
         </div>
     );
 };

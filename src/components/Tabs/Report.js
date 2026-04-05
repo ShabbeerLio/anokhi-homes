@@ -68,7 +68,7 @@ const Report = ({ userData }) => {
             {/* MONTHLY CHART */}
             {monthlySales?.length > 0 && (
                 <>
-                    <h4 style={{ marginTop: "40px" }}>Monthly Sales Trend</h4>
+                    <h4 style={{ marginTop: "40px" }}>Sales Trend</h4>
 
                     <div className="card" style={{ marginTop: "20px" }}>
                         <Charts

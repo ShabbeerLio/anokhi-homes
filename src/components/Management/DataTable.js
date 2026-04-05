@@ -115,29 +115,23 @@ const DataTable = ({ data, mood, setAlert }) => {
           >
             <option value="">All Status</option>
             <option value="New">New</option>
-            <option value="Processing">Processing</option>
-            <option value="Booking">Booking</option>
+            <option value="Assigned">Assigned</option>
+            <option value="Unassigned">Unassigned</option>
             <option value="Converted">Converted</option>
             <option value="Lost">Lost</option>
           </select>
         </div>
-        {mood !== "agent" && (
-          <div className="searchItem">
-            <select
-              value={agentFilter}
-              onChange={(e) => {
-                setAgentFilter(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="">Agent</option>
-              <option value="Amit">Amit</option>
-              <option value="Sana">Sana</option>
-              <option value="Raj">Raj</option>
-            </select>
-          </div>
-        )}
 
+        <div className="searchItem">
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => {
+              setDateFilter(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
         <div className="searchItem">
           <input
             type="date"
@@ -222,6 +216,8 @@ const DataTable = ({ data, mood, setAlert }) => {
             >
               <option value="">Select Status</option>
               <option value="New">New</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Unassigned">Unassigned</option>
               <option value="Converted">Converted</option>
               <option value="Lost">Lost</option>
             </select>
