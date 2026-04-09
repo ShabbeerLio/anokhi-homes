@@ -4,6 +4,7 @@ import AdminPayments from "../../components/Payments/AdminPayments";
 import AgentPayments from "../../components/Payments/AgentPayments";
 import StaffPayments from "../../components/Payments/StaffPayments";
 import "./Payments.css";
+import UserPayments from "../../components/Payments/UserPayments";
 
 
 const Payments = ({ mood, staffType, setAlert }) => {
@@ -15,6 +16,8 @@ const Payments = ({ mood, staffType, setAlert }) => {
         return <AgentPayments mood={mood} setAlert={setAlert}/>;
       case "staff":
         return <StaffPayments mood={mood} staffType={"accounts"} setAlert={setAlert}/>;
+      case "user":
+        return <UserPayments mood={mood} setAlert={setAlert}/>;
       default:
         return <div>Access Denied</div>;
     }

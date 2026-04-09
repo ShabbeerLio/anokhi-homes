@@ -230,18 +230,6 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
         </div>
 
         <div className="field">
-          <label>Amount</label>
-          <input
-            type="number"
-            value={formData.amount}
-            onChange={(e) =>
-              setFormData({ ...formData, amount: e.target.value })
-            }
-            placeholder="Amount"
-          />
-        </div>
-
-        <div className="field">
           <label>Payment Mode</label>
           <select
             value={formData.mode}
@@ -250,6 +238,7 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             <option value="">Select Mode</option>
             <option value="Cash">Cash</option>
             <option value="UPI">UPI</option>
+            <option value="Cheque">Cheque</option>
             <option value="Bank Transfer">Bank Transfer</option>
           </select>
         </div>
@@ -258,6 +247,7 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
 
           <select
             value={formData.paymentType}
+            // disabled={currentStage !== "booking"} // 🔥 lock for agreement & full
             onChange={(e) => {
               const type = e.target.value;
               const total = Number(formData.totalAmount);
@@ -265,7 +255,8 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
               let autoAmount = "";
 
               if (type === "booking") autoAmount = total * 0.1;
-              if (type === "agreement") autoAmount = total * 0.3;
+              if (type === "agreement") autoAmount = total * 0.25;
+              if (type === "full") autoAmount = total;
 
               setFormData({
                 ...formData,
@@ -280,21 +271,33 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             <option value="full">Full Payment</option>
           </select>
         </div>
-        {(formData.paymentType === "agreement" ||
-          formData.paymentType === "full") && (
-          <div className="field">
-            <label>Valid Days</label>
+        <div className="field">
+          <label>Amount</label>
+          <input
+            type="number"
+            placeholder="Amount"
+            onChange={(e) =>
+              setFormData({ ...formData, amount: e.target.value })
+            }
+            value={formData.amount}
+            // disabled={currentStage !== "booking"} // lock amount also
+          />
+        </div>
+        <div className="field">
+          <label>Valid Days for next payment</label>
 
-            <input
-              type="number"
-              placeholder="Enter valid days (eg: 30 / 90)"
-              value={formData.validDays}
-              onChange={(e) =>
-                setFormData({ ...formData, validDays: e.target.value })
-              }
-            />
-          </div>
-        )}
+          <input
+            type="number"
+            placeholder="Enter valid days (eg: 30 / 90)"
+            value={formData.validDays}
+            onChange={(e) =>
+              setFormData({ ...formData, validDays: e.target.value })
+            }
+          />
+        </div>
+        {/* {(formData.paymentType === "agreement" ||
+                formData.paymentType === "full") && (
+              )} */}
         {(formData.mode === "UPI" || formData.mode === "Bank Transfer") && (
           <div className="field">
             <label>Transaction ID *</label>
@@ -310,7 +313,10 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             />
           </div>
         )}
-        {(formData.mode === "UPI" || formData.mode === "Bank Transfer") && (
+        {(formData.mode === "UPI" ||
+          formData.mode === "Cash" ||
+          formData.mode === "Cheque" ||
+          formData.mode === "Bank Transfer") && (
           <div className="field">
             <label>Attachment *</label>
             <input
@@ -324,18 +330,7 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             />
           </div>
         )}
-        <div className="field">
-          <label>Notes</label>
-
-          <textarea
-            placeholder="Example: 35% cancellation charges"
-            value={formData.notes}
-            onChange={(e) =>
-              setFormData({ ...formData, notes: e.target.value })
-            }
-          />
-        </div>
-        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+        <p>Notes : 35% cancellation charges</p>
         <div className="modal-actions">
           <button
             onClick={() => {

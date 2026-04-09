@@ -4,21 +4,21 @@
   align-items: flex-start;
 }
 
-.profile-card{
+.profile-card {
   width: 100%;
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
-.profile-top{
-    text-align: center;
+.profile-top {
+  text-align: center;
 }
-.profile-top h3{
-    margin: 0;
+.profile-top h3 {
+  margin: 0;
 }
-.profile-top p{
-    font-size: 12px;
-    margin-top: 5px;
-    color: #9f9f9f;
+.profile-top p {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #9f9f9f;
 }
 
 .profile-avatar {
@@ -29,11 +29,12 @@
 }
 
 .profile-sidebar {
-  width: 30%;
+  width: 25%;
+  position: relative;
 }
 
 .profile-main {
-  width: 70%;
+  width: 75%;
 }
 
 .stats-grid {
@@ -44,10 +45,10 @@
 }
 
 .profile-nav {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
-.profile-nav span{
-    cursor: pointer;
+.profile-nav span {
+  cursor: pointer;
 }
 
 .report-grid {
@@ -69,14 +70,28 @@
 }
 
 .referral-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
+  position: absolute;
+  top: 5%;
+  right: 5%;
 }
 
-.agent-mini-stats h4{
+.agent-mini-stats h4 {
   border-bottom: 1px solid #d4d4d4;
   padding-bottom: 5px;
   margin-bottom: 0;
+}
+
+.doc-thumbnail {
+  width: 50px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  transition: 0.2s;
+}
+
+.doc-thumbnail:hover {
+  transform: scale(1.05);
+  border-color: #999;
 }

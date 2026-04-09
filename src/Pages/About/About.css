@@ -38,9 +38,9 @@
 }
 .landing-top h1 {
   color: white;
-  font-size: 100px;
+  font-size: 75px;
   text-transform: uppercase;
-  letter-spacing: 35px;
+  letter-spacing: 10px;
 }
 
 .landing-head .breadcrumb {

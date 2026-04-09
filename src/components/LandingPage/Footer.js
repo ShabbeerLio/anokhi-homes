@@ -2,9 +2,9 @@ import React from "react";
 import "./Footer.css";
 import { FaEnvelope, FaFacebook, FaLinkedin, FaPhoneAlt } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { FaLocationDot, FaXTwitter } from "react-icons/fa6";
-import Logo from "../../icons/FooterLogo"
+import Logo from "../../Assets/Logo/Anokhi Homes.png"
 
 const Footer = () => {
     return (
@@ -13,10 +13,10 @@ const Footer = () => {
             <div className="footer-top landing-pages">
                 {/* Company */}
                 <div className="footer-col">
-                    {/* <img className="footer-logo" src={logo} alt="" /> */}
-                    <div className="footer-logo">
+                    <img className="footer-logo" src={Logo} alt="" />
+                    {/* <div className="footer-logo">
                         <Logo />
-                    </div>
+                    </div> */}
                     <p>
                         At Anokhi Homes, we don't just sell plots we help you own a piece of your future, where your dreams take root and your legacy begins.
                     </p>
@@ -27,12 +27,11 @@ const Footer = () => {
                 <div className="footer-col">
                     {/* <h4>Useful Links</h4> */}
                     <ul className="footer-navitems">
-                        <li><a href="/about">About Us</a></li>
-                        <li><a href="/contact">Contact Us</a></li>
-                        <li><a href="/career">Career</a></li>
-                        <li><a href="/privacy-policy">Privacy Policy</a></li>
-                        <li><a href="/terms-conditions">Terms & Conditions</a></li>
-                        <li><a href="/return-refund">Return and Refund Policy</a></li>
+                        <li><NavLink to="/contact">Contact Us</NavLink></li>
+                        <li><NavLink to="/">Career</NavLink></li>
+                        <li><NavLink to="/privacy-policy">Privacy Policy</NavLink></li>
+                        <li><NavLink to="/term-condition">Terms & Conditions</NavLink></li>
+                        <li><NavLink to="/cancellation-refund">Cancellation and Refund Policy</NavLink></li>
                     </ul>
                 </div>
 

@@ -7,6 +7,10 @@ import ViewModal from "../Modals/ViewModal";
 import NiReport from "../../icons/ni-report";
 import NiTick from "../../icons/ni-tick";
 import NiCross from "../../icons/ni-cross";
+import NiUser from "../../icons/ni-user";
+import NiBooking from "../../icons/ni-booking";
+import { useNavigate } from "react-router-dom";
+import NiDownload from "../../icons/ni-download";
 
 const PaymentCard = ({
   item,
@@ -21,19 +25,14 @@ const PaymentCard = ({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     if (!viewOpen) {
       setShowReport(false);
     }
   }, [viewOpen]);
-
-  const total = item.totalAmount || item.amount || 0;
   const paid = item.paidAmount || 0;
 
-  const bookingAmount = total * 0.1;
-  const agreementAmount = total * 0.3;
-  const fullAmount = total - bookingAmount - agreementAmount;
-  const progress = total ? (paid / total) * 100 : 0;
 
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
@@ -44,7 +43,7 @@ const PaymentCard = ({
               {item.client}
               {/* <span>({item.phone})</span> */}
               <span
-                className={`status ${item.status === "Approved" ? "active" : item.status === "Pending" ? "pending" : "failed"}`}
+                className={`status ${item.status === "Completed" ? "active" : item.status === "Pending" ? "pending" : "failed"}`}
               >
                 {item.status}
               </span>
@@ -90,12 +89,12 @@ const PaymentCard = ({
       </div>
       <div className="user-card-bottom">
         <div className="user-card-bottom-left">
-          <p>Date</p>
-          <p>Phone No.</p>
-          <p>Project</p>
+          <p>Payment Date</p>
+          <p>Customer Phone No.</p>
+          <p>Plot</p>
           <p>Amount</p>
           <p>Mode</p>
-          <p>Due Status</p>
+          {/* <p>Due Status</p> */}
         </div>
         <div className="user-card-bottom-right">
           <p>{item.date}</p>
@@ -103,41 +102,40 @@ const PaymentCard = ({
           <p>{item.project}</p>
           <p>₹{paid.toLocaleString()}</p>
           <p>{item.mode}</p>
-          <p>{item.dueStatus}</p>
+          {/* <p>{item.dueStatus}</p> */}
         </div>
       </div>
-      {mood === "admin" &&
-        (item.status === "Pending") && (
-          <div className="modal-actions">
-            <button
-              className="site-visit-approval status active"
-              onClick={() => {
-                setAlert({
-                  message: "Payment approved",
-                  status: "Success",
-                });
+      {mood === "admin" && item.status === "Pending" && (
+        <div className="modal-actions">
+          <button
+            className="site-visit-approval status active"
+            onClick={() => {
+              setAlert({
+                message: "Payment approved",
+                status: "Success",
+              });
 
-                setTimeout(() => setAlert(null), 3000);
-              }}
-            >
-              <NiTick /> Approve
-            </button>
+              setTimeout(() => setAlert(null), 3000);
+            }}
+          >
+            <NiTick /> Approve
+          </button>
 
-            <button
-              className="site-visit-approval status failed"
-              onClick={() => {
-                setAlert({
-                  message: "Payment disapproved",
-                  status: "failed",
-                });
+          <button
+            className="site-visit-approval status failed"
+            onClick={() => {
+              setAlert({
+                message: "Payment disapproved",
+                status: "failed",
+              });
 
-                setTimeout(() => setAlert(null), 3000);
-              }}
-            >
-              <NiCross /> Disapprove
-            </button>
-          </div>
-        )}
+              setTimeout(() => setAlert(null), 3000);
+            }}
+          >
+            <NiCross /> Disapprove
+          </button>
+        </div>
+      )}
       <DeleteModal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
@@ -179,23 +177,19 @@ const PaymentCard = ({
       >
         <div className="user-card-bottom view-box">
           <div className="user-card-bottom-left">
-            <p>Date</p>
-            <p>Phone No.</p>
-            <p>Project</p>
-            <p>Amount</p>
+            <p>Payment Date</p>
+            <p>Plot</p>
+            <p>Amount Paid</p>
             <p>Mode</p>
             <p>Status</p>
-            <p>Due Status</p>
             <p>Report</p>
           </div>
           <div className="user-card-bottom-right">
             <p>{item.date}</p>
-            <p>{item.phone}</p>
             <p>{item.project}</p>
             <p>₹{item.paidAmount}</p>
             <p>{item.mode}</p>
             <p>{item.status}</p>
-            <p>{item.dueStatus}</p>
             <div className="table-filters">
               <button
                 className={`view-report-btn ${showReport ? "active" : ""}`}
@@ -206,105 +200,52 @@ const PaymentCard = ({
             </div>
           </div>
         </div>
+        <div className="table-filters">
+          {mood !== "user" && (
+            <button
+              className="view-report-btn "
+              onClick={() => {
+                // navigate(`/user/474`);
+              }}
+            >
+              <NiUser /> Customer Details
+            </button>
+          )}
+
+          <button className="view-report-btn " onClick={() => { }}>
+            <NiBooking /> Booking Details
+          </button>
+        </div>
         <div className={`report-view-box-right ${showReport ? "active" : ""}`}>
-          <h4>Payment Report</h4>
-
-          {/* SUMMARY CARDS */}
-          <div className="user-card-bottom view-box">
-            <div className="user-card-bottom-left">
-              <p>Total Amount</p>
-              <p>Paid Amount</p>
-              <p>Outstanding</p>
-              <p>Due Status</p>
-            </div>
-            <div className="user-card-bottom-right">
-              <p>₹{total}</p>
-              <p>₹{paid}</p>
-              <p>₹{total - paid}</p>
-              <p>{item.dueStatus}</p>
-            </div>
-          </div>
-
           {/* PAYMENT DETAILS */}
           <div className="payment-details">
-            <h5>Transaction Details</h5>
-            <p>
-              <strong>Client:</strong> {item.client}
-            </p>
-            <p>
-              <strong>Project:</strong> {item.project}
-            </p>
-            <p>
-              <strong>Payment Mode:</strong> {item.mode}
-            </p>
-            <p>
-              <strong>Status:</strong> {item.status}
-            </p>
+            <h5
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}>
+              Transaction Details
+              <span className="download-btn"><NiDownload /></span>
+            </h5>
+
             <p>
               <strong>Transaction ID:</strong>{" "}
               {item.payments?.[0]?.transactionId || "-"}
             </p>
             <p>
-              <strong>Approved By:</strong> Admin
+              <strong>Added By:</strong> Admin
             </p>
             <p>
-              <strong>Date:</strong> {item.date}
+              <strong>Completed By:</strong> Admin
             </p>
-          </div>
-
-          {/* <div className="payment-history">
-            <h5>Payment History</h5>
-
-            {item.payments.map((p, i) => (
-              <div key={i} className="payment-row">
-                <p>
-                  <strong>Type:</strong> {p.type}
-                </p>
-                <p>
-                  <strong>Amount:</strong> ₹{p.amount}
-                </p>
-                <p>
-                  <strong>Mode:</strong> {p.mode}
-                </p>
-                <p>
-                  <strong>Date:</strong> {p.date}
-                </p>
-                <p>
-                  <strong>Txn ID:</strong> {p.transactionId}
-                </p>
-                <p>
-                  <strong>Status:</strong> {p.status}
-                </p>
-                <p>
-                  <strong>Attachment:</strong>{" "}
-                  {p.attachment ? "View File" : "N/A"}
-                </p>
-              </div>
-            ))}
-          </div> */}
-
-          {/* INSTALLMENT TIMELINE */}
-          <div className="installment-box">
-            <h5>Installment Timeline</h5>
-
-            <div className="installment">
-              <span>Booking (10%)</span>
-              <span>₹{bookingAmount.toLocaleString()}</span>
-            </div>
-
-            <div className="installment">
-              <span>Agreement (30%)</span>
-              <span>₹{agreementAmount.toLocaleString()}</span>
-            </div>
-
-            <div className="installment">
-              <span>Full Payment</span>
-              <span>₹{fullAmount.toLocaleString()}</span>
-            </div>
+            <p>
+              <strong>Completed Date:</strong> {item.date}
+            </p>
           </div>
 
           {/* PAYMENT PROGRESS */}
-          <div className="payment-progress">
+          {/* <div className="payment-progress">
             <h5>Payment Progress</h5>
 
             <div className="progress-bar">
@@ -315,8 +256,8 @@ const PaymentCard = ({
             </div>
 
             <p>{Math.floor(progress)}% Paid</p>
-          </div>
-          <div className="payment-note">
+          </div> */}
+          <div className="payment-note" style={{ marginTop: "1rem" }}>
             <strong>Note:</strong> 35% cancellation charges applicable.
           </div>
         </div>

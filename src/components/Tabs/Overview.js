@@ -12,7 +12,7 @@ const Overview = ({ userData, mood, setAlert }) => {
   const AGENTS = [
     {
       id: 1001,
-      user: "agent",
+      user: "Associate",
       name: "Rahul Sharma",
       email: "rahul@company.com",
       phone: "9876543210",
@@ -24,12 +24,9 @@ const Overview = ({ userData, mood, setAlert }) => {
       personal: {
         address: "Delhi",
         panNumber: "ABCDE1234F",
+        panPhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
         aadharNumber: "123456789012",
-      },
-
-      documents: {
-        panPhoto: "pan_rahul.jpg",
-        aadharPhoto: "aadhar_rahul.jpg",
+        aadharPhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
       },
 
       bank: {
@@ -42,7 +39,7 @@ const Overview = ({ userData, mood, setAlert }) => {
         name: "Priya Sharma",
         relation: "wife",
         aadharNumber: "987654321012",
-        aadharPhoto: "nominee_aadhar.jpg",
+        aadharPhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
       },
 
       referral: {
@@ -88,7 +85,7 @@ const Overview = ({ userData, mood, setAlert }) => {
   const USERS = [
     {
       id: 3001,
-      user: "user",
+      user: "Customer",
       name: "Amit Kumar",
       email: "amit@gmail.com",
       phone: "9988776655",
@@ -181,13 +178,26 @@ const Overview = ({ userData, mood, setAlert }) => {
           <div className="overview-grid">
             {AGENTS[0].personal &&
               Object.entries(AGENTS[0].personal).map(([key, value]) => (
-                <div>
+                <div key={key}>
                   <label>
                     {key
                       .replace(/([A-Z])/g, " $1")
                       .replace(/^./, (str) => str.toUpperCase())}
                   </label>
-                  <p>{value}</p>
+
+                  {/* ✅ Show image if photo */}
+                  {key.toLowerCase().includes("photo") ? (
+                    <p>
+                      <img
+                        src={value}
+                        alt={key}
+                        className="doc-thumbnail"
+                        onClick={() => window.open(value, "_blank")}
+                      />
+                    </p>
+                  ) : (
+                    <p>{value}</p>
+                  )}
                 </div>
               ))}
           </div>
@@ -209,13 +219,25 @@ const Overview = ({ userData, mood, setAlert }) => {
           <div className="overview-grid">
             {AGENTS[0].nominee &&
               Object.entries(AGENTS[0].nominee).map(([key, value]) => (
-                <div>
+                <div key={key}>
                   <label>
                     {key
                       .replace(/([A-Z])/g, " $1")
                       .replace(/^./, (str) => str.toUpperCase())}
                   </label>
-                  <p>{value}</p>
+
+                  {key.toLowerCase().includes("photo") ? (
+                    <p>
+                      <img
+                        src={value}
+                        alt={key}
+                        className="doc-thumbnail"
+                        onClick={() => window.open(value, "_blank")}
+                      />
+                    </p>
+                  ) : (
+                    <p>{value}</p>
+                  )}
                 </div>
               ))}
           </div>
@@ -295,7 +317,7 @@ const Overview = ({ userData, mood, setAlert }) => {
           </div> */}
         </div>
       )}
-      {userData.user === "user" && (
+      {userData.user === "Customer" && (
         <div className="agent-mini-stats">
           <h4>Connection Details</h4>
           <div className="overview-grid">

@@ -111,15 +111,14 @@ const BookingCard = ({
                 <span>({item.agentId})</span>
 
                 <span
-                  className={`status ${
-                    item.status === "Confirmed"
+                  className={`status ${item.status === "Confirmed"
                       ? "active"
                       : item.status === "Pending"
                         ? "pending"
                         : item.status === "Approval"
                           ? "pending2"
                           : "rejected"
-                  }`}
+                    }`}
                 >
                   {item.status}
                 </span>
@@ -170,16 +169,19 @@ const BookingCard = ({
             <p>Plot</p>
             {!isApproval ? (
               <>
-                <p>Final Rate</p>
-                <p>Total Amount</p>
-                <p>Paid</p>
-                <p>Remaining</p>
+                <p> Final Rate</p>
+                <p> Total Amount</p>
+                <p> Paid</p>
+                <p> Remaining</p>
               </>
             ) : (
               <>
                 <p>Price/Sqft</p>
                 <p>Req. Rate</p>
                 <p>Total Amount</p>
+                <p>Booking Payment</p>
+                <p>Agreement Payment</p>
+                <p>Full Payment</p>
               </>
             )}
             {/* <p>Total Amount</p> */}
@@ -205,7 +207,9 @@ const BookingCard = ({
           </div>
 
           <div className="user-card-bottom-right">
-            <p>{item.plot} {item.area}</p>
+            <p>
+              {item.plot} {item.area}
+            </p>
             {!isApproval ? (
               <>
                 <p>₹500/sqft</p>
@@ -218,6 +222,9 @@ const BookingCard = ({
                 <p>₹500 - ₹{item.pricePerSqft}/sqft</p>
                 <p>₹{item.amountRequested}/sqft</p>
                 <p>₹{total.toLocaleString()}</p>
+                <p>08-09 Days</p>
+                <p>28-30 Days</p>
+                <p>30-40 Days</p>
               </>
             )}
             {/* <p>₹{total.toLocaleString()}</p> */}
@@ -241,7 +248,7 @@ const BookingCard = ({
                   if (agreementPaid && !fullPaid) {
                     return `${getRemainingDays(
                       item.paymentSchedule?.agreement?.date ||
-                        item.paymentSchedule?.booking?.date,
+                      item.paymentSchedule?.booking?.date,
                       item.paymentSchedule?.full?.dueDays || 90,
                     )} days remaining`;
                   }
@@ -277,11 +284,11 @@ const BookingCard = ({
               </button>
             </div>
           )}
-           {item.status === "Pending" && (
+        {item.status === "Pending" && mood !== "user" && (
           <div class="modal-actions">
             <button
               onClick={(e) => {
-                 e.stopPropagation();
+                e.stopPropagation();
                 setViewOpen(true);
                 setPanelMode("payment");
                 setShowReport(false);
@@ -404,7 +411,7 @@ const BookingCard = ({
             )}
           </div>
         </div>
-        {item.status === "Pending" && (
+        {item.status === "Pending" && mood !== "user" && panelMode !== "payment" && (
           <div class="modal-actions">
             <button
               onClick={() => {
@@ -412,7 +419,7 @@ const BookingCard = ({
                 setShowReport(false);
               }}
             >
-              Pay Now
+              Book Now
             </button>
           </div>
         )}
@@ -475,62 +482,55 @@ const BookingCard = ({
                   disabled={currentStage !== "booking"} // lock amount also
                 />
               </div>
-                <div className="field">
-                  <label>Valid Days for next payment</label>
+              <div className="field">
+                <label>Valid Days for next payment</label>
 
-                  <input
-                    type="number"
-                    placeholder="Enter valid days (eg: 30 / 90)"
-                    value={formData.validDays}
-                    onChange={(e) =>
-                      setFormData({ ...formData, validDays: e.target.value })
-                    }
-                  />
-                </div>
+                <input
+                  type="number"
+                  placeholder="Enter valid days (eg: 30 / 90)"
+                  value={formData.validDays}
+                  onChange={(e) =>
+                    setFormData({ ...formData, validDays: e.target.value })
+                  }
+                />
+              </div>
               {/* {(formData.paymentType === "agreement" ||
                 formData.paymentType === "full") && (
               )} */}
               {(formData.mode === "UPI" ||
                 formData.mode === "Bank Transfer") && (
-                <div className="field">
-                  <label>Transaction ID *</label>
-                  <input
-                    placeholder="Enter Transaction ID"
-                    value={formData.transactionId}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        transactionId: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              )}
-              {(formData.mode === "UPI" || formData.mode === "Cash" || formData.mode === "Cheque" || formData.mode === "Bank Transfer") && (
-                <div className="field">
-                  <label>Attachment *</label>
-                  <input
-                    type="file"
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        attachment: e.target.files[0],
-                      })
-                    }
-                  />
-                </div>
-              )}
-              <div className="field">
-                <label>Notes</label>
-
-                <textarea
-                  placeholder="Example: 35% cancellation charges"
-                  value={formData.notes}
-                  onChange={(e) =>
-                    setFormData({ ...formData, notes: e.target.value })
-                  }
-                />
-              </div>
+                  <div className="field">
+                    <label>Transaction ID *</label>
+                    <input
+                      placeholder="Enter Transaction ID"
+                      value={formData.transactionId}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          transactionId: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                )}
+              {(formData.mode === "UPI" ||
+                formData.mode === "Cash" ||
+                formData.mode === "Cheque" ||
+                formData.mode === "Bank Transfer") && (
+                  <div className="field">
+                    <label>Attachment *</label>
+                    <input
+                      type="file"
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          attachment: e.target.files[0],
+                        })
+                      }
+                    />
+                  </div>
+                )}
+              <p>Notes : 35% cancellation charges</p>
               <div className="modal-actions">
                 <button
                   onClick={() => {
@@ -544,7 +544,7 @@ const BookingCard = ({
                     setViewOpen(null);
                   }}
                 >
-                  Pay
+                  Add Payment
                 </button>
               </div>
             </>
@@ -589,9 +589,9 @@ const BookingCard = ({
                       {agreementPaid
                         ? ""
                         : `${getRemainingDays(
-                            item.paymentSchedule?.booking?.date,
-                            item.paymentSchedule?.agreement?.dueDays || 30,
-                          )} days remaining`}
+                          item.paymentSchedule?.booking?.date,
+                          item.paymentSchedule?.agreement?.dueDays || 30,
+                        )} days remaining`}
                     </span>
                   </div>
                 )}
@@ -618,10 +618,10 @@ const BookingCard = ({
                       {fullPaid
                         ? ""
                         : `${getRemainingDays(
-                            item.paymentSchedule?.agreement?.date ||
-                              item.paymentSchedule?.booking?.date,
-                            item.paymentSchedule?.full?.dueDays || 90,
-                          )} days remaining`}
+                          item.paymentSchedule?.agreement?.date ||
+                          item.paymentSchedule?.booking?.date,
+                          item.paymentSchedule?.full?.dueDays || 90,
+                        )} days remaining`}
                     </span>
                   </div>
                 )}

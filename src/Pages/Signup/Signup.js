@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import NiClosseye from "../../icons/ni-closseye";
 import NiOpenEye from "../../icons/ni-openEye";
 import { ChevronLeft } from "lucide-react";
+import NiTick from "../../icons/ni-tick";
 
 const Signup = ({ mood, setAlert }) => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const Signup = ({ mood, setAlert }) => {
 
   /* ================= OTP ================= */
   const verifyOtp = () => {
-    if (formData.emailOtp === "1234") {
+    if (formData.emailOtp === "123456") {
       setFormData((prev) => ({ ...prev, isEmailVerified: true }));
       setAlert({
         message: "Email Verified successfully!",
@@ -73,7 +74,7 @@ const Signup = ({ mood, setAlert }) => {
 
   /* ================= VALIDATIONS ================= */
   const canGoStep2 =
-    formData.name && formData.email && formData.phone && formData.password;
+    formData.name && formData.email && formData.phone && formData.password && formData.referralCode;
 
   const canGoStep3 =
     formData.address &&
@@ -94,6 +95,7 @@ const Signup = ({ mood, setAlert }) => {
   const handleFinish = () => {
     if (formData.accountNumber !== formData.confirmAccountNumber) {
       // return (alert("Account numbers do not match"));
+      navigate("/dashboard");
       setAlert({
         message: "Account numbers do not match",
         status: "Error",
@@ -106,13 +108,19 @@ const Signup = ({ mood, setAlert }) => {
     console.log("FINAL DATA:", formData);
     // alert("Agent Registered Successfully 🚀");
     setAlert({
-      message: "Registration Successful!",
+      message: "Registration Request Submitted Successfully! Please check email for further informations.",
       status: "Success",
     });
+    navigate("/");
     setTimeout(() => {
       setAlert(null);
     }, 5000);
   };
+
+  const isAccountMatch =
+    formData.accountNumber &&
+    formData.confirmAccountNumber &&
+    formData.accountNumber === formData.confirmAccountNumber;
 
   if (mood === "admin") {
     return (
@@ -248,10 +256,17 @@ const Signup = ({ mood, setAlert }) => {
                 setFormData({ ...formData, role: e.target.value })
               }
             />
-            <button className={`role-${mood}`} onClick={() => setAlert({
-              message: "Registration Successful!",
-              status: "Success",
-            })}>
+            <button className={`role-${mood}`} onClick={() => {
+              navigate("/dashboard");
+              setAlert({
+                message: "Registration Successful!",
+                status: "Success",
+              })
+              setTimeout(() => {
+                setAlert(null);
+              }, 5000);
+            }
+            }>
               Sign Up
             </button>
             <p className="auth-footer">
@@ -379,6 +394,7 @@ const Signup = ({ mood, setAlert }) => {
                 />
 
                 <input
+                  type="password"
                   placeholder="Account Number"
                   value={formData.accountNumber}
                   onChange={(e) =>
@@ -387,8 +403,16 @@ const Signup = ({ mood, setAlert }) => {
                 />
 
                 <input
+                  type="password"
                   placeholder="Confirm Account Number"
                   value={formData.confirmAccountNumber}
+                  className={
+                    formData.confirmAccountNumber
+                      ? isAccountMatch
+                        ? "input-success"
+                        : "input-error"
+                      : ""
+                  }
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -406,15 +430,27 @@ const Signup = ({ mood, setAlert }) => {
                 />
 
                 {/* OTP */}
-                <input
-                  placeholder="Enter OTP"
-                  value={formData.emailOtp}
-                  onChange={(e) =>
-                    setFormData({ ...formData, emailOtp: e.target.value })
-                  }
-                />
+                <p className="email-otp-messge">Check email for OTP</p>
+                <div className="otp-box">
+                  <input
+                    placeholder="Enter OTP"
+                    value={formData.emailOtp}
+                    disabled={formData.isEmailVerified}
+                    onChange={(e) =>
+                      setFormData({ ...formData, emailOtp: e.target.value })
+                    }
+                  />
 
-                <button className={`role-${mood}`} onClick={verifyOtp}>Verify OTP</button>
+                  <button
+                    className={`role-${mood} ${formData.isEmailVerified ? "verified" : ""}`}
+                    onClick={verifyOtp}
+                    disabled={formData.isEmailVerified}
+                  >
+                    {formData.isEmailVerified ? `Verified` : "Verify"}
+                  </button>
+
+                </div>
+                {formData.isEmailVerified ? `` : <p className="email-otp-messge" style={{ color: "red", cursor: "pointer" }}>Resend OTP</p>}
 
                 <button className={canGoStep3 ? `role-${mood}` : ""} disabled={!canGoStep3} onClick={() => setStep(3)}>
                   Next

@@ -8,6 +8,11 @@ import { useNavigate } from "react-router-dom";
 import NotificationModal from "../Modals/NotificationModal";
 import SearchModal from "../Modals/SearchModal";
 import MainLogo from "../../icons/MainLogo";
+import AdminLogo from "../../Assets/Logo/logo-anokhi-home-parpul.png";
+import StaffLogo from "../../Assets/Logo/logo-anokhi-home-green.png";
+import AgentLogo from "../../Assets/Logo/logo-anokhi-home-blue.png";
+import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
+
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   const [currentUser, setCurrentUser] = useState({
     id: 473,
@@ -52,7 +57,16 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
           ☰
         </button>
         <span className="logo">
-          <MainLogo />
+          {/* <MainLogo /> */}
+          {mood === "admin" ? (
+            <img className="topbar-nav-logo" src={AdminLogo} alt="" />
+          ) : mood === "staff" ? (
+            <img className="topbar-nav-logo" src={StaffLogo} alt="" />
+          ) : mood === "agent" ? (
+            <img className="topbar-nav-logo" src={AgentLogo} alt="" />
+          ) : (
+            <img className="topbar-nav-logo" src={UserLogo} alt="" />
+          )}
         </span>
       </div>
 

@@ -31,11 +31,16 @@ import Setting from "./Pages/Setting/Setting";
 import Logs from "./Pages/Logs/Logs";
 import OffersDiscounts from "./Pages/OffersDiscounts/OffersDiscounts";
 import Commission from "./Pages/Commission/Commission";
+import Documents from "./Pages/Documents/Documents";
+import LandingSetting from "./Pages/LandingSetting/LandingSettings";
+import PrivacyPolicy from "./Pages/PrivacyPolicy/PrivacyPolicy";
+import TermCondition from "./Pages/TermCondition/TermCondition";
+import CancellationRefund from "./Pages/CancellationRefund/CancellationRefund";
 
-const LandingLayout = () => {
+const LandingLayout = ({ mood }) => {
   return (
     <div className="landing-page">
-      <Navbar />
+      <Navbar mood={mood} />
       <Outlet />
       <Footer />
     </div>
@@ -51,9 +56,9 @@ function App() {
   return (
     <BrowserRouter>
       <div className={`app ${dark ? "dark" : ""} mood-${mood}`}>
-            <Alert item={alert} />
+        <Alert item={alert} />
         <Routes>
-          <Route element={<LandingLayout />}>
+          <Route element={<LandingLayout mood={mood} />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/projects" element={<LandingProjects />} />
@@ -62,11 +67,18 @@ function App() {
               element={<LandingProjectDetail />}
             />
             <Route path="/gallery" element={<Gallery />} />
+            <Route path="/documents" element={<Documents />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/term-condition" element={<TermCondition />} />
+            <Route path="/cancellation-refund" element={<CancellationRefund />} />
           </Route>
           <Route path="/role" element={<RoleSelect setMood={setMood} />} />
           <Route path="/login" element={<Login mood={mood} />} />
-          <Route path="/signup" element={<Signup mood={mood} setAlert={setAlert} />} />
+          <Route
+            path="/signup"
+            element={<Signup mood={mood} setAlert={setAlert} />}
+          />
           <Route
             path="/*"
             element={
@@ -98,16 +110,24 @@ function App() {
                         path="/dashboard"
                         element={<Dashboard mood={mood} setAlert={setAlert} />}
                       />
-                      <Route path="/user" element={<Other mood={mood} setAlert={setAlert}/>} />
+                      <Route
+                        path="/user"
+                        element={<Other mood={mood} setAlert={setAlert} />}
+                      />
                       <Route
                         path="/bookings"
                         element={<Booking mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/offers-discounts"
-                        element={<OffersDiscounts mood={mood} setAlert={setAlert} />}
+                        element={
+                          <OffersDiscounts mood={mood} setAlert={setAlert} />
+                        }
                       />
-                      <Route path="/teams" element={<Team mood={mood} setAlert={setAlert}/>} />
+                      <Route
+                        path="/teams"
+                        element={<Team mood={mood} setAlert={setAlert} />}
+                      />
                       <Route
                         path="/teams/:id"
                         element={
@@ -128,29 +148,43 @@ function App() {
                       />
                       <Route
                         path="/payments"
-                        element={<Payments mood={mood} setAlert={setAlert}/>}
+                        element={<Payments mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/settings"
-                        element={<Setting mood={mood} setAlert={setAlert}/>}
+                        element={<Setting mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/commission"
-                        element={<Commission mood={mood} setAlert={setAlert}/>}
+                        element={<Commission mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/logs"
-                        element={<Logs mood={mood} setAlert={setAlert}/>}
+                        element={<Logs mood={mood} setAlert={setAlert} />}
                       />
-                      <Route path="/user/:id" element={<Profile mood={mood} setAlert={setAlert}/>} />
-                      <Route path="/plot" element={<Plot mood={mood} setAlert={setAlert}/>} />
+                      <Route
+                        path="/landing"
+                        element={
+                          <LandingSetting mood={mood} setAlert={setAlert} />
+                        }
+                      />
+                      <Route
+                        path="/user/:id"
+                        element={<Profile mood={mood} setAlert={setAlert} />}
+                      />
+                      <Route
+                        path="/plot"
+                        element={<Plot mood={mood} setAlert={setAlert} />}
+                      />
                       <Route
                         path="/plot/:plotId"
-                        element={<Projects mood={mood} setAlert={setAlert}/>}
+                        element={<Projects mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/plot/:plotId/:projectId"
-                        element={<ProjectDetail mood={mood} setAlert={setAlert}/>}
+                        element={
+                          <ProjectDetail mood={mood} setAlert={setAlert} />
+                        }
                       />
                     </Routes>
                   </div>

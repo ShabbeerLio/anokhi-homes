@@ -12,6 +12,10 @@
 .footer-logo svg path{
     fill: var(--mood-color);
 }
+.footer-logo {
+    width: 20%;
+    margin-top: 2rem;
+}
 
 .footer-col p {
   font-size: 14px;

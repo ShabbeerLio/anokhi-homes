@@ -11,7 +11,7 @@ import SearchSelect from "../SearchItems/SearchSelect";
 
 const ITEMS_PER_PAGE = 6;
 
-const VisitTable = ({ data, actions = [], mood, setAlert }) => {
+const VisitTable = ({ data, mood, setAlert }) => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
@@ -306,14 +306,14 @@ const VisitTable = ({ data, actions = [], mood, setAlert }) => {
         </div>
 
         <div className="field">
-          <label>Agent</label>
+          <label>Associate</label>
           <select
             value={formData.agent}
             onChange={(e) =>
               setFormData({ ...formData, agent: e.target.value })
             }
           >
-            <option value="">Select Agent</option>
+            <option value="">Select Associate</option>
             <option value="Amit">Amit</option>
             <option value="Sana">Sana</option>
             <option value="Raj">Raj</option>

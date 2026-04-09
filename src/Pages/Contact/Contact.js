@@ -87,6 +87,9 @@ const Contact = () => {
             <p>
               406,4th Floor, Pandey Plaza, Exhibition Road, Patna - 800001
             </p>
+            <p>
+              Phone: +91 98765 43210
+            </p>
           </div>
           <div className="contact-bottom-box card">
             <FaLocationDot />
@@ -100,6 +103,9 @@ const Contact = () => {
             <h5>Branch Office 2</h5>
             <p>
               Beside Prabha Inn, Baitarani Road Rajgir, Nalanda, Bihar - 803116
+            </p>
+            <p>
+              Phone: +91 98765 43210
             </p>
           </div>
         </div>

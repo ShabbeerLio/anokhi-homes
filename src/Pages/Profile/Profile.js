@@ -31,18 +31,18 @@ const Profile = ({ mood, currentUser, setAlert }) => {
     const tabs = [];
 
     // USER PROFILE
-    if (userData.user === "user") {
+    if (userData.user === "Customer") {
       if (mood === "admin" || mood === "staff" || isOwnProfile) {
         tabs.push("Overview");
       }
     }
 
     // AGENT PROFILE
-    if (userData.user === "agent") {
+    if (userData.user === "associate") {
       if (
         mood === "admin" ||
         mood === "staff" ||
-        (mood === "agent" && isOwnProfile)
+        (mood === "associate" && isOwnProfile)
       ) {
         tabs.push("Overview", "Report");
       }
@@ -162,10 +162,10 @@ const Profile = ({ mood, currentUser, setAlert }) => {
               <p className="role">
                 {userData.user}, {userData.status}
               </p>
-              {userData.user === "agent" && (
+              {userData.user === "associate" && (
                 <div className="referral-box">
                   <div className="referral-header dots">
-                    <h4>Referral</h4>
+                    {/* <h4>Referral</h4> */}
 
                     {/* DOT BUTTON */}
                     <span
@@ -190,14 +190,14 @@ const Profile = ({ mood, currentUser, setAlert }) => {
                           <NiCode /> Copy Code
                         </span>
 
-                        <span
+                        {/* <span
                           onClick={() => {
                             handleCopy(referralLink);
                             setShowReferralMenu(false);
                           }}
                         >
                           <NiLink /> Copy Link
-                        </span>
+                        </span> */}
 
                         <span
                           onClick={() => {

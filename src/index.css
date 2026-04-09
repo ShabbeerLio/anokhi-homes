@@ -53,9 +53,9 @@ body {
   position: fixed;
   width: 100%;
 }
-.app.dark .ss-dropdown ,
-.app.dark .plot-card-actions ,
-.app.dark .contact-socail-box ,
+.app.dark .ss-dropdown,
+.app.dark .plot-card-actions,
+.app.dark .contact-socail-box,
 .app.dark {
   background: #202022;
   color: #fff;
@@ -343,7 +343,7 @@ body {
 .app.dark .landing-head-box,
 .app.dark .hero,
 .app.dark .testimonial-box,
-.app.dark .nav-center ,
+.app.dark .nav-center,
 .app.dark .auth-bg {
   background-image: url("./Assets/Bg/bg-dark.jpg");
 }
@@ -361,7 +361,7 @@ body {
   text-align: center;
 }
 
-.auth-header{
+.auth-header {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -373,17 +373,17 @@ body {
   margin: 0;
 }
 .auth-card p {
-      font-weight: 500;
-    color: #9f9f9f;
-    margin: 0 !important;
-    padding: 10px 0;
-    font-size: 14px;
+  font-weight: 500;
+  color: #9f9f9f;
+  margin: 0 !important;
+  padding: 10px 0;
+  font-size: 14px;
 }
 
 .app.dark .auth-card input {
   color: #fff;
 }
-.auth-card input ,
+.auth-card input,
 .auth-card select {
   /* width: 100%; */
   padding: 10px;
@@ -438,15 +438,59 @@ body {
   color: #f8a32a;
 }
 
-.password-field{
+.password-field {
   position: relative;
 }
-.password-field .password-eye{
+.password-field .password-eye {
   position: absolute;
   top: 50%;
   right: 5%;
   transform: translate(0%, -50%);
   cursor: pointer;
+}
+
+.email-otp-messge {
+  font-size: 12px !important;
+  padding-bottom: 0 !important;
+}
+
+.otp-box {
+  display: flex;
+  justify-content: center;
+  padding: 3px;
+  margin: 8px 0;
+  border-radius: 1.125rem;
+  border: 1px solid #bcbcbc2e;
+  background-color: transparent;
+}
+.otp-box input {
+  border: none;
+  padding: 8px;
+  margin: 0;
+}
+.otp-box button {
+  border: none;
+  padding: 8px;
+  margin: 0;
+  width: 40%;
+}
+button.verified {
+  background-color: #22c55e; /* green */
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.input-success {
+  border: 2px solid #22c55e !important; /* green */
+}
+
+.input-error {
+  border: 2px solid #ef4444 !important; /* red */
+}
+
+.topbar-nav-logo{
+  width: 15%;
 }
 
 /* Mobile */

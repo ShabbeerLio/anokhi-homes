@@ -121,7 +121,7 @@ const SiteVisitCard = ({
         <div className="user-card-bottom-left">
           <p>Date</p>
           <p>Phone No.</p>
-          <p>Agent</p>
+          <p>Associate</p>
           <p>Site</p>
           <p>Visit Date</p>
         </div>
@@ -310,7 +310,7 @@ const SiteVisitCard = ({
           <div className="user-card-bottom-left">
             <p>Date</p>
             <p>Phone No.</p>
-            <p>Agent</p>
+            <p>Associate</p>
             <p>Site</p>
             <p>Visit Date</p>
             <p>Report</p>
@@ -386,16 +386,16 @@ const SiteVisitCard = ({
               </div>
 
               <div className="field">
-                <label>Total Amount <small style={{ fontSize: "12px", color: "green" }}>₹550 * 1200 sq.ft</small></label>
+                <label>Rate <small style={{ fontSize: "12px", color: "green" }}>{selectedPlot?.price} </small></label>
                 <input
-                  placeholder="Total Amount"
-                  value={selectedPlot?.price || ""}
+                  placeholder="Rate with sqft"
+                  value={"₹550 * 1200 sq.ft"}
                   readOnly
                 />
               </div>
 
               <div className="field">
-                <label>Amount Request in sq.ft
+                <label>Price Request in sq.ft
                   {/* {selectedPlot && (
                     <small style={{ fontSize: "12px", color: "#ff6969" }}>
                       Allowed Range: ₹{selectedPlot.priceRange.min} - ₹{selectedPlot.priceRange.max}
@@ -404,7 +404,7 @@ const SiteVisitCard = ({
                 </label>
                 <input
                   type="number"
-                  placeholder="Amount request in sq.ft"
+                  placeholder="Price request in sq.ft"
                   value={formData.amountPaid || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, amountPaid: e.target.value })
@@ -430,6 +430,56 @@ const SiteVisitCard = ({
                     />
                   </div>
                 )}
+
+              <div className="field">
+                <label style={{justifyContent:"flex-start"}}>Booking Payment <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
+                <select
+                  value={formData.paymentPeriod || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, paymentPeriod: e.target.value })
+                  }
+                >
+                  <option value="select">Select days</option>
+                  <option value="10-20 days">07-08 days</option>
+                  <option value="20-30 days">08-09 days</option>
+                  <option value="30-40 days">09-10 days</option>
+                </select>
+              </div>
+              <div className="field">
+                <label style={{justifyContent:"flex-start"}}>Agreement Payment <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
+                <select
+                  value={formData.paymentPeriod || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, paymentPeriod: e.target.value })
+                  }
+                >
+                  <option value="select">Select days</option>
+                  <option value="10-20 days">20-25 days</option>
+                  <option value="20-30 days">25-30 days</option>
+                  <option value="30-40 days">30-40 days</option>
+                </select>
+              </div>
+              <div className="field">
+                <label style={{justifyContent:"flex-start"}}>Full Payment (Registry) <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
+                <select
+                  value={formData.paymentPeriod || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, paymentPeriod: e.target.value })
+                  }
+                >
+                  <option value="select">Select days</option>
+                  <option value="10-20 days">20-25 days</option>
+                  <option value="20-30 days">25-30 days</option>
+                  <option value="30-40 days">30-40 days</option>
+                </select>
+              </div>
+              <p style={{ color: "#ff6969", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "5px", padding: "10px 0" }}>
+                <input style={{width:"5%"}} type="checkbox" />
+                Notes : 35% cancellation charges 
+                <span style={{ borderBottom: "1px solid #ff6969", cursor: "pointer" }} onClick={{}}>
+                  Read Cancellation Policy
+                </span>
+              </p>
 
               <div className="modal-actions">
                 <button
@@ -500,7 +550,7 @@ const SiteVisitCard = ({
                 <div className="user-card-bottom-left">
                   <p>Date</p>
                   <p>Phone No.</p>
-                  <p>Agent</p>
+                  <p>Associate</p>
                   <p>Site</p>
                   <p>Visit Date</p>
                 </div>
@@ -529,7 +579,7 @@ const SiteVisitCard = ({
                 </div>
               ))}
               {/* ONLY AGENT CAN ADD NOTE */}
-              {item.status === "Scheduled" || item.status === "Approval" && (
+              {(item.status === "Scheduled" || item.status === "Approval") && (
                 <>
                   <div className="add-note-section">
                     <div class="field">
@@ -548,7 +598,7 @@ const SiteVisitCard = ({
                           const newNote = {
                             text: noteText,
                             date: new Date().toLocaleString(),
-                            by: "Agent",
+                            by: "Associate",
                           };
 
                           setNotes([...notes, newNote]);

@@ -15,9 +15,9 @@ const RoleSelect = ({ setMood }) => {
         <h2>Select Role</h2>
 
         <button className="role-admin" onClick={() => selectRole("admin")}>Admin</button>
-        <button className="role-agent" onClick={() => selectRole("agent")}>Agent</button>
+        <button className="role-agent" onClick={() => selectRole("agent")}>Associate</button>
         <button className="role-staff" onClick={() => selectRole("staff")}>Staff</button>
-        <button className="role-user" onClick={() => selectRole("user")}>User</button>
+        <button className="role-user" onClick={() => selectRole("user")}>Customer</button>
       </div>
     </div>
   );

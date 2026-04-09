@@ -107,7 +107,7 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
               <option value="">Select Type</option>
               <option value="User">Customer</option>
               <option value="Staff">Staff</option>
-              <option value="Agent">Agent</option>
+              <option value="Agent">Associate</option>
             </select>
           </div>
 
@@ -542,8 +542,9 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
               }
             >
               <option value="">Choose Payment Type</option>
-              <option value="Partial Due">Partial Payment</option>
-              <option value="Full Due">Full Payment</option>
+              <option value="Booking Amount">Booking Amount</option>
+              <option value="Agreement">Agreement</option>
+              <option value="Full Payment">Full Payment</option>
             </select>
           </div>
 

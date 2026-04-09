@@ -95,11 +95,22 @@ const Dashboard = ({ mood }) => {
     return `${days} days remaining`;
   };
 
+  let name = "Rahul";
+  if (mood === "admin") {
+    name = "Nawaz";
+  } else if (mood === "staff") {
+    name = "Shabbeer";
+  } else if (mood === "agent") {
+    name = "Amit";
+  } else if (mood === "user") {
+    name = "Rahul";
+  }
+
   return (
     <div className="plot-container">
       <div className="table-filters">
         <div className="page-head-title">
-          <h2>Welcome {mood?.toUpperCase()}</h2>
+          <h2>Welcome {name.toUpperCase()}</h2>
           <Breadcrumb />
         </div>
       </div>
@@ -113,51 +124,53 @@ const Dashboard = ({ mood }) => {
                 {/* <h4>Configurations of the {mood}</h4> */}
 
                 <div className="offer-carousel">
-                  {visibleOffers.map((item, i) => (
-                    <div
-                      key={item.id}
-                      className={`offer-slide ${i === index ? "active" : ""}`}
-                    >
-                      <h4>{item.title}</h4>
-
-                      <p>{item.description}</p>
-
-                      {/* Offer */}
-                      {item.priceValue && (
-                        <span className="offer-badge">
-                          Offer ₹{item.priceValue}
-                        </span>
-                      )}
-
-                      {/* Discount */}
-                      {item.amount && (
-                        <span className="discount-badge">
-                          Discount {item.amount}
-                          {item.type === "percentage" ? "%" : "₹"}
-                        </span>
-                      )}
-
-                      {/* Dates */}
-                      <div className="offer-dates">
-                        <p>
-                          <strong>From:</strong> {item.startDate} to{" "}
-                          {item.endDate} (
-                          <span className="countdown">
-                            {getRemainingDays(item.endDate)}
-                          </span>
-                          )
-                        </p>
-                        {/* 
-                        <p>
-                          <strong>End:</strong> {item.endDate}
-                        </p>
-
-                        <p className="countdown">
-                          {getRemainingDays(item.endDate)}
-                        </p> */}
-                      </div>
+                  {visibleOffers.length === 0 ? (
+                    <div className="no-offers">
+                      <h4>Welcome!</h4>
+                      <p>
+                        No offers available right now. Stay tuned for exciting
+                        deals!
+                      </p>
                     </div>
-                  ))}
+                  ) : (
+                    visibleOffers.map((item, i) => (
+                      <div
+                        key={item.id}
+                        className={`offer-slide ${i === index ? "active" : ""}`}
+                      >
+                        <h4>{item.title}</h4>
+
+                        <p>{item.description}</p>
+
+                        {/* Offer */}
+                        {item.priceValue && (
+                          <span className="offer-badge">
+                            Offer ₹{item.priceValue}
+                          </span>
+                        )}
+
+                        {/* Discount */}
+                        {item.amount && (
+                          <span className="discount-badge">
+                            Discount {item.amount}
+                            {item.type === "percentage" ? "%" : "₹"}
+                          </span>
+                        )}
+
+                        {/* Dates */}
+                        <div className="offer-dates">
+                          <p>
+                            <strong>From:</strong> {item.startDate} to{" "}
+                            {item.endDate} (
+                            <span className="countdown">
+                              {getRemainingDays(item.endDate)}
+                            </span>
+                            )
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 

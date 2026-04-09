@@ -35,12 +35,13 @@ const DATA = [
   {
     id: 473,
     user: "associate",
+    position: "5%",
     name: "Zoila Vittorino",
     email: "zoila@company.com",
     phone: "9876500001",
     avatar: "https://i.pravatar.cc/150?img=2",
     status: "active",
-    
+
     joined: "2023-09-10",
     referral: {
       code: "REF123",
@@ -65,7 +66,7 @@ const DATA = [
 
   {
     id: 474,
-    user: "user",
+    user: "Customer",
     name: "Travis Howard",
     email: "travis@gmail.com",
     phone: "9000000001",
@@ -88,7 +89,7 @@ const DATA = [
     phone: "9000000002",
     avatar: "https://i.pravatar.cc/150?img=4",
     status: "inactive",
-     position: "Plot Manager",
+    position: "Plot Manager",
     joined: "2022-05-11",
     permissions: ["Manage Bookings"],
     performance: null,
@@ -97,13 +98,14 @@ const DATA = [
   {
     id: 476,
     user: "associate",
+    position: "6%",
     name: "Buck Rogers",
     email: "buck@company.com",
     phone: "9000000003",
     avatar: "https://i.pravatar.cc/150?img=5",
     status: "inactive",
     joined: "2023-03-18",
-   
+
     referral: {
       code: "REF123",
       name: "rahul Kumar",
@@ -126,7 +128,7 @@ const DATA = [
 
   {
     id: 477,
-    user: "user",
+    user: "Customer",
     name: "Emily Watson",
     email: "emily@gmail.com",
     phone: "9000000004",
@@ -144,6 +146,7 @@ const DATA = [
     id: 483,
     user: "associate",
     name: "Ethan Wilson",
+    position: "0%",
     email: "ethan@company.com",
     phone: "9000000005",
     avatar: "https://i.pravatar.cc/150?img=11",
@@ -169,12 +172,13 @@ const DATA = [
     id: 482,
     user: "associate",
     name: "Ethan Wilson",
+    position: "5%",
     email: "ethan@company.com",
     phone: "9000000005",
     avatar: "https://i.pravatar.cc/150?img=11",
     status: "active",
     joined: "2023-11-01",
-   
+
     referral: {
       code: "REF123",
       name: "Amit Kumar",
@@ -320,7 +324,7 @@ const Other = ({ mood, setAlert }) => {
             />
           </div>
           <div className="filter-buttons">
-            {["all", "user", "staff", "associate"].map((f) => (
+            {["all", "Customer", "staff", "associate"].map((f) => (
               <button
                 key={f}
                 className={filter === f ? "active" : ""}
@@ -368,7 +372,7 @@ const Other = ({ mood, setAlert }) => {
                   ? "Staff"
                   : item.user === "associate"
                     ? "Associate"
-                    : "User"}
+                    : "Customer"}
               </span>
               <span className="title">
                 {item.name} {item.position && `(${item.position})`}
@@ -376,7 +380,7 @@ const Other = ({ mood, setAlert }) => {
               <span className="title">{item.connected?.name || "-"}</span>
               <span className="title">{item.referral?.name || "-"}</span>
 
-              {(item.status !== "pending" && mood === "admin" && (
+              {((item.status !== "pending" && mood === "admin" || item.status !== "pending" && mood === "staff") && (
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -389,10 +393,10 @@ const Other = ({ mood, setAlert }) => {
                   <span className="slider"></span>
                 </label>
               )) || (
-                <span className={`status ${item.status}`}>
-                  {item.status === "pending" && "Pending"}
-                </span>
-              )}
+                  <span className={`status ${item.status}`}>
+                    {item.status}
+                  </span>
+                )}
 
               <div className="dots">
                 <span
@@ -480,7 +484,7 @@ const Other = ({ mood, setAlert }) => {
                     ? "Staff"
                     : item.user === "associate"
                       ? "Associate"
-                      : "User"}
+                      : "Customer"}
                 </span>
                 <span className="title">
                   {item.connected?.name || item.referral?.name || "-"}
@@ -498,10 +502,10 @@ const Other = ({ mood, setAlert }) => {
                     <span className="slider"></span>
                   </label>
                 )) || (
-                  <span className={`status ${item.status}`}>
-                    {item.status === "pending" && "Pending"}
-                  </span>
-                )}
+                    <span className={`status ${item.status}`}>
+                      {item.status === "pending" && "Pending"}
+                    </span>
+                  )}
               </div>
             </div>
           ))}
@@ -547,7 +551,7 @@ const Other = ({ mood, setAlert }) => {
             onChange={(e) => setFormData({ ...formData, user: e.target.value })}
           >
             <option value="">Select Type</option>
-            <option value="User">User</option>
+            <option value="Customer">Customer</option>
             <option value="Staff">Staff</option>
             <option value="Associate">Associate</option>
           </select>

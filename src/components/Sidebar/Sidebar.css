@@ -72,6 +72,12 @@
 .single {
   margin-top: 8px;
 }
+.dev-by{
+  position: absolute;
+  bottom: 1%;
+  padding-bottom: 0;
+  font-size: 12px;
+}
 
 .arrow {
   transition: 0.3s;
@@ -83,10 +89,18 @@
 
 .menu.single {
   position: absolute;
-  bottom: 2%;
+  bottom: 4%;
   width: 80%;
 }
 
+.side-more-items{
+  position: absolute;
+  bottom: 11%;
+  width: 80%;
+}
+.side-more-items .social-icons a {
+  background-color: #b5b5b51e;
+}
 
 @media (max-width: 900px) {
   .sidebar {

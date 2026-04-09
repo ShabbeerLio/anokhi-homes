@@ -33,7 +33,6 @@ const UserDashboard = ({ mood }) => {
       <h4>Stats</h4>
       {/* ================= STATS ================= */}
       <div className="dashboard-grid">
-        <DashboardCard title="My Plot" value="A-12" icons={<NiTool />} />
         <DashboardCard
           title="Total Paid"
           value="₹1,20,000"
@@ -54,8 +53,11 @@ const UserDashboard = ({ mood }) => {
         {/* ================= RECENT ACTIVITY ================= */}
         <div className=" dashboard-box-left">
           <div className="dashboard-title-box">
-          <h4>Payment History</h4>
-            <Link to="/bookings" className="view-all"> <FaAngleRight /> View All</Link>
+            <h4>Payment History</h4>
+            <Link to="/bookings" className="view-all">
+              {" "}
+              <FaAngleRight /> View All
+            </Link>
           </div>
           {/* <div className=" table card">
             <div className="dashboard-activity table-head">
@@ -110,14 +112,18 @@ const UserDashboard = ({ mood }) => {
             )}
           </div>
           <div className="dashboard-title-box">
-          <h4>Booking Details</h4>
-            <Link to="/bookings" className="view-all"> <FaAngleRight /> View All</Link>
+            <h4>Booking Details</h4>
+            <Link to="/bookings" className="view-all">
+              {" "}
+              <FaAngleRight /> View All
+            </Link>
           </div>
           <div className="user-card-box">
             {BookingData.slice(0, 2).map((item) => (
               <BookingCard
                 item={item}
                 dashboard={() => handleNavigate()}
+                mood={"user"}
               />
             ))}
           </div>

@@ -11,7 +11,7 @@ import SearchSelect from "../../components/SearchItems/SearchSelect";
 const ITEMS_PER_PAGE = 12;
 
 const Booking = ({ mood, setAlert }) => {
-  const currentUser = { id: "user1", name: "Agent Smith" }; // Mocked current user
+  const currentUser = { id: "Rahul", name: "Rahul" }; // Mocked current user
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
