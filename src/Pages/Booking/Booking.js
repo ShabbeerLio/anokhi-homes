@@ -8,6 +8,7 @@ import NiSearch from "../../icons/ni-search";
 import BookingCard from "../../components/Cards/BookingCard";
 import BookingData from "../../components/Data/BookingData";
 import SearchSelect from "../../components/SearchItems/SearchSelect";
+import CancellationPolicy from "../../components/Policies/CancellationPolicy";
 const ITEMS_PER_PAGE = 12;
 
 const Booking = ({ mood, setAlert }) => {
@@ -18,6 +19,7 @@ const Booking = ({ mood, setAlert }) => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [search, setSearch] = useState();
+  const [policyOpen, setPolicyOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     id: "",
@@ -121,25 +123,25 @@ const Booking = ({ mood, setAlert }) => {
       id: "P101",
       name: "Plot A-12",
       projectId: "PJ101",
-      price: 1200000,
+      price: 1200,
+      area: "1000",
       status: "Vacant",
     },
     {
       id: "P102",
       name: "Plot B-07",
       projectId: "PJ102",
-      price: 2300000,
-      status: "Hold",
+      price: 1150,
+      area: "2000",
+      status: "Vacant",
     },
   ];
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedProjects, setSelectedProjects] = useState(null);
   const [selectedPlot, setSelectedPlot] = useState(null);
-  // console.log(selectedCustomer, "selectedCustomer")
   const totalAmount = Number(selectedPlot?.price || 0);
   const paidAmount = Number(formData.amountPaid || 0);
-  const remainingAmount = totalAmount - paidAmount;
 
   return (
     <div className="plot-container">
@@ -173,7 +175,7 @@ const Booking = ({ mood, setAlert }) => {
             />
           </div>
 
-          {["all", "Confirmed", "Pending","Approval", "Rejected"].map((f) => (
+          {["all", "Confirmed", "Pending", "Approval", "Rejected"].map((f) => (
             <button
               key={f}
               className={filter === f ? "active" : ""}
@@ -236,13 +238,16 @@ const Booking = ({ mood, setAlert }) => {
       >
         <div className="field">
           <SearchSelect
-            label="Customer"
+            label="Customer Name"
             placeholder="Search name or number"
             options={customers}
             value={selectedCustomer}
             onChange={(selected) => {
               setSelectedCustomer(selected);
-              setFormData({ ...formData, customer: selected.name });
+              setFormData({
+                ...formData,
+                customerName: selected.customerName,
+              });
             }}
             displayKey="name"
             searchKeys={["name", "phone"]}
@@ -253,9 +258,20 @@ const Booking = ({ mood, setAlert }) => {
             )}
           />
         </div>
+
+        <div className="field">
+          <label>Phone</label>
+          <input
+            value={selectedCustomer?.phone}
+            onChange={(e) =>
+              setFormData({ ...formData, phone: e.target.value })
+            }
+            placeholder="Phone Number"
+          />
+        </div>
         <div className="field">
           <SearchSelect
-            label="Project"
+            label="Site"
             placeholder="Search Project or location"
             options={Projects}
             value={selectedProjects}
@@ -286,7 +302,7 @@ const Booking = ({ mood, setAlert }) => {
 
               setFormData({
                 ...formData,
-                plot: selected.id,
+                plotId: selected.id,
                 amount: selected.price,
               });
             }}
@@ -304,10 +320,25 @@ const Booking = ({ mood, setAlert }) => {
         </div>
 
         <div className="field">
-          <label>Amount</label>
+          <label>Associate</label>
+          <select
+            value={formData.agent}
+            onChange={(e) =>
+              setFormData({ ...formData, agent: e.target.value })
+            }
+          >
+            <option value="">Select Associate</option>
+            <option value="Amit">Amit</option>
+            <option value="Sana">Sana</option>
+            <option value="Raj">Raj</option>
+          </select>
+        </div>
+
+        <div className="field">
+          <label>Amount ( Area X Rate ) <small style={{ color: "green" }}>{selectedPlot?.price} X {selectedPlot?.area}</small></label>
           <input
             placeholder="Total Amount"
-            value={selectedPlot?.price || ""}
+            value={(selectedPlot?.price) * (selectedPlot?.area) || ""}
             onChange={(e) =>
               setFormData({ ...formData, amount: e.target.value })
             }
@@ -325,31 +356,65 @@ const Booking = ({ mood, setAlert }) => {
           />
         </div> */}
         <div className="field">
-          <label>Amount Requested</label>
+          <label>Amount Requested in sqft</label>
           <input
-            placeholder="Amount Requested"
-            value={formData.amountRequested || 0 }
-            disabled
+            placeholder="Amount Requested in SQFT"
+            value={formData.amountRequested}
+            onChange={(e) =>
+              setFormData({ ...formData, amountRequested: e.target.value })
+            }
           />
         </div>
 
-        {/* {mood === "admin" && (
-          <div className="field">
-            <label>Status</label>
-            <select
-              value={formData.status || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-            >
-              <option value="">Select Status</option>
-              <option value="Token">Confirmend</option>
-              <option value="Full">Rejected</option>
-            </select>
-          </div>
-        )} */}
-
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        <div className="field">
+          <label style={{ justifyContent: "flex-start" }}>Booking Payment <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
+          <select
+            value={formData.paymentPeriod || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, paymentPeriod: e.target.value })
+            }
+          >
+            <option value="select">Select days</option>
+            <option value="10-20 days">07-08 days</option>
+            <option value="20-30 days">08-09 days</option>
+            <option value="30-40 days">09-10 days</option>
+          </select>
+        </div>
+        <div className="field">
+          <label style={{ justifyContent: "flex-start" }}>Agreement Payment <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
+          <select
+            value={formData.paymentPeriod || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, paymentPeriod: e.target.value })
+            }
+          >
+            <option value="select">Select days</option>
+            <option value="10-20 days">20-25 days</option>
+            <option value="20-30 days">25-30 days</option>
+            <option value="30-40 days">30-40 days</option>
+          </select>
+        </div>
+        <div className="field">
+          <label style={{ justifyContent: "flex-start" }}>Full Payment (Registry) <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
+          <select
+            value={formData.paymentPeriod || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, paymentPeriod: e.target.value })
+            }
+          >
+            <option value="select">Select days</option>
+            <option value="10-20 days">20-25 days</option>
+            <option value="20-30 days">25-30 days</option>
+            <option value="30-40 days">30-40 days</option>
+          </select>
+        </div>
+        <p style={{ color: "#ff6969", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "5px", padding: "0px 0" }}>
+          <input style={{ width: "5%" }} type="checkbox" />
+          Notes : 35% cancellation charges
+          <span style={{ borderBottom: "1px solid #ff6969", cursor: "pointer" }} onClick={() => setPolicyOpen(true)}>
+            Read Cancellation Policy
+          </span>
+        </p>
         <div className="modal-actions">
           <button
             onClick={() => {
@@ -364,6 +429,13 @@ const Booking = ({ mood, setAlert }) => {
             {isEditMode ? "Update Booking" : "Book Now"}
           </button>
         </div>
+      </AddLocationModal>
+      <AddLocationModal
+        open={policyOpen}
+        onClose={() => setPolicyOpen(false)}
+        title="Cancellation Policy"
+      >
+        <CancellationPolicy/>
       </AddLocationModal>
     </div>
   );

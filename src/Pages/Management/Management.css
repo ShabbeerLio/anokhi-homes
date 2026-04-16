@@ -82,16 +82,7 @@ select:focus {
 /* Progress */
 .progress-bar {
   height: 10px;
-  background: #eee;
-  border-radius: 20px;
-  overflow: hidden;
-  margin-top: 10px;
-}
-
-/* Progress */
-.progress-bar {
-  height: 10px;
-  background: #eee;
+  background: #c8c8c830;
   border-radius: 20px;
   overflow: hidden;
   margin-top: 10px;

@@ -141,7 +141,9 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
                 </span>
               </div>
 
-              <div className="pm-item">Help</div>
+              <div className="pm-item" onClick={() => navigate(`/help-support`)}>
+                Help and Support
+              </div>
 
               <button className="pm-logout" onClick={handleLogout}>
                 Sign out

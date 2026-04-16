@@ -15,15 +15,15 @@ const BookingData = [
         percent: 10,
         amount: 120000,
         paid: true,
-        date: "2026-03-01",
+        date: "2026-04-01",
       },
 
       agreement: {
         percent: 25,
         amount: 300000,
         dueDays: 30,
-        paid: false,
-        date: null,
+        paid: true,
+        date: "2026-05-20",
       },
 
       full: {
@@ -31,7 +31,7 @@ const BookingData = [
         amount: 780000,
         dueDays: 90,
         paid: false,
-        date: null,
+        date: "2026-06-20",
       },
     },
   },
@@ -153,11 +153,35 @@ const BookingData = [
     area:"1200 sqft",
 
     totalAmount: 1500000,
-    amountPaid: 525000,
+    amountPaid: 0,
 
     status: "Approval",
     amountRequested: 500,
     pricePerSqft: 700,
+    paymentSchedule: {
+      booking: {
+        percent: 10,
+        amount: 0,
+        paid: false,
+        date: "2026-05-10",
+      },
+
+      agreement: {
+        percent: 25,
+        amount: 0,
+        dueDays: 30,
+        paid: false,
+        date: "2026-03-05",
+      },
+
+      full: {
+        percent: 65,
+        amount: 0,
+        dueDays: 90,
+        paid: false,
+        date: "2026-04-05",
+      },
+    },
   },
 ];
 

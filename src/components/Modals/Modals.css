@@ -272,7 +272,7 @@
   padding: 8px 12px;
   cursor: pointer;
   font-size: 14px;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
 }
 .action-modal span:hover {
   background: #c8c8c830;
@@ -282,7 +282,7 @@
   background-color: #252528;
 }
 
-.dashboard-wrapper .modal .modal-body{
-max-height: 80vh ;
-overflow: auto;
+.modal .modal-body {
+  max-height: 85vh;
+  overflow: auto;
 }

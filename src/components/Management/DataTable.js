@@ -205,7 +205,7 @@ const DataTable = ({ data, mood, setAlert }) => {
             placeholder="Phone Number"
           />
         </div>
-        {mood === "admin" && (
+        {/* {mood === "admin" && (
           <div className="field">
             <label>Status</label>
             <select
@@ -222,24 +222,26 @@ const DataTable = ({ data, mood, setAlert }) => {
               <option value="Lost">Lost</option>
             </select>
           </div>
-        )}
+        )} */}
 
-        <div className="field">
-          <label>Agent</label>
-          <select
-            value={formData.agent}
-            disabled={mood === "agent"}
-            onChange={(e) =>
-              setFormData({ ...formData, agent: e.target.value })
-            }
-          >
-            <option value="">Select Agent</option>
-            <option value="Amit">Amit</option>
-            <option value="Sana">Sana</option>
-            <option value="Raj">Raj</option>
-          </select>
-        </div>
-        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+        {mood === "admin" && (
+          <div className="field">
+            <label>Associate</label>
+            <select
+              value={formData.agent}
+              disabled={mood === "agent"}
+              onChange={(e) =>
+                setFormData({ ...formData, agent: e.target.value })
+              }
+            >
+              <option value="">Select Associate</option>
+              <option value="Amit">Amit</option>
+              <option value="Sana">Sana</option>
+              <option value="Raj">Raj</option>
+            </select>
+          </div>
+        )}
+        {/* <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p> */}
         <div className="modal-actions">
           <button
             onClick={() => {

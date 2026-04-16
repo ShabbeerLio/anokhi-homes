@@ -213,6 +213,8 @@ const VisitTable = ({ data, mood, setAlert }) => {
       >
         <div className="field">
           <label>Date of Visit</label>
+
+          {/* Date */}
           <input
             type="date"
             value={formData.visitDate || ""}
@@ -220,8 +222,36 @@ const VisitTable = ({ data, mood, setAlert }) => {
               setFormData({ ...formData, visitDate: e.target.value })
             }
           />
-        </div>
 
+          {/* Hour Dropdown */}
+          <select
+            value={formData.visitHour || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, visitHour: e.target.value })
+            }
+          >
+            <option value="">Select Hour</option>
+            {[...Array(12)].map((_, i) => {
+              const hour = i + 1;
+              return (
+                <option key={hour} value={hour}>
+                  {hour}
+                </option>
+              );
+            })}
+          </select>
+
+          {/* AM / PM */}
+          <select
+            value={formData.visitPeriod || "AM"}
+            onChange={(e) =>
+              setFormData({ ...formData, visitPeriod: e.target.value })
+            }
+          >
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
         <div className="field">
           <SearchSelect
             label="Customer Name"
@@ -277,7 +307,7 @@ const VisitTable = ({ data, mood, setAlert }) => {
             )}
           />
         </div>
-        <div className="field">
+        {/* <div className="field">
           <SearchSelect
             label="Plots"
             placeholder="Search Plot..."
@@ -303,7 +333,7 @@ const VisitTable = ({ data, mood, setAlert }) => {
               </div>
             )}
           />
-        </div>
+        </div> */}
 
         <div className="field">
           <label>Associate</label>
@@ -320,7 +350,7 @@ const VisitTable = ({ data, mood, setAlert }) => {
           </select>
         </div>
 
-        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+        {/* <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p> */}
         <div className="modal-actions">
           <button
             onClick={() => {

@@ -31,7 +31,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
     const tabs = [];
 
     // USER PROFILE
-    if (userData.user === "Customer") {
+    if (userData.user === "customer") {
       if (mood === "admin" || mood === "staff" || isOwnProfile) {
         tabs.push("Overview");
       }

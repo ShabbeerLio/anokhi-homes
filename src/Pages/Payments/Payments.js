@@ -27,7 +27,7 @@ const Payments = ({ mood, staffType, setAlert }) => {
     <div className="plot-container">
       <div className="table-filters">
          <div className="page-head-title">
-        <h2>Payments Management</h2>
+        <h2>Payments</h2>
           <Breadcrumb />
         </div>
       </div>

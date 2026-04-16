@@ -39,7 +39,7 @@ const SiteVisit = ({ mood, staffType, setAlert }) => {
     <div className="plot-container">
       <div className="table-filters">
         <div className="page-head-title">
-          <h2>Site Visit Management</h2>
+          <h2>Site Visit</h2>
           <Breadcrumb />
         </div>
         <div className="page-tools">

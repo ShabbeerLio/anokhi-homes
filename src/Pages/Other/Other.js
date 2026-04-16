@@ -14,6 +14,7 @@ import { LucidePlus } from "lucide-react";
 import AddLocationModal from "../../components/Modals/AddLocationModal";
 import ActionModal from "../../components/Modals/ActionModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
+import NiClosseye from "../../icons/ni-closseye";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -66,7 +67,7 @@ const DATA = [
 
   {
     id: 474,
-    user: "Customer",
+    user: "customer",
     name: "Travis Howard",
     email: "travis@gmail.com",
     phone: "9000000001",
@@ -128,7 +129,7 @@ const DATA = [
 
   {
     id: 477,
-    user: "Customer",
+    user: "customer",
     name: "Emily Watson",
     email: "emily@gmail.com",
     phone: "9000000004",
@@ -211,6 +212,7 @@ const Other = ({ mood, setAlert }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     user: "",
@@ -290,6 +292,17 @@ const Other = ({ mood, setAlert }) => {
     setTimeout(() => {
       setAlert(null);
     }, 5000);
+  };
+
+  const handleReferralCheck = async (code) => {
+    // simulate API
+    if (code.length > 3) {
+      setFormData((prev) => ({
+        ...prev,
+        referralCode: code,
+        referralName: "Agent Rahul",
+      }));
+    }
   };
 
   return (
@@ -544,64 +557,104 @@ const Other = ({ mood, setAlert }) => {
         onClose={() => setOpen(false)}
         title={isEditMode ? "Edit User" : "Add User"}
       >
+        {/* User Type */}
         <div className="field">
           <label>User Type</label>
           <select
             value={formData.user}
-            onChange={(e) => setFormData({ ...formData, user: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, user: e.target.value })
+            }
           >
             <option value="">Select Type</option>
-            <option value="Customer">Customer</option>
-            <option value="Staff">Staff</option>
-            <option value="Associate">Associate</option>
+            <option value="customer">Customer</option>
+            <option value="associate">Associate</option>
+            <option value="staff">Staff</option>
           </select>
         </div>
 
-        <div className="field">
-          <label>Name</label>
-          <input
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="Name"
-          />
-        </div>
+        {/* Common Fields */}
+        {/* {formData.user && ( */}
+          <>
+            <div className="field">
+              <input
+                placeholder="Name (as per Aadhaar) "
+                value={formData.name || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </div>
 
-        <div className="field">
-          <label>Image (profile)</label>
+            <div className="field">
+              <input
+                type="email"
+                placeholder="Email"
+                value={formData.email || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+              />
+            </div>
 
-          {/* Preview existing image */}
-          {formData.avatar && typeof formData.avatar === "string" && (
-            <img
-              src={formData.avatar}
-              alt="preview"
-              style={{ width: 40, height: 40, borderRadius: "50%" }}
+            <div className="field">
+              <input
+                placeholder="Phone"
+                value={formData.phone || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="field password-field">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={formData.password || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <span
+                className="password-eye"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <NiClosseye /> : <NiOpenEye />}
+              </span>
+            </div>
+          </>
+        {/* )} */}
+
+        {/* Agent Only */}
+        {formData.user === "associate" && (
+          <div className="field">
+            <input
+              placeholder="Referral Code"
+              value={formData.referralCode || ""}
+              onChange={(e) => handleReferralCheck(e.target.value)}
             />
-          )}
+          </div>
+        )}
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              setFormData({ ...formData, avatar: e.target.files[0] })
-            }
-          />
-        </div>
+        {formData.user === "associate" && formData.referralName && (
+          <p>Referred by: {formData.referralName}</p>
+        )}
 
-        <div className="field">
-          <label>Status</label>
-          <select
-            value={formData.status}
-            onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value })
-            }
-          >
-            <option value="">Select Status</option>
-            <option value="Active">Active</option>
-            <option value="In Active">In Active</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        {/* Staff Only */}
+        {formData.user === "staff" && (
+          <div className="field">
+            <input
+              placeholder="Department / Role"
+              value={formData.role || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, role: e.target.value })
+              }
+            />
+          </div>
+        )}
+
+        {/* Actions */}
         <div className="modal-actions">
           <button
             onClick={() => {
@@ -613,7 +666,7 @@ const Other = ({ mood, setAlert }) => {
               setOpen(false);
             }}
           >
-            {isEditMode ? "Update Booking" : "Add Booking"}
+            {isEditMode ? "Update User" : "Add User"}
           </button>
         </div>
       </AddLocationModal>

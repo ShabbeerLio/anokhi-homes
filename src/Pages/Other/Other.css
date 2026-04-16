@@ -74,7 +74,7 @@
 .table-row img {
   width: 40px;
   height: 40px;
-  border-radius: 1.1rem;
+  border-radius: 50%;
 }
 
 /* Status */

@@ -165,7 +165,7 @@ const Home = ({ setAlert }) => {
           <LandingCard
             key={contact.id}
             p={contact}
-            action="delete"
+            // action="delete"
             onEdit={() => handleEdit("contact", contact)}
             onDelete={() => handleDelete("contact", contact.id)}
           />
@@ -187,7 +187,6 @@ const Home = ({ setAlert }) => {
           <LandingCard
             key={socialmedia.id}
             p={socialmedia}
-            action="delete"
             onEdit={() => handleEdit("socialmedia", socialmedia)}
             onDelete={() => handleDelete("socialmedia", socialmedia.id)}
           />

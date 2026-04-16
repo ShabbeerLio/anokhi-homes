@@ -34,7 +34,7 @@ function Sidebar({ closeMobile, mood }) {
   const menuConfig = {
     user: [
       { path: "/plot", label: "Plots", icon: <NiTool /> },
-      { path: "/site-visits", label: "Follow Up", icon: <NiSitevisit /> },
+      { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
     ],
@@ -43,9 +43,9 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
       { path: "/plot", label: "Plots", icon: <NiTool /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
+      { path: "/payments", label: "Payments", icon: <NiPayments /> },
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
-      { path: "/payments", label: "Payments", icon: <NiPayments /> },
       { path: "/commission", label: "Commission", icon: <NiCommission /> },
       {
         path: "/offers-discounts",

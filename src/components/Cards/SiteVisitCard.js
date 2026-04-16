@@ -9,6 +9,8 @@ import NiTick from "../../icons/ni-tick";
 import NiCross from "../../icons/ni-cross";
 import NiClock from "../../icons/ni-clock";
 import SearchSelect from "../SearchItems/SearchSelect";
+import CancellationPolicy from "../Policies/CancellationPolicy";
+import AddLocationModal from "../Modals/AddLocationModal";
 
 const SiteVisitCard = ({
   item,
@@ -27,6 +29,7 @@ const SiteVisitCard = ({
   const [noteText, setNoteText] = useState("");
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
   const [disapproveOpen, setDisapproveOpen] = useState(false);
+  const [policyOpen, setPolicyOpen] = useState(false);
   const [newVisitDate, setNewVisitDate] = useState("");
   const [panelMode, setPanelMode] = useState(null);
   const [formData, setFormData] = useState({});
@@ -190,6 +193,7 @@ const SiteVisitCard = ({
             </button>
           </div>
         )} */}
+        
       <DeleteModal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
@@ -476,7 +480,7 @@ const SiteVisitCard = ({
               <p style={{ color: "#ff6969", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "5px", padding: "10px 0" }}>
                 <input style={{width:"5%"}} type="checkbox" />
                 Notes : 35% cancellation charges 
-                <span style={{ borderBottom: "1px solid #ff6969", cursor: "pointer" }} onClick={{}}>
+                <span style={{ borderBottom: "1px solid #ff6969", cursor: "pointer" }} onClick={() => setPolicyOpen(true)}>
                   Read Cancellation Policy
                 </span>
               </p>
@@ -616,6 +620,13 @@ const SiteVisitCard = ({
 
         </div>
       </ViewModal>
+      <AddLocationModal
+        open={policyOpen}
+        onClose={() => setPolicyOpen(false)}
+        title="Cancellation Policy"
+      >
+        <CancellationPolicy/>
+      </AddLocationModal>
     </div>
   );
 };

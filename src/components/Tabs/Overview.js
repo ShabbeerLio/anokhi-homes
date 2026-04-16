@@ -3,16 +3,19 @@ import "./Tabs.css";
 import NiCross from "../../icons/ni-cross";
 import NiTick from "../../icons/ni-tick";
 import DeleteModal from "../Modals/DeleteModal";
+import AddLocationModal from "../Modals/AddLocationModal";
 
 const Overview = ({ userData, mood, setAlert }) => {
   const [disapproveOpen, setDisapproveOpen] = useState(false);
   const [formData, setFormData] = useState({});
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
   if (!userData) return null;
 
   const AGENTS = [
     {
       id: 1001,
-      user: "Associate",
+      user: "associate",
       name: "Rahul Sharma",
       email: "rahul@company.com",
       phone: "9876543210",
@@ -24,9 +27,11 @@ const Overview = ({ userData, mood, setAlert }) => {
       personal: {
         address: "Delhi",
         panNumber: "ABCDE1234F",
-        panPhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
+        panPhoto:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
         aadharNumber: "123456789012",
-        aadharPhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
+        aadharPhoto:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
       },
 
       bank: {
@@ -39,7 +44,8 @@ const Overview = ({ userData, mood, setAlert }) => {
         name: "Priya Sharma",
         relation: "wife",
         aadharNumber: "987654321012",
-        aadharPhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
+        aadharPhoto:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UAnlghZyb1Rd0kUlB8MLo0pfQWDP7loMEg&s",
       },
 
       referral: {
@@ -85,7 +91,7 @@ const Overview = ({ userData, mood, setAlert }) => {
   const USERS = [
     {
       id: 3001,
-      user: "Customer",
+      user: "customer",
       name: "Amit Kumar",
       email: "amit@gmail.com",
       phone: "9988776655",
@@ -125,11 +131,12 @@ const Overview = ({ userData, mood, setAlert }) => {
           <label>Phone</label>
           <p>{userData.phone || "Not Provided"}</p>
         </div>
-
-        <div>
-          <label>Role</label>
-          <p>{STAFF[0].role}</p>
-        </div>
+        {userData.user !== "customer" && userData.user !== "associate" && (
+          <div>
+            <label>Role</label>
+            <p>{STAFF[0].role}</p>
+          </div>
+        )}
 
         <div>
           <label>Status</label>
@@ -192,7 +199,10 @@ const Overview = ({ userData, mood, setAlert }) => {
                         src={value}
                         alt={key}
                         className="doc-thumbnail"
-                        onClick={() => window.open(value, "_blank")}
+                        onClick={() => {
+                          setPreviewImage(value);
+                          setPreviewOpen(true);
+                        }}
                       />
                     </p>
                   ) : (
@@ -232,7 +242,10 @@ const Overview = ({ userData, mood, setAlert }) => {
                         src={value}
                         alt={key}
                         className="doc-thumbnail"
-                        onClick={() => window.open(value, "_blank")}
+                        onClick={() => {
+                          setPreviewImage(value);
+                          setPreviewOpen(true);
+                        }}
                       />
                     </p>
                   ) : (
@@ -317,7 +330,7 @@ const Overview = ({ userData, mood, setAlert }) => {
           </div> */}
         </div>
       )}
-      {userData.user === "Customer" && (
+      {userData.user === "customer" && (
         <div className="agent-mini-stats">
           <h4>Connection Details</h4>
           <div className="overview-grid">
@@ -333,7 +346,7 @@ const Overview = ({ userData, mood, setAlert }) => {
                 </div>
               ))}
           </div>
-          <h4>activity Details</h4>
+          <h4>Activity Details</h4>
           <div className="overview-grid">
             {USERS[0].activity &&
               Object.entries(USERS[0].activity).map(([key, value]) => (
@@ -382,6 +395,23 @@ const Overview = ({ userData, mood, setAlert }) => {
           </button>
         </div>
       </DeleteModal>
+      <AddLocationModal
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        title="Document Preview"
+      >
+        <div style={{ textAlign: "center" }}>
+          <img
+            src={previewImage}
+            alt="Document"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "70vh",
+              borderRadius: "8px",
+            }}
+          />
+        </div>
+      </AddLocationModal>
     </div>
   );
 };

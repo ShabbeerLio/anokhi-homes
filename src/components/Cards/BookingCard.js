@@ -74,12 +74,6 @@ const BookingCard = ({
     }
   }, [viewOpen]);
 
-  const currentStage = (() => {
-    if (!bookingPaid) return "booking";
-    if (bookingPaid && !agreementPaid) return "agreement";
-    if (agreementPaid && !fullPaid) return "full";
-    return "completed";
-  })();
 
   useEffect(() => {
     if (panelMode === "payment") {
@@ -98,6 +92,56 @@ const BookingCard = ({
     }
   }, [panelMode]);
 
+  const getProgressPercent = (daysLeft, totalDays) => {
+    if (daysLeft <= 0) return 100;
+    const percent = ((totalDays - daysLeft) / totalDays) * 100;
+    return Math.min(Math.max(percent, 0), 100);
+  };
+
+  const bookingDaysLeft = getRemainingDays(
+    item.paymentSchedule?.booking?.date,
+    item.paymentSchedule?.agreement?.dueDays || 10
+  );
+
+  const agreementDaysLeft = getRemainingDays(
+    item.paymentSchedule?.booking?.date,
+    item.paymentSchedule?.agreement?.dueDays || 30
+  );
+
+  const registryDaysLeft = getRemainingDays(
+    item.paymentSchedule?.agreement?.date ||
+    item.paymentSchedule?.booking?.date,
+    item.paymentSchedule?.full?.dueDays || 90
+  );
+
+  const currentStage = (() => {
+    if (!bookingPaid) return "booking";
+    if (bookingPaid && !agreementPaid) return "agreement";
+    if (agreementPaid && !fullPaid) return "registry";
+    return "completed";
+  })();
+
+  const bookingProgress =
+    currentStage === "booking"
+      ? getProgressPercent(bookingDaysLeft, 10)
+      : bookingPaid
+        ? 100
+        : 0;
+
+  const agreementProgress =
+    currentStage === "agreement"
+      ? getProgressPercent(agreementDaysLeft, 30)
+      : agreementPaid
+        ? 100
+        : 0;
+
+  const registryProgress =
+    currentStage === "registry"
+      ? getProgressPercent(registryDaysLeft, 90)
+      : fullPaid
+        ? 100
+        : 0;
+
   return (
     <>
       {/* ================= CARD ================= */}
@@ -112,12 +156,12 @@ const BookingCard = ({
 
                 <span
                   className={`status ${item.status === "Confirmed"
-                      ? "active"
-                      : item.status === "Pending"
-                        ? "pending"
-                        : item.status === "Approval"
-                          ? "pending2"
-                          : "rejected"
+                    ? "active"
+                    : item.status === "Pending"
+                      ? "pending"
+                      : item.status === "Approval"
+                        ? "pending2"
+                        : "rejected"
                     }`}
                 >
                   {item.status}
@@ -179,13 +223,10 @@ const BookingCard = ({
                 <p>Price/Sqft</p>
                 <p>Req. Rate</p>
                 <p>Total Amount</p>
-                <p>Booking Payment</p>
-                <p>Agreement Payment</p>
-                <p>Full Payment</p>
               </>
             )}
             {/* <p>Total Amount</p> */}
-            {item.status !== "Rejected" && !isApproval && (
+            {/* {item.status !== "Rejected" && !isApproval && (
               <p className="countdown">
                 {(() => {
                   if (!bookingPaid) {
@@ -203,7 +244,7 @@ const BookingCard = ({
                   return "Payment";
                 })()}
               </p>
-            )}
+            )} */}
           </div>
 
           <div className="user-card-bottom-right">
@@ -222,13 +263,10 @@ const BookingCard = ({
                 <p>₹500 - ₹{item.pricePerSqft}/sqft</p>
                 <p>₹{item.amountRequested}/sqft</p>
                 <p>₹{total.toLocaleString()}</p>
-                <p>08-09 Days</p>
-                <p>28-30 Days</p>
-                <p>30-40 Days</p>
               </>
             )}
             {/* <p>₹{total.toLocaleString()}</p> */}
-            {item.status !== "Rejected" && !isApproval && (
+            {/* {item.status !== "Rejected" && !isApproval && (
               <p className="countdown">
                 {(() => {
                   if (!bookingPaid) {
@@ -256,8 +294,68 @@ const BookingCard = ({
                   return "Completed";
                 })()}
               </p>
-            )}
+            )} */}
           </div>
+        </div>
+        <div className="modal-actions progress-wrapper">
+
+          {/* BOOKING */}
+          <div className="booking-progress">
+            <span>Booking</span>
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{ width: `${bookingProgress}%` }}
+              >
+                <span>
+                  {item.status === "Approval"
+                    ? "12-13 Days"
+                    : bookingPaid
+                      ? "Completed"
+                      : `${bookingDaysLeft} Days Left`}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* AGREEMENT */}
+          <div className="booking-progress">
+            <span>Agreement</span>
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{ width: `${agreementProgress}%` }}
+              >
+                <span>
+                  {!bookingPaid
+                    ? "15-16 Days"
+                    : agreementPaid
+                      ? "Completed"
+                      : `${agreementDaysLeft} Days Left`}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* REGISTRY */}
+          <div className="booking-progress">
+            <span>Registry</span>
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{ width: `${registryProgress}%` }}
+              >
+                <span>
+                  {!agreementPaid
+                    ? "28-30 Days"
+                    : fullPaid
+                      ? "Completed"
+                      : `${registryDaysLeft} Days Left`}
+                </span>
+              </div>
+            </div>
+          </div>
+
         </div>
         {mood === "admin" &&
           (item.status === "Scheduled" || item.status === "Approval") && (
@@ -284,20 +382,6 @@ const BookingCard = ({
               </button>
             </div>
           )}
-        {item.status === "Pending" && mood !== "user" && (
-          <div class="modal-actions">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setViewOpen(true);
-                setPanelMode("payment");
-                setShowReport(false);
-              }}
-            >
-              Book Now
-            </button>
-          </div>
-        )}
       </div>
 
       <DeleteModal

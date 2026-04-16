@@ -20,6 +20,30 @@
   /* padding-bottom: 1rem; */
 /* } */
 
+.booking-progress{
+  width: 100%;
+  text-align: center;
+}
+.booking-progress span{
+  font-size: 12px;
+}
+.booking-progress .progress-bar{
+  height: 24px !important;
+  position: relative;
+  margin-top: 5px;
+}
+.booking-progress .progress-fill{
+  background-color: rgb(81, 212, 0);
+}
+.booking-progress .progress-fill span{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+   white-space: nowrap;
+   /* color: white; */
+}
+
 @media (max-width: 600px) {
   .view-box {
     width: 80vw;

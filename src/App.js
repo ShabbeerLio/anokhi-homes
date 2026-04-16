@@ -36,6 +36,7 @@ import LandingSetting from "./Pages/LandingSetting/LandingSettings";
 import PrivacyPolicy from "./Pages/PrivacyPolicy/PrivacyPolicy";
 import TermCondition from "./Pages/TermCondition/TermCondition";
 import CancellationRefund from "./Pages/CancellationRefund/CancellationRefund";
+import HelpCenter from "./Pages/HelpCenter/HelpCenter";
 
 const LandingLayout = ({ mood }) => {
   return (
@@ -166,6 +167,12 @@ function App() {
                         path="/landing"
                         element={
                           <LandingSetting mood={mood} setAlert={setAlert} />
+                        }
+                      />
+                      <Route
+                        path="/help-support"
+                        element={
+                          <HelpCenter mood={mood} setAlert={setAlert} />
                         }
                       />
                       <Route

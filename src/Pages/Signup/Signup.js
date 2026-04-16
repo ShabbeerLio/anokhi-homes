@@ -146,7 +146,7 @@ const Signup = ({ mood, setAlert }) => {
               onClick={() => setStep(step - 1)}
             />
           )}
-          <h2>{mood === "agent" ? "Agent Signup" : "Signup"}</h2>
+          <h2>{mood === "agent" ? "Associate Signup" : "Signup"}</h2>
         </div>
         {mood === "user" && (
           <>
