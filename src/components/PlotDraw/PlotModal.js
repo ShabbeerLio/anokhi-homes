@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 
 const PLOT_TYPES = ["FOR_SALE", "SOLD", "PENDING", "ROAD", "NOT_FOR_SALE"];
 
-const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
+const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
   const isAdmin = mood === "admin";
 
   const [showEnquiryModal, setShowEnquiryModal] = useState(false);
@@ -225,14 +225,7 @@ const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
                   </div>
                 </div>
 
-                <div className="user-field">
-                  <label>Price Range</label>
-
-                  <div className="value">
-                    ₹{plot?.priceRange?.min || 0} - ₹
-                    {plot?.priceRange?.max || 0}
-                  </div>
-                </div>
+                
               </>
             )}
           </>
@@ -298,6 +291,7 @@ const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
             mood={mood}
             agent={agent}
             onClose={onClose}
+            setAlert={setAlert}
           />
         </div>
       )}
