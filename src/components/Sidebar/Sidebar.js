@@ -34,6 +34,7 @@ function Sidebar({ closeMobile, mood }) {
   const menuConfig = {
     user: [
       { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/management", label: "My Enquiry", icon: <NiManagement /> },
       { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },

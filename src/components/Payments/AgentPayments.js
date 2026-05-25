@@ -17,7 +17,7 @@ const myPayments = [
   },
 ];
 
-const AgentPayments = ({ mood, setAlert }) => {
+const AgentPayments = ({payment, mood, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-grid">
@@ -39,7 +39,7 @@ const AgentPayments = ({ mood, setAlert }) => {
         <DashboardCard title="Overdue Clients" value="3" icons=<NiPayments /> />
       </div>
       <h4>Payments</h4>
-      <PaymentTable data={PaymentsData} mood={mood} setAlert={setAlert} />
+      <PaymentTable data={payment} mood={mood} setAlert={setAlert} />
     </div>
   );
 };

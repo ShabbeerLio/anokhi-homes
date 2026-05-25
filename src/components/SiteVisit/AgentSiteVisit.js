@@ -25,11 +25,12 @@ const myVisits = [
   },
 ];
 
-const AgentSiteVisit = ({ mood, setAlert }) => {
+const AgentSiteVisit = ({siteVisits, mood, setAlert }) => {
+  // console.log(siteVisits, "siteVisits");
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-grid">
-        <DashboardCard title="My Visits" value="25" icons={<NiSitevisit />} />
+        <DashboardCard title="My Visits" value={siteVisits?.length} icons={<NiSitevisit />} />
         <DashboardCard title="Today's Visits" value="4" icons={<NiSitevisit />} />
         <DashboardCard title="Completed" value="15" icons={<NiSitevisit />} />
         <DashboardCard title="Cancelled" value="2" icons={<NiSitevisit />} />
@@ -46,7 +47,7 @@ const AgentSiteVisit = ({ mood, setAlert }) => {
       </div>
       <h4>Site Visits</h4>
       <VisitTable
-        data={myVisits}
+        data={siteVisits}
         actions={["Edit", "Update Status", "Add Feedback", "Set Interest"]}
         setAlert={setAlert}
         mood={mood}

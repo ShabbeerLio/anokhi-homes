@@ -2,163 +2,291 @@ import React, { useState } from "react";
 import EnquireModal from "../Modals/EnquireModal";
 import { X } from "lucide-react";
 
-const PLOT_TYPES = ["FOR_SALE", "SOLD", "PENDING", "NOT_FOR_SALE", "ROAD"];
+const PLOT_TYPES = ["FOR_SALE", "SOLD", "PENDING", "ROAD", "NOT_FOR_SALE"];
 
 const PlotModal = ({ plot, onClose, mood, updatePlot }) => {
   const isAdmin = mood === "admin";
+
   const [showEnquiryModal, setShowEnquiryModal] = useState(false);
 
   const PLOT_ACTION_CONFIG = {
     FOR_SALE: {
-      label: "Book Plot",
+      label: mood === "user" ? "Enquire Now" : "Book Plot",
       className: "agent btn sale",
     },
+
     SOLD: {
-      label: "SOLD",
+      label: "Sold",
       className: "agent btn sold",
     },
+
     PENDING: {
       label: "Pending",
       className: "agent btn pending",
     },
+
+    ROAD: {
+      label: "Road",
+      className: "agent btn road",
+    },
+
+    NOT_FOR_SALE: {
+      label: "Not For Sale",
+      className: "agent btn hold",
+    },
   };
 
   const handleActionClick = () => {
-    // onClose();
     setShowEnquiryModal(true);
   };
 
   const agent = {
-  id: "AG123",
-  name: "Rahul Sharma"
-}
+    id: "AG123",
+    name: "Rahul Sharma",
+  };
 
   return (
     <div className="modal-bg plot-modal" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>Plot Details</h3>
 
-        {/* Plot ID */}
+        {/* ================= ADMIN VIEW ================= */}
+
         {isAdmin ? (
           <>
             <div className="field">
               <label>Plot ID</label>
-              <input value={plot.id} disabled />
+              <input value={plot.plotId || ""} disabled />
             </div>
 
             <div className="field">
-              <label>Plot Name</label>
+              <label>Plot Number</label>
+
               <input
-                value={plot.name || ""}
-                disabled={!isAdmin}
-                onChange={(e) => updatePlot(plot.id, { name: e.target.value })}
-                placeholder="Enter plot name"
+                value={plot.plotNumber || ""}
+                onChange={(e) =>
+                  updatePlot(plot._id, {
+                    plotNumber: e.target.value,
+                  })
+                }
+                placeholder="Enter plot number"
               />
             </div>
 
-            {/* Plot Type */}
             <div className="field">
               <label>Plot Type</label>
+
               <select
-                value={plot.plotType}
-                disabled={!isAdmin}
+                value={plot.plotType || "FOR_SALE"}
                 onChange={(e) =>
-                  updatePlot(plot.id, { plotType: e.target.value })
+                  updatePlot(plot._id, {
+                    plotType: e.target.value,
+                  })
                 }
               >
-                {PLOT_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t.replaceAll("_", " ")}
+                {PLOT_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type.replaceAll("_", " ")}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Area */}
-            <div className="field">
-              <label>Area (sq.ft)</label>
-              <input
-                type="number"
-                value={plot.areaSqFt || 0}
-                disabled={!isAdmin}
-                onChange={(e) =>
-                  updatePlot(plot.id, {
-                    areaSqFt: Number(e.target.value),
-                  })
-                }
-              />
-            </div>
+            {/* AREA */}
 
-            {/* Auto calculated area info */}
+            {plot.plotType !== "ROAD" && (
+              <>
+                <div className="field">
+                  <label>Area (sq.ft)</label>
+
+                  <input
+                    type="number"
+                    value={plot.area || 0}
+                    onChange={(e) =>
+                      updatePlot(plot._id, {
+                        area: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Price / sq.ft</label>
+
+                  <input
+                    type="number"
+                    value={plot.price || 0}
+                    onChange={(e) =>
+                      updatePlot(plot._id, {
+                        price: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                {/* PRICE RANGE */}
+
+                <div className="field">
+                  <label>Price Range</label>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                    }}
+                  >
+                    <input
+                      type="number"
+                      placeholder="Min Price"
+                      value={plot?.priceRange?.min || 0}
+                      onChange={(e) =>
+                        updatePlot(plot._id, {
+                          priceRange: {
+                            ...plot.priceRange,
+                            min: Number(e.target.value),
+                          },
+                        })
+                      }
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Max Price"
+                      value={plot?.priceRange?.max || 0}
+                      onChange={(e) =>
+                        updatePlot(plot._id, {
+                          priceRange: {
+                            ...plot.priceRange,
+                            max: Number(e.target.value),
+                          },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
             <p className="hint">
-              * Area is editable. Auto-calculated from shape by default.
+              * Area auto-calculated from polygon points.
             </p>
           </>
         ) : (
           <>
+            {/* ================= USER / AGENT VIEW ================= */}
+
             <div className="user-field">
               <label>Plot ID</label>
-              <div className="value">{plot.id}</div>
-            </div>
-            <div className="user-field">
-              <label>Plot Name</label>
-              <div className="value">{plot.name || "-"}</div>
+
+              <div className="value">{plot.plotId || "-"}</div>
             </div>
 
-            {/* Plot Type */}
+            <div className="user-field">
+              <label>Plot Number</label>
+
+              <div className="value">{plot.plotNumber || "-"}</div>
+            </div>
+
             <div className="user-field">
               <label>Plot Type</label>
-              <div className="value">{plot.plotType.replaceAll("_", " ")}</div>
+
+              <div className="value">
+                {plot.plotType?.replaceAll("_", " ")}
+              </div>
             </div>
 
-            {/* Area */}
-            <div className="user-field">
-              <label>Area (sq.ft)</label>
-              <div className="value">{plot.areaSqFt || 0} sq.ft</div>
-            </div>
+            {plot.plotType !== "ROAD" && (
+              <>
+                <div className="user-field">
+                  <label>Area</label>
+
+                  <div className="value">
+                    {plot.area || 0} sq.ft
+                  </div>
+                </div>
+
+                <div className="user-field">
+                  <label>Price / sq.ft</label>
+
+                  <div className="value">
+                    ₹{plot.price || 0}
+                  </div>
+                </div>
+
+                <div className="user-field">
+                  <label>Total Price</label>
+
+                  <div className="value">
+                    ₹
+                    {(
+                      Number(plot.area || 0) *
+                      Number(plot.price || 0)
+                    ).toLocaleString()}
+                  </div>
+                </div>
+
+                <div className="user-field">
+                  <label>Price Range</label>
+
+                  <div className="value">
+                    ₹{plot?.priceRange?.min || 0} - ₹
+                    {plot?.priceRange?.max || 0}
+                  </div>
+                </div>
+              </>
+            )}
           </>
         )}
 
+        {/* ================= ACTIONS ================= */}
+
         <div className="modal-actions">
-          {mood === "agent" && plot.plotType !== "ROAD" && (
-            <button
-              className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
-              // onClick={onClose}
-              disabled={plot.plotType === "SOLD"}
-              onClick={() =>
-                plot.plotType === "FOR_SALE"
-                  ? handleActionClick()
-                  : onClose()
-              }
-            >
-              {PLOT_ACTION_CONFIG[plot.plotType]?.label}
+          {/* USER / AGENT */}
+
+          {(mood === "agent" || mood === "user") &&
+            plot.plotType !== "ROAD" &&
+            plot.plotType !== "NOT_FOR_SALE" && (
+              <>
+                {plot.plotType === "FOR_SALE" ? (
+                  <button
+                    className={
+                      PLOT_ACTION_CONFIG[plot.plotType]?.className
+                    }
+                    onClick={handleActionClick}
+                  >
+                    {PLOT_ACTION_CONFIG[plot.plotType]?.label}
+                  </button>
+                ) : (
+                  <button
+                    className={
+                      PLOT_ACTION_CONFIG[plot.plotType]?.className
+                    }
+                    disabled
+                  >
+                    {PLOT_ACTION_CONFIG[plot.plotType]?.label}
+                  </button>
+                )}
+              </>
+            )}
+
+          {/* CLOSE */}
+
+          <button className="close-btn" onClick={onClose}>
+            <X />
+          </button>
+
+          {/* ADMIN */}
+
+          {isAdmin && (
+            <button className="btn secondary" onClick={onClose}>
+              Done
             </button>
           )}
-          {mood === "user" && plot.plotType !== "ROAD" && (
-            <>
-              {plot.plotType === "FOR_SALE" ? (
-                <button
-                  className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
-                  onClick={() => handleActionClick()}
-                >
-                  Enquire Now
-                </button>
-              ) : (
-                <button className="btn sold" onClick={onClose}>
-                  SOLD
-                </button>
-              )}
-            </>
-          )}
-          <button className="close-btn" onClick={onClose}>
-            <X/>
-          </button>
-          {isAdmin && <button className="btn secondary" onClick={onClose}>
-            Done
-          </button>}
         </div>
       </div>
-      {/* ENQUIRY / BOOK MODAL */}
+
+      {/* ================= ENQUIRY MODAL ================= */}
+
       {showEnquiryModal && (
         <div
           className="modal-bg enquiry-modal"

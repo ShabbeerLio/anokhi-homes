@@ -94,7 +94,7 @@ const Navbar = ({ mood }) => {
           <img src={svgss} alt="" />
         </div>
         <div className="nav-items2 nav-right">
-          <button className="btn primary" onClick={() => navigate("/role")}>
+          <button className="btn primary" onClick={() => navigate("/login")}>
             <LogIn />
             Sign in
           </button>
@@ -106,7 +106,7 @@ const Navbar = ({ mood }) => {
         />
       </div>
       <div className="nav-right">
-        <button className="btn primary" onClick={() => navigate("/role")}>
+        <button className="btn primary" onClick={() => navigate("/login")}>
           <LogIn />
           Sign in
         </button>

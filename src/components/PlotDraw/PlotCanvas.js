@@ -123,7 +123,7 @@ export default function PlotCanvas({
     if (!previewShape) return;
     const shape = previewShape;
 
-    if (!mainPlot) {
+    if (!mainPlot?.points?.length) {
       setMainPlot({
         id: "MAIN",
         points: shape,
@@ -191,7 +191,7 @@ export default function PlotCanvas({
     if (!shape.length) return;
 
     // ---------- MAIN PLOT ----------
-    if (!mainPlot) {
+    if (!mainPlot?.points?.length) {
       setMainPlot({
         id: "MAIN",
         points: shape,
@@ -362,7 +362,7 @@ export default function PlotCanvas({
           )}
           {mainPlot && (
             <polygon
-              points={mainPlot.points.map((p) => p.join(",")).join(" ")}
+              points={mainPlot.points?.map((p) => p.join(",")).join(" ")}
               fill="#e5e7eb76"
               stroke="black"
               strokeWidth={2}
@@ -371,14 +371,14 @@ export default function PlotCanvas({
 
           {previewShape && (
             <polygon
-              points={previewShape.map((p) => p.join(",")).join(" ")}
+              points={previewShape?.map((p) => p.join(",")).join(" ")}
               fill="rgba(59,130,246,0.2)"
               stroke="#2563eb"
               strokeDasharray="5"
             />
           )}
 
-          {plots.map((p) => (
+          {plots?.map((p) => (
             <PlotPolygon
               key={p.id}
               plot={p}
@@ -388,7 +388,7 @@ export default function PlotCanvas({
               plots={plots}
               updatePlot={updatePlot}
               onSelect={(plot) =>
-                tool === TOOLS.ERASE ? erasePlot(plot.id) : onSelectPlot(plot)
+                tool === TOOLS.ERASE ? erasePlot(plot._id) : onSelectPlot(plot)
               }
             />
           ))}
@@ -402,17 +402,8 @@ export default function PlotCanvas({
             />
           )}
 
-          {/* {mood === "admin" && (
-                        <Ruler
-                            scale={scale}
-                            offset={offset}
-                            width={svgRef.current?.clientWidth || 1000}
-                            height={500}
-                        />
-                    )} */}
           {mood === "admin" && (
             <defs>
-              {/* Small grid */}
               <pattern
                 id="smallGrid"
                 width={GRID_SIZE}
@@ -427,7 +418,6 @@ export default function PlotCanvas({
                 />
               </pattern>
 
-              {/* Large grid */}
               <pattern
                 id="grid"
                 width={GRID_SIZE * MAJOR_GRID}

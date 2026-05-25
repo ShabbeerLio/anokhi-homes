@@ -1,23 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import AdminPayments from "../../components/Payments/AdminPayments";
 import AgentPayments from "../../components/Payments/AgentPayments";
 import StaffPayments from "../../components/Payments/StaffPayments";
 import "./Payments.css";
 import UserPayments from "../../components/Payments/UserPayments";
+import { useDispatch, useSelector } from "react-redux";
+import { getAccountDetails, getPayments } from "../../Redux/Slices/AppSlices";
 
 
 const Payments = ({ mood, staffType, setAlert }) => {
+    const dispatch = useDispatch();
+  const { userDetail, payment } = useSelector((state) => state.app);
+
+  useEffect(() => {
+    dispatch(getAccountDetails());
+    dispatch(getPayments());
+  }, []);
+
   const renderPage = () => {
     switch (mood) {
       case "admin":
-        return <AdminPayments mood={mood} setAlert={setAlert}/>;
+        return <AdminPayments payment={payment} mood={mood} setAlert={setAlert}/>;
       case "agent":
-        return <AgentPayments mood={mood} setAlert={setAlert}/>;
+        return <AgentPayments payment={payment} mood={mood} setAlert={setAlert}/>;
       case "staff":
-        return <StaffPayments mood={mood} staffType={"accounts"} setAlert={setAlert}/>;
+        return <StaffPayments payment={payment} mood={mood} staffType={"accounts"} setAlert={setAlert}/>;
       case "user":
-        return <UserPayments mood={mood} setAlert={setAlert}/>;
+        return <UserPayments payment={payment} mood={mood} setAlert={setAlert}/>;
       default:
         return <div>Access Denied</div>;
     }

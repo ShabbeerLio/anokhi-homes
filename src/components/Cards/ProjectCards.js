@@ -14,63 +14,62 @@ const ProjectCards = ({
   setOpen,
   mood,
   setAlert,
+  onDelete
 }) => {
   const navigate = useNavigate();
   const [deleteOpen, setDeleteOpen] = useState(false);
   return (
     <>
-    <div
-      key={p.id}
-      className="plot-card card"
-      onClick={() => navigate(`/plot/${p.id}`)}
-    >
-      <div className="plot-img">
-        <img src={p.img} alt={p.title} />
-        {/* <span className="offer">{p.offer}</span> */}
-      </div>
-      <div className="plot-details">
-        <h3>{p.title}</h3>
-        <p>{p.desc}</p>
-      </div>
-      {mood !== "user" && (
-        <div className="plot-card-actions dots">
-          <span
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedLocation(p);
-              setIsEditMode(true);
-              setOpen(true);
-            }}
-          >
-            <NiEdit /> 
-          </span>
-          <span onClick={(e) => {
-              e.stopPropagation();
-              setDeleteOpen(true);
-            }}>
-            <NiDelete /> 
-          </span>
+      <div
+        key={p._id}
+        className="plot-card card"
+        onClick={() =>
+          navigate(`/plot/${p._id}`, {
+            state: {
+              location: p.name,
+            },
+          })
+        }
+      >
+        <div className="plot-img">
+          <img src={p.image} alt={p.name} />
+          {/* <span className="offer">{p.offer}</span> */}
         </div>
-      )}
-    </div>
-    <DeleteModal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
+        <div className="plot-details">
+          <h3>{p.name}</h3>
+          <p>{p.description}</p>
+        </div>
+        {mood !== "user" && (
+          <div className="plot-card-actions dots">
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedLocation(p);
+                setIsEditMode(true);
+                setOpen(true);
+              }}
+            >
+              <NiEdit />
+            </span>
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleteOpen(true);
+              }}
+            >
+              <NiDelete />
+            </span>
+          </div>
+        )}
+      </div>
+      <DeleteModal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              console.log("Lead deleted");
-
               setDeleteOpen(false);
-
-              setAlert({
-                message: "Lead deleted successfully!",
-                status: "Success",
-              });
-
-              setTimeout(() => {
-                setAlert(null);
-              }, 5000);
+              onDelete(p._id)
             }}
           >
             Yes
@@ -87,7 +86,7 @@ const ProjectCards = ({
           </button>
         </div>
       </DeleteModal>
-      </>
+    </>
   );
 };
 

@@ -6,62 +6,46 @@ import NiOpenEye from "../../icons/ni-openEye";
 import NiDots from "../../icons/ni-dots";
 import ActionModal from "../Modals/ActionModal";
 import PaymentCard from "../Cards/PaymentCard";
+import SearchSelect from "../SearchItems/SearchSelect";
+import { useDispatch, useSelector } from "react-redux";
+import { getBooking, getPayments } from "../../Redux/Slices/AppSlices";
+import axios from "axios";
+import Host from "../../Host/Host";
 
 const ITEMS_PER_PAGE = 6;
 
-const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
+const PaymentTable = ({ data, mood, setAlert }) => {
+  const dispatch = useDispatch();
+  const { booking } = useSelector((state) => state.app);
+
+  useEffect(() => {
+    dispatch(getBooking());
+  }, []);
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-
-  const [formData, setFormData] = useState({
-    date: "",
-    client: "",
-    phone: "",
-    project: "",
-    amount: "",
-    mode: "",
-    status: "",
-    dueStatus: "",
-    paymentType: "",
-    validDays: "",
-    notes: "",
-    transactionId: "",
-    attachment: null,
-    totalAmount: "", // IMPORTANT for % calc
-  });
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     if (selectedPayment) {
       setFormData(selectedPayment);
     } else {
-      setFormData({
-        date: "",
-        client: "",
-        phone: "",
-        project: "",
-        amount: "",
-        mode: "",
-        status: "",
-        dueStatus: "",
-        paymentType: "",
-        validDays: "",
-        notes: "",
-        transactionId: "",
-        attachment: null,
-        totalAmount: "",
-      });
+      setFormData({});
     }
   }, [selectedPayment]);
 
+  console.log(booking, "booking");
+
   const filtered = useMemo(() => {
-    return data.filter((payment) => {
+    return data?.filter((payment) => {
       const matchSearch =
-        payment.client.toLowerCase().includes(search.toLowerCase()) ||
-        payment.phone.includes(search);
+        payment?.customer?.name?.toLowerCase().includes(search.toLowerCase()) ||
+        payment?.customer?.phone.includes(search);
 
       const matchStatus =
         statusFilter === "" || payment.status === statusFilter;
@@ -76,14 +60,14 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
     page * ITEMS_PER_PAGE,
   );
 
-  const handleAddPayments = () => {
-    console.log("Adding Payment:", formData);
-    setOpen(false);
-    setAlert({ message: "Payment added successfully!", status: "Success" });
-    setTimeout(() => {
-      setAlert(null);
-    }, 5000);
-  };
+  // const handleAddPayments = () => {
+  //   console.log("Adding Payment:", formData);
+  //   setOpen(false);
+  //   setAlert({ message: "Payment added successfully!", status: "Success" });
+  //   setTimeout(() => {
+  //     setAlert(null);
+  //   }, 5000);
+  // };
   const handleEditPayments = () => {
     console.log("Editing Payment:", formData);
     setOpen(false);
@@ -91,6 +75,74 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
     setTimeout(() => {
       setAlert(null);
     }, 5000);
+  };
+
+  // console.log(selectedBooking, "selectedBooking");
+  const handleAddPayments = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      // 🔥 validations
+      if (!formData.paymentType) {
+        return setAlert({ message: "Select payment type", status: "Error" });
+      }
+
+      if (!formData.mode) {
+        return setAlert({ message: "Select payment mode", status: "Error" });
+      }
+
+      if (!formData.amount) {
+        return setAlert({ message: "Enter amount", status: "Error" });
+      }
+
+      if (
+        (formData.mode === "UPI" || formData.mode === "Bank Transfer") &&
+        !formData.transactionId
+      ) {
+        return setAlert({
+          message: "Transaction ID required",
+          status: "Error",
+        });
+      }
+
+      const payload = {
+        booking: formData.booking,
+        amount: Number(formData.amount),
+        paymentMode: formData.mode,
+        paymentType: formData.paymentType,
+        transactionId: formData.transactionId || "",
+      };
+
+      console.log(payload,"payload")
+
+      await axios.post(`${Host}/api/payment/add`, payload, {
+        headers: {
+          "auth-token": token,
+          "Content-Type": "application/json",
+        },
+      });
+
+      // console.log(payload, "payload")
+
+      setAlert({
+        message: "Payment submitted successfully",
+        status: "Success",
+      });
+
+      dispatch(getPayments());
+      setFormData({});
+      setOpen(false);
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: err.response?.data?.message || "Payment failed",
+        status: "Error",
+      });
+      setOpen(false);
+      setTimeout(() => setAlert(null), 3000);
+    }
   };
 
   return (
@@ -128,9 +180,9 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             }}
           >
             <option value="">Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
           </select>
         </div>
         <div className="searchItem">
@@ -148,7 +200,7 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
         {paginated.length === 0 ? (
           <p>No Payment Found</p>
         ) : (
-          paginated.map((item) => (
+          paginated.reverse().map((item) => (
             <PaymentCard
               item={item}
               setSelectedPayment={setSelectedPayment}
@@ -188,46 +240,58 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
         title={isEditMode ? "Edit Payment" : "Add Payment"}
       >
         <div className="field">
-          <label>Date</label>
-          <input
-            type="date"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-          />
-        </div>
+          <SearchSelect
+            label="Booking"
+            placeholder="Search Booking..."
+            options={booking?.filter((b) => b.status === "pending")}
+            value={selectedBooking}
+            onChange={(selected) => {
+              setSelectedBooking(selected);
 
-        <div className="field">
-          <label>Client</label>
-          <input
-            value={formData.client}
-            onChange={(e) =>
-              setFormData({ ...formData, client: e.target.value })
-            }
-            placeholder="Client Name"
+              setFormData({
+                ...formData,
+                booking: selected._id,
+                customer: selected.customer,
+                plot: selected.plot,
+                colony: selected.colony,
+                location: selected.location,
+                pricePerSqft: selected.pricePerSqft,
+                plotArea: selected.plotArea,
+                requestAmount: selected.requestAmount,
+                totalAmount: selected.finalAmount,
+                amountPaid: selected.amountPaid
+              });
+            }}
+            displayKey="sitevisitId"
+            searchKeys={["customer", "colony", "location"]}
+            renderOption={(p) => (
+              <div>
+                <b>
+                  {p?.customer?.name}( {p.customer.phone})
+                </b>
+                {p.totalAmount ? (
+                  <small style={{ display: "block", color: "#666" }}>
+                    Total Amount :- {p.totalAmount}
+                  </small>
+                ) : (
+                  ""
+                )}
+              </div>
+            )}
           />
         </div>
-
-        <div className="field">
-          <label>Phone</label>
-          <input
-            value={formData.phone}
-            onChange={(e) =>
-              setFormData({ ...formData, phone: e.target.value })
-            }
-            placeholder="Phone"
-          />
-        </div>
-
-        <div className="field">
-          <label>Project</label>
-          <input
-            value={formData.project}
-            onChange={(e) =>
-              setFormData({ ...formData, project: e.target.value })
-            }
-            placeholder="Project Name"
-          />
-        </div>
+        {selectedBooking && (
+          <>
+            <div className="payment-details" style={{border: "1px solid #d4d4d4", borderRadius:"1.75rem", padding:"1rem 1rem 0 1rem", marginBottom:"1rem"}}>
+              <span>Booking Details</span>
+              <p>Customer :- <small>{formData?.customer?.name} ({formData?.customer?.phone})</small></p>
+              <p>Plot Price / sqft :- <small>{formData?.pricePerSqft}/sqft</small></p>
+              <p>Request Price / sqft :- <small>{formData?.requestAmount}/sqft</small></p>
+              <p>Plot Area :- <small>{formData?.plotArea}</small></p>
+              <p>Total Amount :- <small>{formData?.totalAmount}</small></p>
+            </div>
+          </>
+        )}
 
         <div className="field">
           <label>Payment Mode</label>
@@ -236,10 +300,10 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             onChange={(e) => setFormData({ ...formData, mode: e.target.value })}
           >
             <option value="">Select Mode</option>
-            <option value="Cash">Cash</option>
-            <option value="UPI">UPI</option>
-            <option value="Cheque">Cheque</option>
-            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="cash">Cash</option>
+            <option value="upi">UPI</option>
+            <option value="cheque">Cheque</option>
+            <option value="bank">Bank Transfer</option>
           </select>
         </div>
         <div className="field">
@@ -247,7 +311,6 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
 
           <select
             value={formData.paymentType}
-            // disabled={currentStage !== "booking"} // 🔥 lock for agreement & full
             onChange={(e) => {
               const type = e.target.value;
               const total = Number(formData.totalAmount);
@@ -261,44 +324,32 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
               setFormData({
                 ...formData,
                 paymentType: type,
-                amount: autoAmount || formData.amount,
+                restAmount: autoAmount,
               });
             }}
           >
             <option value="">Select Payment Type</option>
-            <option value="booking">Booking (10%)</option>
-            <option value="agreement">Agreement (30%)</option>
+            <option value="booking">Booking</option>
+            <option value="agreement">Agreement</option>
             <option value="full">Full Payment</option>
           </select>
         </div>
         <div className="field">
-          <label>Amount</label>
+          <label>
+            Amount
+            <small style={{ fontSize: "12px", color: "green" }}>
+              ₹{formData.restAmount || 0}{" "}
+            </small>
+          </label>
           <input
             type="number"
-            placeholder="Amount"
+            value={formData.amount}
             onChange={(e) =>
               setFormData({ ...formData, amount: e.target.value })
             }
-            value={formData.amount}
-            // disabled={currentStage !== "booking"} // lock amount also
           />
         </div>
-        <div className="field">
-          <label>Valid Days for next payment</label>
-
-          <input
-            type="number"
-            placeholder="Enter valid days (eg: 30 / 90)"
-            value={formData.validDays}
-            onChange={(e) =>
-              setFormData({ ...formData, validDays: e.target.value })
-            }
-          />
-        </div>
-        {/* {(formData.paymentType === "agreement" ||
-                formData.paymentType === "full") && (
-              )} */}
-        {(formData.mode === "UPI" || formData.mode === "Bank Transfer") && (
+        {(formData.mode === "upi" || formData.mode === "bank") && (
           <div className="field">
             <label>Transaction ID *</label>
             <input
@@ -313,24 +364,27 @@ const PaymentTable = ({ data, actions = [], mood, setAlert }) => {
             />
           </div>
         )}
-        {(formData.mode === "UPI" ||
-          formData.mode === "Cash" ||
-          formData.mode === "Cheque" ||
-          formData.mode === "Bank Transfer") && (
-          <div className="field">
-            <label>Attachment *</label>
-            <input
-              type="file"
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  attachment: e.target.files[0],
-                })
-              }
-            />
-          </div>
-        )}
+        {(formData.mode === "upi" ||
+          formData.mode === "cash" ||
+          formData.mode === "cheque" ||
+          formData.mode === "bank") && (
+            <div className="field">
+              <label>Attachment *</label>
+              <input
+                type="file"
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    attachment: e.target.files[0],
+                  })
+                }
+              />
+            </div>
+          )}
         <p>Notes : 35% cancellation charges</p>
+        {/* <div className="modal-actions">
+                <button onClick={handleAddPayment}>Add Payment</button>
+              </div> */}
         <div className="modal-actions">
           <button
             onClick={() => {

@@ -113,7 +113,7 @@ export default function PlotPolygon({
         fill="#111827"
         pointerEvents="none"
       >
-        {plot.name || plot.id}
+        {plot.plotNumber || plot.plotId}
       </text>
     </>
   );

@@ -66,6 +66,7 @@ select:focus {
 .report-view-box-right h4 {
   padding-bottom: 5px;
   border-bottom: 1px solid #d4d4d4;
+  margin: 1rem 0 .5rem 0;
 }
 
 .view-report-btn {
@@ -166,13 +167,20 @@ select:focus {
   color: #00c0eb;
 }
 
+.comment.staff {
+  color: #67bb3a;
+}
 
-.associate-location{
+.comment.user {
+  color: #f8a32a;
+}
+
+.associate-location {
   font-size: 12px !important;
   color: #9f9f9f;
   padding: 0 !important;
 }
 
-.associate-note{
+.associate-note {
   padding-bottom: 10px !important;
 }

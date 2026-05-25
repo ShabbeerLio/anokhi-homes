@@ -6,8 +6,12 @@ import Icon3 from "../../Assets/icons/Property Services.png"
 import Icon4 from "../../Assets/icons/Construction Services.png"
 import AddLocationModal from '../Modals/AddLocationModal'
 import { LucidePlus } from 'lucide-react'
+import { deleteGallery, updateGallery, uploadImage } from '../../Pages/LandingSetting/LandingApi'
+import { getLandingPage } from '../../Redux/Slices/AppSlices'
+import { useDispatch } from 'react-redux'
 
-const Gallery = ({ setAlert }) => {
+const Gallery = ({ data, setAlert }) => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
@@ -55,57 +59,75 @@ const Gallery = ({ setAlert }) => {
   };
 
   const [homePageData, setHomePageData] = useState({
-    gallery: [
-      { id: 1, image: Icon1, alt: "Gallery Image 1" },
-      { id: 2, image: Icon2, alt: "Gallery Image 1" },
-      { id: 3, image: Icon3, alt: "Gallery Image 1" },
-      { id: 4, image: Icon4, alt: "Gallery Image 1" },
-    ],
+    gallery: [],
   });
 
-  const handleSave = () => {
-    if (type === "gallery") {
-      if (isEditMode) {
-        setHomePageData((prev) => ({
-          ...prev,
-          gallery: prev.gallery.map((item) =>
-            item.id === selectedItem.id
-              ? { ...item, image: formData.preview || item.image }
-              : item
-          ),
-        }));
-      } else {
-        setHomePageData((prev) => ({
-          ...prev,
-          gallery: [
-            ...prev.gallery,
-            {
-              id: Date.now(),
-              image: formData.preview,
-            },
-          ],
-        }));
-      }
+  useEffect(() => {
+    if (data) {
+      setHomePageData(data);
     }
+  }, [data]);
 
-    setAlert({
-      message: `${isEditMode ? "Updated" : "Added"} successfully!`,
-      status: "Success",
-    });
+  const handleSave = async () => {
+    const uploadedImage = await uploadImage(formData.image);
 
-    setTimeout(() => setAlert(null), 3000);
-    setFormData({});
-    setOpen(false);
+    try {
+      let updatedData = {
+        ...homePageData,
+        gallery: [...(homePageData.gallery || [])],
+      };
+      if (type === "gallery") {
+        let uploadedImage = null;
+        if (formData.image instanceof File) {
+          uploadedImage = await uploadImage(formData.image);
+        }
+
+        if (isEditMode) {
+          updatedData.gallery =
+            updatedData.gallery.map((item) =>
+              item._id === selectedItem._id
+                ? {
+                  ...item,
+                  image:
+                    uploadedImage?.url ||
+                    item.image,
+                  alt:
+                    formData.alt || item.alt,
+                }
+                : item
+            );
+
+        } else {
+          updatedData.gallery.push({
+            image: uploadedImage.url,
+            alt: formData.alt,
+          });
+        }
+      }
+      await updateGallery(updatedData);
+      setHomePageData(updatedData);
+      dispatch(getLandingPage());
+      setAlert({
+        message: `${isEditMode ? "Updated" : "Added"} successfully!`,
+        status: "Success",
+      });
+      setTimeout(() => setAlert(null), 3000);
+      setOpen(false);
+      setFormData({});
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleDelete = (section, id) => {
+  const handleDelete = async (section, id) => {
     if (section === "gallery") {
       setHomePageData((prev) => ({
         ...prev,
-        gallery: prev.gallery.filter((item) => item.id !== id),
+        gallery: prev.gallery.filter((item) => item._id !== id),
       }));
     }
-
+    await deleteGallery(id);
+    dispatch(getLandingPage());
     setAlert({
       message: "Deleted successfully!",
       status: "Success",
@@ -130,11 +152,11 @@ const Gallery = ({ setAlert }) => {
       <div className="user-card-box">
         {homePageData.gallery.map((p) => (
           <LandingCard
-            key={p.id}
+            key={p._id}
             p={p}
             action="delete"
             onEdit={() => handleEdit("gallery", p)}
-            onDelete={() => handleDelete("gallery", p.id)}
+            onDelete={() => handleDelete("gallery", p._id)}
           />
         ))}
       </div>
@@ -152,7 +174,7 @@ const Gallery = ({ setAlert }) => {
             <>
               <input type="file" name="image" onChange={handleChange} />
               <input
-                name="title"
+                name="alt"
                 value={formData.alt || ""}
                 onChange={handleChange}
                 placeholder="Alt Tag"

@@ -14,20 +14,22 @@ import AgentLogo from "../../Assets/Logo/logo-anokhi-home-blue.png";
 import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
 
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
-  const [currentUser, setCurrentUser] = useState({
-    id: 473,
-    user: "admin",
-    name: "Anokhi Homes",
-    email: "anokhihomes@company.com",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    status: "active",
-  });
+  const [currentUser, setCurrentUser] = useState({});
   const navigate = useNavigate();
   const [openProfile, setOpenProfile] = useState(false);
   const [openNotif, setOpenNotif] = useState(false);
 
   const profileRef = useRef();
   const notifRef = useRef();
+
+  useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        setCurrentUser(user);
+        setMood(user.role);
+      }
+    }, []);
 
   useEffect(() => {
     const handler = (e) => {
@@ -48,7 +50,10 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
 
   const handleLogout = () => {
     navigate("/");
+    localStorage.removeItem("token");
   };
+
+  // console.log(currentUser,"currentUser")
 
   return (
     <div className="topbar">
@@ -72,7 +77,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
 
       <div className="top-right">
         {/* Role Switch (Demo Only) */}
-        <select
+        {/* <select
           className="top-mood"
           value={mood}
           onChange={(e) => setMood(e.target.value)}
@@ -81,7 +86,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
           <option value="agent">Agent</option>
           <option value="staff">Staff</option>
           <option value="user">User</option>
-        </select>
+        </select> */}
 
         {/* Notifications */}
         <div

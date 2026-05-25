@@ -9,10 +9,34 @@ import BookingCard from "../../components/Cards/BookingCard";
 import BookingData from "../../components/Data/BookingData";
 import SearchSelect from "../../components/SearchItems/SearchSelect";
 import CancellationPolicy from "../../components/Policies/CancellationPolicy";
+import { useDispatch, useSelector } from "react-redux";
+import { getAccountDetails, getBooking, getPlots, getSiteVisit, getUser } from "../../Redux/Slices/AppSlices";
+import axios from "axios";
+import Host from "../../Host/Host";
 const ITEMS_PER_PAGE = 12;
 
 const Booking = ({ mood, setAlert }) => {
-  const currentUser = { id: "Rahul", name: "Rahul" }; // Mocked current user
+  const dispatch = useDispatch();
+  const { userDetail, booking, users, siteVisit, plots } = useSelector((state) => state.app);
+  const [customersList, setCustomersList] = useState([]);
+  const [agentsList, setAgentsList] = useState([]);
+
+  useEffect(() => {
+    dispatch(getAccountDetails());
+    dispatch(getBooking());
+    dispatch(getUser());
+    dispatch(getSiteVisit());
+  }, []);
+
+  useEffect(() => {
+    if (users?.length) {
+      const customers = users.filter((user) => user.role === "user");
+      const agents = users.filter((user) => user.role === "agent");
+      setCustomersList(customers);
+      setAgentsList(agents);
+    }
+  }, [users]);
+
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -47,29 +71,21 @@ const Booking = ({ mood, setAlert }) => {
     }
   }, [selectedBooking]);
 
-  // 🔥 Role-Based Filtering
-  let visibleBookings = [];
+  useEffect(() => {
+    if (formData?.colony) {
+      dispatch(getPlots(formData?.colony?._id));
+    }
+  }, [formData?.colony?._id]);
 
-  if (mood === "admin" || mood === "staff") {
-    visibleBookings = BookingData;
-  } else if (mood === "agent") {
-    visibleBookings = BookingData.filter(
-      (booking) => booking.agentId === currentUser.id,
-    );
-  } else if (mood === "user") {
-    visibleBookings = BookingData.filter(
-      (booking) => booking.customerId === currentUser.id,
-    );
-  }
-
+  console.log(booking, "booking")
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   // console.log(filter, "filter");
 
   const filteredData =
     filter === "all"
-      ? visibleBookings
-      : visibleBookings.filter((d) => d.status === filter);
+      ? booking
+      : booking.filter((d) => d.status === filter);
 
   // reset page when filter changes
   useEffect(() => {
@@ -84,21 +100,88 @@ const Booking = ({ mood, setAlert }) => {
     startIndex + ITEMS_PER_PAGE,
   );
 
-  const handleAddBooking = () => {
-    const newBooking = {
-      ...formData,
-      status: mood === "admin" ? "Confirmed" : "Pending",
-    };
-    console.log("Adding booking:", newBooking);
-    setOpen(false);
-    setAlert({
-      message: `Plot ${newBooking.plot} has been booked successfully!`,
-      status: "Success",
-    });
-    setTimeout(() => {
-      setAlert(null);
-    }, 5000);
+  // const handleAddBooking = () => {
+  //   const newBooking = {
+  //     ...formData,
+  //     status: mood === "admin" ? "Confirmed" : "Pending",
+  //   };
+  //   console.log("Adding booking:", newBooking);
+  //   setOpen(false);
+  //   setAlert({
+  //     message: `Plot ${newBooking.plot} has been booked successfully!`,
+  //     status: "Success",
+  //   });
+  //   setTimeout(() => {
+  //     setAlert(null);
+  //   }, 5000);
+  // };
+  const handleAddBooking = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!selectedPlot) {
+        setAlert({ message: "Please select plot", status: "Error" });
+        return;
+      }
+
+      if (!formData.requestAmount) {
+        setAlert({ message: "Enter request amount", status: "Error" });
+        return;
+      }
+
+      if (!formData.termsAccepted) {
+        setAlert({
+          message: "Please accept terms & conditions",
+          status: "Error",
+        });
+        return;
+      }
+
+      console.log(formData, "formData")
+      const res = await axios.post(
+        `${Host}/api/booking/add`,
+        {
+          sitevisitId: formData._id, // 🔥 IMPORTANT
+          customer: formData.customer._id,
+          location: formData.location?._id,
+          colony: formData.colony?._id,
+          plot: selectedPlot._id, // 🔥 IMPORTANT
+
+          requestAmount: formData.requestAmount,
+
+          bookingDate: formData.bookingDate,
+          agreementDate: formData.agreementDate,
+          fullDate: formData.fullDate,
+
+          termsAccepted: formData.termsAccepted,
+        },
+        {
+          headers: {
+            "auth-token": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setAlert({
+        message: "Booking created successfully",
+        status: "Success",
+      });
+
+      dispatch(getBooking());
+      setOpen(false);
+      setTimeout(() => setAlert(null), 3000);
+
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: err.response?.data?.message || "Booking failed",
+        status: "Error",
+      });
+      setTimeout(() => setAlert(null), 3000);
+    }
   };
+
   const handleEditBooking = () => {
     console.log("Editing booking:", formData);
     setOpen(false);
@@ -108,41 +191,14 @@ const Booking = ({ mood, setAlert }) => {
     }, 5000);
   };
 
-  const customers = [
-    { id: "C001", name: "Rahul Sharma", phone: "9876543210" },
-    { id: "C002", name: "Imran Khan", phone: "9123456789" },
-    { id: "C003", name: "Arjun Mehta", phone: "9988776655" },
-  ];
-
-  const Projects = [
-    { id: "PJ101", name: "SunShine Colony", location: "Mumbai" },
-    { id: "PJ102", name: "Moon Colony", location: "Delhi" },
-  ];
-  const plots = [
-    {
-      id: "P101",
-      name: "Plot A-12",
-      projectId: "PJ101",
-      price: 1200,
-      area: "1000",
-      status: "Vacant",
-    },
-    {
-      id: "P102",
-      name: "Plot B-07",
-      projectId: "PJ102",
-      price: 1150,
-      area: "2000",
-      status: "Vacant",
-    },
-  ];
-
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedProjects, setSelectedProjects] = useState(null);
   const [selectedPlot, setSelectedPlot] = useState(null);
   const totalAmount = Number(selectedPlot?.price || 0);
   const paidAmount = Number(formData.amountPaid || 0);
 
+  // console.log(siteVisit, "siteVisit")
+  console.log(selectedCustomer, "selectedCustomer")
   return (
     <div className="plot-container">
       {/* Filters */}
@@ -175,7 +231,7 @@ const Booking = ({ mood, setAlert }) => {
             />
           </div>
 
-          {["all", "Confirmed", "Pending", "Approval", "Rejected"].map((f) => (
+          {["all", "confirmed", "pending", "approval", "rejected"].map((f) => (
             <button
               key={f}
               className={filter === f ? "active" : ""}
@@ -191,7 +247,7 @@ const Booking = ({ mood, setAlert }) => {
         {currentData.length === 0 ? (
           <p>No Bookings Found</p>
         ) : (
-          currentData.map((item) => (
+          currentData.reverse().map((item) => (
             <BookingCard
               item={item}
               setSelectedBooking={setSelectedBooking}
@@ -238,79 +294,72 @@ const Booking = ({ mood, setAlert }) => {
       >
         <div className="field">
           <SearchSelect
-            label="Customer Name"
+            label="Site Visit"
             placeholder="Search name or number"
-            options={customers}
+            options={siteVisit}
             value={selectedCustomer}
             onChange={(selected) => {
               setSelectedCustomer(selected);
               setFormData({
                 ...formData,
-                customerName: selected.customerName,
+                sitevisitId: selected._id,
+                customer: selected.customer,
+                agent: selected?.agent?._id || null,
+                location: selected?.location,
+                colony: selected?.colony
               });
             }}
-            displayKey="name"
-            searchKeys={["name", "phone"]}
+            displayKey="visitDate"
+            searchKeys={["customer", "colony", "location"]}
             renderOption={(c) => (
               <div>
-                <b>{c.name}</b> ({c.phone})
-              </div>
-            )}
-          />
-        </div>
-
-        <div className="field">
-          <label>Phone</label>
-          <input
-            value={selectedCustomer?.phone}
-            onChange={(e) =>
-              setFormData({ ...formData, phone: e.target.value })
-            }
-            placeholder="Phone Number"
-          />
-        </div>
-        <div className="field">
-          <SearchSelect
-            label="Site"
-            placeholder="Search Project or location"
-            options={Projects}
-            value={selectedProjects}
-            onChange={(selected) => {
-              setSelectedProjects(selected);
-              setFormData({ ...formData, Project: selected.name });
-            }}
-            displayKey="name"
-            searchKeys={["name", "location"]}
-            renderOption={(p) => (
-              <div>
-                <b>{p.name}</b>
+                <b>{c?.customer?.name}</b> ({c?.customer?.phone})
                 <small style={{ display: "block", color: "#666" }}>
-                  {p.location}
+                  {c?.colony?.name}, {c?.location?.name}
                 </small>
               </div>
             )}
           />
         </div>
         <div className="field">
+          <label>Customer Name</label>
+          <input
+            value={selectedCustomer?.customer?.name}
+            readOnly
+            placeholder="Phone Number"
+          />
+        </div>
+        <div className="field">
+          <label>Customer Phone</label>
+          <input
+            value={selectedCustomer?.customer?.phone}
+            readOnly
+            placeholder="Phone Number"
+          />
+        </div>
+        <div className="field">
           <SearchSelect
             label="Plots"
             placeholder="Search Plot..."
-            options={plots}
+            options={plots?.plots}
             value={selectedPlot}
             onChange={(selected) => {
               setSelectedPlot(selected);
 
               setFormData({
                 ...formData,
-                plotId: selected.id,
-                amount: selected.price,
+                plot: selected._id,
+                plotId: selected.plotId,
+                pricePerSqft: selected.price,
+                plotArea: selected.area,
+                priceRange: selected.priceRange,
               });
             }}
-            displayKey="name"
-            searchKeys={["name", "location"]}
+            displayKey="plotNumber"
+            searchKeys={["plotNumber", "status"]}
             renderOption={(p) => (
               <div>
-                <b>{p.name}</b>
+                <b>{p.plotNumber}</b>
                 <small style={{ display: "block", color: "#666" }}>
                   {p.status}
                 </small>
@@ -320,104 +369,128 @@ const Booking = ({ mood, setAlert }) => {
         </div>
 
         <div className="field">
-          <label>Associate</label>
-          <select
-            value={formData.agent}
-            onChange={(e) =>
-              setFormData({ ...formData, agent: e.target.value })
-            }
-          >
-            <option value="">Select Associate</option>
-            <option value="Amit">Amit</option>
-            <option value="Sana">Sana</option>
-            <option value="Raj">Raj</option>
-          </select>
-        </div>
-
-        <div className="field">
-          <label>Amount ( Area X Rate ) <small style={{ color: "green" }}>{selectedPlot?.price} X {selectedPlot?.area}</small></label>
+          <label>Rate <small style={{ fontSize: "12px", color: "green" }}>₹{selectedPlot?.price || 0} / sq.ft </small></label>
           <input
-            placeholder="Total Amount"
-            value={(selectedPlot?.price) * (selectedPlot?.area) || ""}
-            onChange={(e) =>
-              setFormData({ ...formData, amount: e.target.value })
-            }
-          />
-        </div>
-
-        {/* <div className="field">
-          <label>Amount Paid</label>
-          <input
-            placeholder="Amount Paid"
-            value={formData.amountPaid || ""}
-            onChange={(e) =>
-              setFormData({ ...formData, amountPaid: e.target.value })
-            }
-          />
-        </div> */}
-        <div className="field">
-          <label>Amount Requested in sqft</label>
-          <input
-            placeholder="Amount Requested in SQFT"
-            value={formData.amountRequested}
-            onChange={(e) =>
-              setFormData({ ...formData, amountRequested: e.target.value })
-            }
+            placeholder="Rate with sqft"
+            value={formData.pricePerSqft ? `₹${formData.pricePerSqft} * ${formData.plotArea} sq.ft` : ""}
+            // {"₹550 * 1200 sq.ft"}
+            readOnly
           />
         </div>
 
         <div className="field">
-          <label style={{ justifyContent: "flex-start" }}>Booking Payment <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
-          <select
-            value={formData.paymentPeriod || ""}
+          <label>Price Request in sq.ft
+            <small style={{ fontSize: "12px", color: "green" }}>₹{formData.requestAmount * formData.plotArea || 0} </small>
+          </label>
+          <input
+            type="number"
+            placeholder="Price request in sq.ft"
+            value={formData.requestAmount || ""}
             onChange={(e) =>
-              setFormData({ ...formData, paymentPeriod: e.target.value })
+              setFormData({ ...formData, requestAmount: e.target.value })
             }
-          >
-            <option value="select">Select days</option>
-            <option value="10-20 days">07-08 days</option>
-            <option value="20-30 days">08-09 days</option>
-            <option value="30-40 days">09-10 days</option>
-          </select>
+          />
         </div>
+
+
+        {selectedPlot &&
+          formData.requestAmount &&
+          (Number(formData.requestAmount) < selectedPlot.priceRange.min ||
+            Number(formData.requestAmount) > selectedPlot.priceRange.max) && (
+            <div className="field">
+              <label>
+                Notes <small style={{ fontSize: "12px", color: "#ff6969" }}>(Price Doesn't Match Allowed Range)</small><span style={{ color: "red" }}>*</span>
+              </label>
+              <textarea
+                placeholder="Enter reason for requesting amount outside allowed range"
+                value={formData.notes || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
+              />
+            </div>
+          )}
+
         <div className="field">
-          <label style={{ justifyContent: "flex-start" }}>Agreement Payment <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
-          <select
-            value={formData.paymentPeriod || ""}
+          <label>Booking Payment Date</label>
+          <input
+            type="date"
+            value={formData.bookingDate || ""}
             onChange={(e) =>
-              setFormData({ ...formData, paymentPeriod: e.target.value })
+              setFormData({ ...formData, bookingDate: e.target.value })
             }
-          >
-            <option value="select">Select days</option>
-            <option value="10-20 days">20-25 days</option>
-            <option value="20-30 days">25-30 days</option>
-            <option value="30-40 days">30-40 days</option>
-          </select>
+          />
         </div>
+
         <div className="field">
-          <label style={{ justifyContent: "flex-start" }}>Full Payment (Registry) <small style={{ fontSize: "12px", color: "gray" }}>Within </small></label>
-          <select
-            value={formData.paymentPeriod || ""}
+          <label>Agreement Payment Date</label>
+          <input
+            type="date"
+            value={formData.agreementDate || ""}
             onChange={(e) =>
-              setFormData({ ...formData, paymentPeriod: e.target.value })
+              setFormData({ ...formData, agreementDate: e.target.value })
             }
-          >
-            <option value="select">Select days</option>
-            <option value="10-20 days">20-25 days</option>
-            <option value="20-30 days">25-30 days</option>
-            <option value="30-40 days">30-40 days</option>
-          </select>
+          />
         </div>
-        <p style={{ color: "#ff6969", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "5px", padding: "0px 0" }}>
-          <input style={{ width: "5%" }} type="checkbox" />
+
+        <div className="field">
+          <label>Full Payment Date</label>
+          <input
+            type="date"
+            value={formData.fullDate || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, fullDate: e.target.value })
+            }
+          />
+        </div>
+        <p style={{ color: "#ff6969", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "5px", padding: "10px 0" }}>
+          <input style={{ width: "5%" }} type="checkbox"
+            checked={formData.termsAccepted || false}
+            onChange={(e) =>
+              setFormData({ ...formData, termsAccepted: e.target.checked })
+            } />
           Notes : 35% cancellation charges
           <span style={{ borderBottom: "1px solid #ff6969", cursor: "pointer" }} onClick={() => setPolicyOpen(true)}>
             Read Cancellation Policy
           </span>
         </p>
+
         <div className="modal-actions">
           <button
             onClick={() => {
+              if (!selectedPlot) {
+                setAlert({
+                  message: "Please select a plot",
+                  status: "Error",
+                });
+                setTimeout(() => setAlert(null), 3000);
+                return;
+              }
+
+              const requestedAmount = Number(formData.requestAmount);
+              const min = selectedPlot.priceRange.min;
+              const max = selectedPlot.priceRange.max;
+
+              const isInRange = requestedAmount >= min && requestedAmount <= max;
+
+              if (!requestedAmount) {
+                setAlert({
+                  message: "Please enter amount request",
+                  status: "Error",
+                });
+                setTimeout(() => setAlert(null), 3000);
+                return;
+              }
+
+              if (!isInRange && !formData.notes?.trim()) {
+                setAlert({
+                  message: "Notes are required when amount is outside the allowed range",
+                  status: "Error",
+                });
+                setTimeout(() => setAlert(null), 3000);
+                return;
+              }
+
               if (isEditMode) {
                 handleEditBooking();
               } else {
@@ -435,7 +508,7 @@ const Booking = ({ mood, setAlert }) => {
         onClose={() => setPolicyOpen(false)}
         title="Cancellation Policy"
       >
-        <CancellationPolicy/>
+        <CancellationPolicy />
       </AddLocationModal>
     </div>
   );

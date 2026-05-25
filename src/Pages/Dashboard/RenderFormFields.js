@@ -88,7 +88,7 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
   );
 
   switch (actionType) {
-    case "Add Agent / Staff / Customer":
+    case "Add Associate / Staff / Customer":
       return (
         <>
           {/* USER TYPE */}

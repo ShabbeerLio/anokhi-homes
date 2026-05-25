@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,9 +11,17 @@ import Contact from "../../components/LandingSetting/Contact";
 import Footer from "../../components/LandingSetting/Footer";
 import Meta from "../../components/LandingSetting/Meta";
 import PolicyPage from "../../components/LandingSetting/PolicyPage";
+import { getLandingPage } from "../../Redux/Slices/AppSlices";
+import { useDispatch, useSelector } from "react-redux";
 
 const LandingSetting = ({ mood, setAlert }) => {
-  //   console.log(setAlert, "setAlert");
+  const dispatch = useDispatch();
+  const { landingPage } = useSelector((state) => state.app);
+
+  useEffect(() => {
+    dispatch(getLandingPage());
+  }, []);
+    console.log(landingPage, "landingPage");
   const navigate = useNavigate();
 
   /* ================= ROLE BASED TABS ================= */
@@ -36,31 +44,31 @@ const LandingSetting = ({ mood, setAlert }) => {
   const renderContent = () => {
     switch (activeTab) {
       case "Home":
-        return <Home setAlert={setAlert} />;
+        return <Home data={landingPage?.home} setAlert={setAlert} />;
 
       case "About":
-        return <About setAlert={setAlert} />;
+        return <About data={landingPage?.about} setAlert={setAlert} />;
 
       case "Gallery":
-        return <Gallery setAlert={setAlert} />;
+        return <Gallery data={landingPage?.gallery} setAlert={setAlert} />;
 
       case "Documents":
-        return <Documents setAlert={setAlert} />;
+        return <Documents data={landingPage?.documents} setAlert={setAlert} />;
 
       case "Contact":
-        return <Contact setAlert={setAlert} />;
+        return <Contact data={landingPage?.contact} setAlert={setAlert} />;
 
       case "Footer":
-        return <Footer setAlert={setAlert} />;
+        return <Footer data={landingPage?.footer} setAlert={setAlert} />;
 
       case "Meta":
-        return <Meta setAlert={setAlert} />;
+        return <Meta data={landingPage?.meta} setAlert={setAlert} />;
 
       case "Policies":
-        return <PolicyPage setAlert={setAlert} />;
+        return <PolicyPage data={landingPage?.policies} setAlert={setAlert} />;
 
       default:
-        return <Home setAlert={setAlert} />;
+        return <Home data={landingPage?.home} setAlert={setAlert} />;
     }
   };
 

@@ -8,6 +8,15 @@ import NiReport from "../../icons/ni-report";
 import NiCross from "../../icons/ni-cross";
 import NiUser from "../../icons/ni-user";
 import SearchSelect from "../SearchItems/SearchSelect";
+import formatDate from "../DateFormate/DateFormate";
+import Host from "../../Host/Host";
+import axios from "axios";
+import { getAllColonies, getLeads } from "../../Redux/Slices/AppSlices";
+import { useDispatch, useSelector } from "react-redux";
+import NiTick from "../../icons/ni-tick";
+import NiEdit from "../../icons/ni-edit";
+import NiDelete from "../../icons/ni-delete";
+import NoteItem from "../NoteItem/NoteItem";
 const agents = [
   {
     id: 1,
@@ -40,18 +49,30 @@ const ManagementCard = ({
   mood,
   dashboard,
   setAlert,
+  agentsList,
+  onDeleteLead
 }) => {
+  const dispatch = useDispatch();
+  const { allColonies } = useSelector((state) => state.app);
   const [activeRow, setActiveRow] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [panelMode, setPanelMode] = useState(null);
-
+  const [editingNoteId, setEditingNoteId] = useState(null);
+  const [editText, setEditText] = useState("");
   const [agentSearch, setAgentSearch] = useState("");
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [noteText, setNoteText] = useState("");
   const [notes, setNotes] = useState(item.notes || []);
+  const [disapproveOpen, setDisapproveOpen] = useState(false);
   const [lostReason, setLostReason] = useState(item.lostReason || "");
   const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    dispatch(getAllColonies());
+  }, [dispatch]);
+
+
   useEffect(() => {
     if (!viewOpen) {
       setPanelMode(null);
@@ -59,15 +80,16 @@ const ManagementCard = ({
     }
   }, [viewOpen]);
 
-  const handleAssignAgent = (leadId, agentName) => {
-    console.log("Assigning", agentName, "to lead", leadId);
-
-    // Update lead logic here
-    // If using state leads:
-    // setLeads(prev =>
-    //   prev.map(l => l.id === leadId ? { ...l, agent: agentName } : l)
-    // );
-
+  const handleAssignAgent = async (leadId, agentId) => {
+    console.log("Assigning", agentId, "to lead", leadId);
+    const token = localStorage.getItem("token");
+    const res = await axios.put(`${Host}/api/lead/assign/${leadId}`, { agentId }, {
+      headers: {
+        "auth-token": token,
+        "Content-Type": "application/json",
+      },
+    });
+    dispatch(getLeads());
     setAlert({
       message: "Agent Assigned Successfully",
       status: "Success",
@@ -75,15 +97,17 @@ const ManagementCard = ({
 
     setTimeout(() => setAlert(null), 3000);
   };
-  const handleReAssignAgent = (leadId, agentName) => {
-    console.log("Reassigning", agentName, "to lead", leadId);
 
-    // Update lead logic here
-    // If using state leads:
-    // setLeads(prev =>
-    //   prev.map(l => l.id === leadId ? { ...l, agent: agentName } : l)
-    // );
-
+  const handleReAssignAgent = async (leadId, agentId) => {
+    console.log("Reassigning", agentId, "to lead", leadId);
+    const token = localStorage.getItem("token");
+    const res = await axios.put(`${Host}/api/lead/assign/${leadId}`, { agentId }, {
+      headers: {
+        "auth-token": token,
+        "Content-Type": "application/json",
+      },
+    });
+    dispatch(getLeads());
     setAlert({
       message: "Agent Ressigned Successfully",
       status: "Success",
@@ -92,49 +116,260 @@ const ManagementCard = ({
     setTimeout(() => setAlert(null), 3000);
   };
 
-  const filteredAgents = agents.filter(
+  const handleAgentAction = async (leadId, action, note = "") => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.put(
+        `${Host}/api/lead/agent-action/${leadId}`,
+        {
+          action,
+          note,
+        },
+        {
+          headers: {
+            "auth-token": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      dispatch(getLeads());
+
+      setAlert({
+        message:
+          action === "accept"
+            ? "Lead accepted successfully"
+            : "Lead rejected successfully",
+        status: "Success",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: err.response?.data?.message || "Something went wrong",
+        status: "Error",
+      });
+    }
+  };
+
+  const handleAddNote = async (leadId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(
+        `${Host}/api/lead/add-note/${leadId}`,
+        { note: noteText },
+        {
+          headers: {
+            "auth-token": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // ✅ update UI from backend response
+      setNotes(res.data.lead.notes);
+      setNoteText("");
+
+      setAlert({
+        message: "Note added successfully",
+        status: "Success",
+      });
+
+      dispatch(getLeads()); // optional refresh
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: err.response?.data?.message || "Failed to add note",
+        status: "Error",
+      });
+    }
+  };
+
+  const handleEditNote = async (leadId, noteId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.put(
+        `${Host}/api/lead/edit-note/${leadId}/${noteId}`,
+        { note: editText },
+        {
+          headers: {
+            "auth-token": token,
+          },
+        }
+      );
+
+      setNotes(res.data.lead.notes);
+      setEditingNoteId(null);
+      setEditText("");
+      dispatch(getLeads());
+
+      setAlert({ message: "Note updated", status: "Success" });
+    } catch (err) {
+      console.error(err);
+      setAlert({ message: "Edit failed", status: "Error" });
+    }
+  };
+
+  const handleDeleteNote = async (leadId, noteId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.delete(
+        `${Host}/api/lead/delete-note/${leadId}/${noteId}`,
+        {
+          headers: {
+            "auth-token": token,
+          },
+        }
+      );
+
+      setNotes(res.data.lead.notes);
+      dispatch(getLeads());
+      setAlert({ message: "Note deleted", status: "Success" });
+    } catch (err) {
+      console.error(err);
+      setAlert({ message: "Delete failed", status: "Error" });
+    }
+  };
+
+  const handleMarkAsLost = async (leadId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.put(
+        `${Host}/api/lead/mark-lost/${leadId}`,
+        { reason: formData.lostReason },
+        {
+          headers: {
+            "auth-token": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      dispatch(getLeads());
+
+      setAlert({
+        message: "Lead marked as lost",
+        status: "Success",
+      });
+
+      setViewOpen(false);
+      setFormData({});
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: err.response?.data?.message || "Failed",
+        status: "Error",
+      });
+    }
+  };
+
+  const handleDeleteLead = async (leadId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${Host}/api/lead/delete/${leadId}`, {
+        headers: {
+          "auth-token": token,
+        },
+      });
+
+      dispatch(getLeads());
+
+      setAlert({
+        message: "Lead deleted successfully!",
+        status: "Success",
+      });
+setTimeout(() => setAlert(null), 3000);
+      setDeleteOpen(false);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: "Delete failed",
+        status: "Error",
+      });
+      setTimeout(() => setAlert(null), 3000);
+    }
+  };
+
+  const handleRequestSiteVisit = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const payload = {
+        lead: item._id,
+        customer: item.customer,
+        location: selectedProjects?.locationId?._id,
+        colony: selectedProjects?._id,
+        visitDate: formData.visitHour + " " + formData.visitPeriod + " " + formData.visitDate,
+      };
+
+      // console.log(payload,"payload")
+
+      const res = await axios.post(
+        `${Host}/api/sitevisit/add`,
+        payload,
+        {
+          headers: {
+            "auth-token": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setAlert({
+        message: "Site visit requested",
+        status: "Success",
+      });
+      dispatch(getLeads());
+      setViewOpen(false);
+      setFormData({});
+      setSelectedProjects(null);
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: err.response?.data?.message || "Request failed",
+        status: "Error",
+      });
+    }
+  };
+
+  const filteredAgents = agentsList.filter(
     (a) =>
       a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
       a.phone.includes(agentSearch),
   );
 
-  const Projects = [
-    { id: "PJ101", name: "SunShine Colony", location: "Mumbai" },
-    { id: "PJ102", name: "Moon Colony", location: "Delhi" },
-  ];
-
-  const plots = [
-    {
-      id: "P101",
-      name: "Plot A-12",
-      projectId: "PJ101",
-      price: 1200000,
-      status: "Vacant",
-    },
-    {
-      id: "P102",
-      name: "Plot B-07",
-      projectId: "PJ102",
-      price: 2300000,
-      status: "Hold",
-    },
-  ];
-
   const [selectedProjects, setSelectedProjects] = useState(null);
-  const [selectedPlot, setSelectedPlot] = useState(null);
+  // console.log(mood, "item")
+  const isSystemNote = (text) => {
+    return text?.toLowerCase().includes("accepted by");
+  };
 
+  // console.log(item, "item")
+  // console.log(selectedProjects, "allCoselectedProjectslonies")
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
       <div className="user-card-top">
         <div className="user-card-title">
           <div className="user-card-name">
-            <h4>
-              {item.name}
+            <h4 style={{ textTransform: "capitalize" }}>
+              {item?.name}
               {/* <span>({item.phone})</span> */}
               <span
-                className={`status ${item.status === "New" ? "active2" : item.status === "Converted" ? "active" : item.status === "Assigned" ? "pending" : item.status === "Unassigned" ? "pending2" : "failed"}`}
+                className={`status ${item?.status === "new" ? "active2" : item?.status === "converted" ? "active" : item?.status === "assigned" ? "pending" : item?.status === "unassigned" ? "pending2" : "failed"}`}
               >
-                {item.status}
+                {item?.status}
               </span>
             </h4>
             {/* <p>{item.id}</p> */}
@@ -149,18 +384,18 @@ const ManagementCard = ({
           >
             <NiOpenEye />
           </span>
-          {mood !== "user" && !dashboard && (
+          {mood !== "user" && mood !== "agent" && !dashboard && (
             <span
               onClick={(e) => {
                 e.stopPropagation();
-                setActiveRow(activeRow === item.id ? null : item.id);
+                setActiveRow(activeRow === item._id ? null : item._id);
               }}
             >
               <NiDots />
             </span>
           )}
 
-          {activeRow === item.id && (
+          {activeRow === item._id && (
             <ActionModal
               item={item}
               onClose={() => setActiveRow(null)}
@@ -180,16 +415,18 @@ const ManagementCard = ({
         <div className="user-card-bottom-left">
           <p>Date</p>
           <p>Phone No.</p>
-          <p>Associate</p>
+          {mood !== "agent" && <p>Associate</p>}
         </div>
         <div className="user-card-bottom-right">
-          <p>{item.date}</p>
-          <p>{item.phone}</p>
-          <p>{item.agent}</p>
+          <p>
+            {formatDate(item?.createdAt)}
+          </p>
+          <p>{item?.phone}</p>
+          {mood !== "agent" && <p>{item?.agent?.name || ""}</p>}
         </div>
       </div>
       {mood === "admin" &&
-        (item.status === "New" ? (
+        (item?.status === "new" ? (
           <div className="modal-actions">
             <button
               className="view-report-btn"
@@ -202,7 +439,7 @@ const ManagementCard = ({
               <NiUser /> Assign Associate
             </button>
           </div>
-        ) : item.status === "Unassigned" ? (
+        ) : item?.status === "unassigned" ? (
           <div className="modal-actions">
             <button
               className=" view-report-btn"
@@ -217,7 +454,7 @@ const ManagementCard = ({
           </div>
         ) : "")
       }
-      {mood === "agent" && item.status === "Assigned" && (
+      {mood === "agent" && item?.status === "assigned" && (
         <div className="modal-actions">
           <button
             onClick={(e) => {
@@ -230,13 +467,60 @@ const ManagementCard = ({
           </button>
         </div>
       )}
+      {mood === "agent" && item?.status === "new" && (
+        <div className="modal-actions">
+          <button
+            className="site-visit-approval status active"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAgentAction(item._id, "accept");
+            }}
+          >
+            <NiTick /> Accept
+          </button>
+
+          <button
+            className="site-visit-approval status failed"
+            onClick={() => setDisapproveOpen(true)}
+          >
+            <NiCross /> Disapprove
+          </button>
+        </div>
+      )}
+      <DeleteModal open={disapproveOpen} onClose={() => setDisapproveOpen(false)}>
+        <h4>Disapprove Lead</h4>
+        <div className="field">
+          <label>
+            Notes
+          </label>
+          <textarea
+            placeholder="Add Notes..."
+            value={formData.notes || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, notes: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="modal-actions">
+          <button
+            onClick={() => {
+              handleAgentAction(item._id, "reject", formData.notes);
+              setDisapproveOpen(false);
+              setFormData({});
+            }}
+          >
+            Disapprove
+          </button>
+        </div>
+      </DeleteModal>
       <DeleteModal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              console.log("Lead deleted");
+              handleDeleteLead(item._id);
 
               setDeleteOpen(false);
 
@@ -276,12 +560,12 @@ const ManagementCard = ({
             <p>Date</p>
             <p>Status</p>
             <p>Phone No.</p>
-            <p>Associate</p>
-            {item.status === "Converted" ? (
+            {mood !== "agent" && <p>Associate</p>}
+            {item?.status === "converted" ? (
               <p>Report</p>
-            ) : item.status === "Lost" ? (
+            ) : item?.status === "lost" ? (
               <p>Report</p>
-            ) : item.status === "Assigned" && mood === "admin" ? (
+            ) : item?.status === "assigned" && mood === "admin" ? (
               <div className="table-filters">
                 <button
                   className="view-report-btn"
@@ -294,11 +578,13 @@ const ManagementCard = ({
             ) : ""}
           </div>
           <div className="user-card-bottom-right">
-            <p>{item.date}</p>
-            <p>{item.status}</p>
-            <p>{item.phone}</p>
+            <p>
+              {formatDate(item?.createdAt)}
+            </p>
+            <p>{item?.status}</p>
+            <p>{item?.phone}</p>
 
-            {item.status === "New" && mood === "admin" ? (
+            {item?.status === "new" && mood === "admin" ? (
               <>
                 <div className="table-filters">
                   <button
@@ -312,12 +598,12 @@ const ManagementCard = ({
               </>
             ) : (
               <>
-                <p>{item.agent || ""}</p>
+                {mood !== "agent" && <p>{item?.agent?.name || ""}</p>}
               </>
             )}
 
             <div className="table-filters">
-              {(item.status === "Assigned" || item.status === "Unassigned") && (
+              {(item?.status === "assigned" || item?.status === "unassigned") && (
                 <button
                   className="view-report-btn"
                   onClick={() => setPanelMode("notes")}
@@ -326,7 +612,7 @@ const ManagementCard = ({
                 </button>
               )}
 
-              {item.status === "Lost" && (
+              {item?.status === "lost" && (
                 <button
                   className="view-report-btn"
                   onClick={() => setPanelMode("lost")}
@@ -335,7 +621,7 @@ const ManagementCard = ({
                 </button>
               )}
 
-              {item.status === "Converted" && (
+              {item?.status === "converted" && (
                 <button
                   className="view-report-btn"
                   onClick={() => setPanelMode("report")}
@@ -346,7 +632,7 @@ const ManagementCard = ({
             </div>
           </div>
         </div>
-        {mood === "agent" && item.status === "Assigned" && (
+        {mood === "agent" && item?.status === "assigned" && (
           <div className="modal-actions">
             <button
               onClick={() => setPanelMode("siteVisit")}
@@ -378,7 +664,7 @@ const ManagementCard = ({
                     <SearchSelect
                       label=""
                       placeholder="Search name or number"
-                      options={agents}
+                      options={agentsList}
                       value={selectedAgent}
                       onChange={(selected) => {
                         setSelectedAgent(selected);
@@ -404,9 +690,9 @@ const ManagementCard = ({
                       <img src={selectedAgent.avatar} alt="" />
                       <div>
                         <p>
-                          {selectedAgent.name} ({selectedAgent.phone})
+                          {selectedAgent.name}
                         </p>
-                        <p className="associate-location">{selectedAgent.location}</p>
+                        <p className="associate-location">{selectedAgent.phone}</p>
                       </div>
                     </div>
                     <span
@@ -422,7 +708,7 @@ const ManagementCard = ({
                   <div className="modal-actions">
                     <button
                       onClick={() => {
-                        handleAssignAgent(item.id, selectedAgent.name);
+                        handleAssignAgent(item._id, selectedAgent._id);
                         setPanelMode(null);
                         setSelectedAgent(null);
                         setViewOpen(false);
@@ -437,7 +723,7 @@ const ManagementCard = ({
           )}
           {panelMode === "reassign" && (
             <>
-              <h4>Reassign Agent</h4>
+              <h4>Reassign Associate</h4>
 
               {/* IF NO AGENT SELECTED → SHOW SEARCH + LIST */}
               {!selectedAgent && (
@@ -446,7 +732,7 @@ const ManagementCard = ({
                     <SearchSelect
                       label=""
                       placeholder="Search name or number"
-                      options={agents}
+                      options={agentsList}
                       value={selectedAgent}
                       onChange={(selected) => {
                         setSelectedAgent(selected);
@@ -472,9 +758,9 @@ const ManagementCard = ({
                       <img src={selectedAgent.avatar} alt="" />
                       <div>
                         <p>
-                          {selectedAgent.name}({selectedAgent.phone})
+                          {selectedAgent.name}
                         </p>
-                        <p>{selectedAgent.location}</p>
+                        <p className="associate-location">{selectedAgent.phone}</p>
                       </div>
                     </div>
                     <span
@@ -486,18 +772,18 @@ const ManagementCard = ({
                       <NiCross />
                     </span>
                   </div>
-                  <div class="field">
+                  {/* <div class="field">
                     <textarea
                       placeholder="Add reason or note of re-assigning"
                       value={noteText}
                       onChange={(e) => setNoteText(e.target.value)}
                     />
-                  </div>
+                  </div> */}
                   <p>Reassinging agent will move lead to assigned</p>
                   <div className="modal-actions">
                     <button
                       onClick={() => {
-                        handleReAssignAgent(item.id, selectedAgent.name);
+                        handleReAssignAgent(item._id, selectedAgent._id);
                         setPanelMode(null);
                         setSelectedAgent(null);
                         setViewOpen(false);
@@ -546,11 +832,12 @@ const ManagementCard = ({
 
                 {/* AM / PM */}
                 <select
-                  value={formData.visitPeriod || "AM"}
+                  value={formData.visitPeriod}
                   onChange={(e) =>
                     setFormData({ ...formData, visitPeriod: e.target.value })
                   }
                 >
+                  <option value="">Select Period (AM / PM)</option>
                   <option value="AM">AM</option>
                   <option value="PM">PM</option>
                 </select>
@@ -559,11 +846,11 @@ const ManagementCard = ({
                 <SearchSelect
                   label="Site"
                   placeholder="Search Project or location"
-                  options={Projects}
+                  options={allColonies}
                   value={selectedProjects}
                   onChange={(selected) => {
                     setSelectedProjects(selected);
-                    setFormData({ ...formData, Project: selected.name });
+                    setFormData({ ...formData, location: selected.name });
                   }}
                   displayKey="name"
                   searchKeys={["name", "location"]}
@@ -571,7 +858,7 @@ const ManagementCard = ({
                     <div>
                       <b>{p.name}</b>
                       <small style={{ display: "block", color: "#666" }}>
-                        {p.location}
+                        {p?.locationId?.name}
                       </small>
                     </div>
                   )}
@@ -581,17 +868,16 @@ const ManagementCard = ({
               <div className="modal-actions">
                 <button
                   onClick={() => {
-                    console.log("Site Visit Requested", formData);
-
-                    setAlert({
-                      message: "Site visit request submitted",
-                      status: "Success",
-                    });
-
-                    setTimeout(() => setAlert(null), 3000);
-
-                    setViewOpen(null);
-                    setFormData({});
+                    // console.log("Site Visit Requested", formData);
+                    if (!formData.visitDate || !selectedProjects) {
+                      setAlert({
+                        message: "Please select date and location",
+                        status: "Error",
+                      });
+                      return;
+                      setTimeout(() => setAlert(null), 3000);
+                    }
+                    handleRequestSiteVisit();
                   }}
                 >
                   Submit Request
@@ -605,10 +891,10 @@ const ManagementCard = ({
               <div className="field">
                 <label>Notes</label>
                 <textarea
-                  placeholder="Add Notes..."
-                  value={formData.notes || ""}
+                  placeholder="Enter reason..."
+                  value={formData.lostReason || ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, notes: e.target.value })
+                    setFormData({ ...formData, lostReason: e.target.value })
                   }
                 />
               </div>
@@ -616,15 +902,13 @@ const ManagementCard = ({
               <div className="modal-actions">
                 <button
                   onClick={() => {
-                    setAlert({
-                      message: "Marked as Lost",
-                      status: "Success",
-                    });
+                    if (!formData.lostReason?.trim()) {
+                      setAlert({ message: "Please add reason", status: "Error" });
+                      setTimeout(() => setAlert(null), 3000);
+                      return;
+                    }
 
-                    setViewOpen(null);
-                    setFormData({});
-
-                    setTimeout(() => setAlert(null), 3000);
+                    handleMarkAsLost(item._id);
                   }}
                 >
                   Mark as Lost
@@ -635,50 +919,19 @@ const ManagementCard = ({
 
           {/* ASSIGNED → NOTES */}
           {panelMode === "notes" && (
-            <>
-              <h4>Notes</h4>
-              <div className="note-history">
-                {[...notes].reverse().map((n, i) => (
-                  <div key={i} className="note-item">
-                    <small>
-                      <span
-                        className={`${n.by === "Admin" ? "comment admin" : "comment agent"}`}
-                      >
-                        {n.by}
-                      </span>{" "}
-                      {n.date}
-                    </small>
-                    <p>{n.text}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div class="field">
-                <textarea
-                  placeholder="Add reason or note..."
-                  value={noteText}
-                  onChange={(e) => setNoteText(e.target.value)}
-                />
-              </div>
-
-              <div className="modal-actions">
-                <button
-                  onClick={() => {
-                    const newNote = {
-                      text: noteText,
-                      date: new Date().toLocaleString(),
-                      by: mood === "admin" ? "Admin" : "Agent",
-                    };
-
-                    setNotes([...notes, newNote]);
-                    setNoteText("");
-                  }}
-                >
-                  Add Note
-                </button>
-              </div>
-
-            </>
+            <NoteItem
+              item={item}
+              notes={notes}
+              editingNoteId={editingNoteId}
+              editText={editText}
+              noteText={noteText}
+              setEditingNoteId={setEditingNoteId}
+              setEditText={setEditText}
+              setNoteText={setNoteText}
+              handleAddNote={handleAddNote}
+              handleEditNote={handleEditNote}
+              handleDeleteNote={handleDeleteNote}
+            />
           )}
 
           {/* LOST */}
@@ -690,17 +943,22 @@ const ManagementCard = ({
 
               {notes.length === 0 && <p>No notes available.</p>}
 
-              {notes.map((n, i) => (
-                <div key={i} className="note-item">
-                  <p>{n.text}</p>
-                  <small>
-                    {n.date} — {n.by}
-                  </small>
-                </div>
+              {[...notes].reverse().map((n) => (
+                <>
+                  <div key={n._id} className="note-item" >
+                    <small>
+                      <span className="comment agent">
+                        {n.by?.name || "User"}
+                      </span>{" "}
+                      {new Date(n?.date).toLocaleString()}
+                    </small>
+                    <p>{n.text}</p>
+                  </div>
+                </>
               ))}
 
               {/* ONLY AGENT CAN ADD NOTE */}
-              {mood === "agent" && (
+              {/* {mood === "agent" && (
                 <>
                   <div className="add-note-section">
                     <div class="field">
@@ -715,15 +973,7 @@ const ManagementCard = ({
                       <button
                         onClick={() => {
                           if (!noteText.trim()) return;
-
-                          const newNote = {
-                            text: noteText,
-                            date: new Date().toLocaleString(),
-                            by: "Agent",
-                          };
-
-                          setNotes([...notes, newNote]);
-                          setNoteText("");
+                          handleAddNote(item._id);
                         }}
                       >
                         Add Note
@@ -731,7 +981,7 @@ const ManagementCard = ({
                     </div>
                   </div>
                 </>
-              )}
+              )} */}
             </>
           )}
 
@@ -741,23 +991,25 @@ const ManagementCard = ({
               <h4>Lead Conversion Report</h4>
 
               <p>
-                <strong>Converted By:</strong> {item.agent}
+                <strong>Converted By:</strong> {item?.agent.name}
               </p>
               <p>
-                <strong>Conversion Date:</strong> {item.date}
-              </p>
-              <p>
-                <strong>Revenue:</strong> ₹5,00,000
+                <strong>Conversion Date:</strong> {formatDate(item?.updatedAt)}
               </p>
 
               <h5>Notes History</h5>
-              {notes.map((n, i) => (
-                <div key={i} className="note-item">
-                  <small>
-                    <span>{n.by}</span> {n.date}
-                  </small>
-                  <p>{n.text}</p>
-                </div>
+              {[...notes].reverse().map((n) => (
+                <>
+                  <div key={n._id} className="note-item" >
+                    <small>
+                      <span className="comment agent">
+                        {n.by?.name || "User"}
+                      </span>{" "}
+                      {new Date(n?.date).toLocaleString()}
+                    </small>
+                    <p>{n.text}</p>
+                  </div>
+                </>
               ))}
             </>
           )}

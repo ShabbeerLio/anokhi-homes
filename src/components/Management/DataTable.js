@@ -3,10 +3,38 @@ import React, { useState, useMemo, useEffect } from "react";
 import NiSearch from "../../icons/ni-search";
 import AddLocationModal from "../Modals/AddLocationModal";
 import ManagementCard from "../Cards/ManagementCard";
+import SearchSelect from "../SearchItems/SearchSelect";
+import { getLeads, getUser, getUserRole } from "../../Redux/Slices/AppSlices";
+import { useDispatch, useSelector } from "react-redux";
+import Host from "../../Host/Host";
+import axios from "axios";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 15;
 
 const DataTable = ({ data, mood, setAlert }) => {
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.app);
+  const [customersList, setCustomersList] = useState([]);
+  const [agentsList, setAgentsList] = useState([]);
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
+  // console.log(users, "users");
+
+  useEffect(() => {
+    if (users?.length) {
+      const customers = users.filter((user) => user.role === "user");
+      const agents = users.filter((user) => user.role === "agent");
+      setCustomersList(customers);
+      setAgentsList(agents);
+    }
+  }, [users]);
+
+  // console.log(customersList, "customersList");
+  // console.log(agentsList, "agentsList");
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [agentFilter, setAgentFilter] = useState("");
@@ -14,24 +42,36 @@ const DataTable = ({ data, mood, setAlert }) => {
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
 
+  // console.log(data,"data")
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
   const [selectedLead, setSelectedLead] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState({
+    customerId: "",
     name: "",
     phone: "",
-    status: "",
-    agent: "",
+    email: "",
   });
 
   useEffect(() => {
-    setFormData({
-      name: selectedLead?.name || "",
-      phone: selectedLead?.phone || "",
-      status: selectedLead?.status || "",
-      agent: mood === "agent" ? "Amit" : selectedLead?.agent || "",
-    });
-    // console.log(mood, "mood");
-  }, [selectedLead, mood]);
+    if (selectedLead) {
+      setFormData({
+        customerId: selectedLead.customer || "",
+        name: selectedLead.name || "",
+        phone: selectedLead.phone || "",
+        email: selectedLead.email || "",
+      });
+
+      // also set selectedCustomer for UI
+      setSelectedCustomer({
+        _id: selectedLead.customer,
+        name: selectedLead.name,
+        phone: selectedLead.phone,
+        email: selectedLead.email,
+      });
+    }
+  }, [selectedLead]);
 
   useEffect(() => {
     // console.log(formData, "Updated formdata");
@@ -39,17 +79,14 @@ const DataTable = ({ data, mood, setAlert }) => {
 
   // 🔥 FILTER LOGIC
   const filteredData = useMemo(() => {
-    return data.filter((lead) => {
+    return data?.filter((lead) => {
       const matchesSearch =
-        lead.name.toLowerCase().includes(search.toLowerCase()) ||
-        lead.phone.includes(search);
-
-      const matchesStatus = statusFilter === "" || lead.status === statusFilter;
-
-      const matchesAgent = agentFilter === "" || lead.agent === agentFilter;
-
-      const matchesDate = dateFilter === "" || lead.date === dateFilter;
-
+        lead?.name?.toLowerCase().includes(search?.toLowerCase()) ||
+        lead?.phone?.includes(search);
+      const matchesStatus =
+        statusFilter === "" || lead?.status === statusFilter;
+      const matchesAgent = agentFilter === "" || lead?.agent === agentFilter;
+      const matchesDate = dateFilter === "" || lead?.date === dateFilter;
       return matchesSearch && matchesStatus && matchesAgent && matchesDate;
     });
   }, [search, statusFilter, agentFilter, dateFilter, data]);
@@ -62,27 +99,75 @@ const DataTable = ({ data, mood, setAlert }) => {
     page * ITEMS_PER_PAGE,
   );
 
-  const handleAddLead = () => {
+  const handleAddLead = async () => {
+    const token = localStorage.getItem("token");
+    console.log(token, "token");
     console.log("Adding lead:", formData);
-    setOpen(false);
-    setAlert({ message: "Lead added successfully!", status: "Success" });
-    setTimeout(() => {
-      setAlert(null);
-    }, 5000);
+    try {
+      const payload = {
+        customerId: formData.customerId,
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+      };
+      const res = await axios.post(`${Host}/api/lead/add`, payload, {
+        headers: {
+          "auth-token": token,
+          "Content-Type": "application/json",
+        },
+      });
+      // console.log(res.data);
+      setAlert({ message: "Lead added successfully!", status: "Success" });
+      setOpen(false);
+      setFormData({
+        customerId: "",
+        name: "",
+        phone: "",
+        email: "",
+      });
+      dispatch(getLeads());
+    } catch (err) {
+      console.error(err);
+      setAlert({ message: "Failed to add lead", status: "Error" });
+    } finally {
+      setTimeout(() => setAlert(null), 5000);
+    }
   };
-  const handleEditLead = () => {
-    console.log("Editing lead:", formData);
-    setOpen(false);
-    setAlert({ message: "Lead updated successfully!", status: "Success" });
-    setTimeout(() => {
-      setAlert(null);
-    }, 5000);
-  };
+  const handleEditLead = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
+      const res = await axios.put(
+        `${Host}/api/lead/edit/${selectedLead._id}`,
+        formData,
+        {
+          headers: {
+            "auth-token": token,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      dispatch(getLeads());
+
+      setAlert({
+        message: "Lead updated successfully",
+        status: "Success",
+      });
+
+      setOpen(false);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: "Failed to update lead",
+        status: "Error",
+      });
+    }
+  };
   return (
     <div>
       <div className="filter-grid page-tools table-filters">
-        {mood !== "user" && (
+        {mood !== "user" && mood !== "agent" && (
           <button
             className="add-button"
             onClick={() => {
@@ -94,17 +179,19 @@ const DataTable = ({ data, mood, setAlert }) => {
             <LucidePlus /> Add
           </button>
         )}
-        <div className="searchItem">
-          <NiSearch />
-          <input
-            placeholder="Search name / phone"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-        </div>
+        {mood !== "user" && (
+          <div className="searchItem">
+            <NiSearch />
+            <input
+              placeholder="Search name / phone"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+          </div>
+        )}
         <div className="searchItem">
           <select
             value={statusFilter}
@@ -146,18 +233,21 @@ const DataTable = ({ data, mood, setAlert }) => {
 
       <div className="user-card-box">
         {paginatedData.length === 0 ? (
-          <p>No Bookings Found</p>
+          <p>No Leads Found</p>
         ) : (
-          paginatedData.map((item) => (
-            <ManagementCard
-              item={item}
-              setSelectedLead={setSelectedLead}
-              setIsEditMode={setIsEditMode}
-              setOpen={setOpen}
-              mood={mood}
-              setAlert={setAlert}
-            />
-          ))
+          paginatedData
+            ?.reverse()
+            .map((item) => (
+              <ManagementCard
+                item={item}
+                setSelectedLead={setSelectedLead}
+                setIsEditMode={setIsEditMode}
+                setOpen={setOpen}
+                mood={mood}
+                setAlert={setAlert}
+                agentsList={agentsList}
+              />
+            ))
         )}
       </div>
       <div className="pagination">
@@ -188,13 +278,31 @@ const DataTable = ({ data, mood, setAlert }) => {
         title={isEditMode ? "Edit Lead" : "Add Lead"}
       >
         <div className="field">
-          <label>Customer Name</label>
-          <input
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="Customer Name"
+          <SearchSelect
+            label="Customer Name"
+            placeholder="Search name or number"
+            options={customersList}
+            value={selectedCustomer}
+            onChange={(selected) => {
+              setSelectedCustomer(selected);
+              setFormData({
+                ...formData,
+                customerId: selected._id,
+                name: selected.name,
+                phone: selected.phone,
+                email: selected.email,
+              });
+            }}
+            displayKey="name"
+            searchKeys={["name", "phone"]}
+            renderOption={(c) => (
+              <div>
+                <b>{c.name}</b> ({c.phone})
+              </div>
+            )}
           />
         </div>
+
         <div className="field">
           <label>Phone</label>
           <input
@@ -205,43 +313,16 @@ const DataTable = ({ data, mood, setAlert }) => {
             placeholder="Phone Number"
           />
         </div>
-        {/* {mood === "admin" && (
-          <div className="field">
-            <label>Status</label>
-            <select
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-            >
-              <option value="">Select Status</option>
-              <option value="New">New</option>
-              <option value="Assigned">Assigned</option>
-              <option value="Unassigned">Unassigned</option>
-              <option value="Converted">Converted</option>
-              <option value="Lost">Lost</option>
-            </select>
-          </div>
-        )} */}
-
-        {mood === "admin" && (
-          <div className="field">
-            <label>Associate</label>
-            <select
-              value={formData.agent}
-              disabled={mood === "agent"}
-              onChange={(e) =>
-                setFormData({ ...formData, agent: e.target.value })
-              }
-            >
-              <option value="">Select Associate</option>
-              <option value="Amit">Amit</option>
-              <option value="Sana">Sana</option>
-              <option value="Raj">Raj</option>
-            </select>
-          </div>
-        )}
-        {/* <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p> */}
+        <div className="field">
+          <label>Email</label>
+          <input
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            placeholder="Email Address"
+          />
+        </div>
         <div className="modal-actions">
           <button
             onClick={() => {

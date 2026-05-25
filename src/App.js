@@ -62,10 +62,10 @@ function App() {
           <Route element={<LandingLayout mood={mood} />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/projects" element={<LandingProjects />} />
+            <Route path="/projects" element={<LandingProjects setAlert={setAlert}/>} />
             <Route
               path="/projects/:projectId"
-              element={<LandingProjectDetail />}
+              element={<LandingProjectDetail setAlert={setAlert}/>}
             />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/documents" element={<Documents />} />

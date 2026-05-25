@@ -25,12 +25,12 @@ const myVisits = [
   },
 ];
 
-const UserSiteVisit = ({ mood, setAlert }) => {
+const UserSiteVisit = ({siteVisits, mood, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
       {/* <h4>Site Visits</h4> */}
       <VisitTable
-        data={myVisits}
+        data={siteVisits}
         setAlert={setAlert}
         mood={mood}
       />

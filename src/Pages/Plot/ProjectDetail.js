@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProjectData from "./PlotData";
 import AdminPanel from "../../components/PlotDraw/AdminPanel";
 import PlotCanvas from "../../components/PlotDraw/PlotCanvas";
@@ -9,19 +9,27 @@ import { TOOLS } from "../../components/PlotDraw/Tools";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { ChevronLeft } from "lucide-react";
 import PlotDrawCard from "../../components/Cards/PlotDrawCard";
+import { useDispatch, useSelector } from "react-redux";
+import { getPlots } from "../../Redux/Slices/AppSlices";
 
-const ProjectDetail = ({ mood }) => {
+const ProjectDetail = ({ mood, setAlert }) => {
+  const location = useLocation();
+  // console.log(location.state); 
+  const projectName = location.state?.project || "";
   const navigate = useNavigate();
   const { projectId } = useParams();
-  const [project, setProject] = useState(null);
+
+  const dispatch = useDispatch();
+  const { plots } = useSelector((state) => state.app);
+
   useEffect(() => {
-    const found = ProjectData.flatMap((p) => p.plots).find(
-      (x) => x.id === projectId,
-    );
-    setProject(found || null);
+    dispatch(getPlots(projectId));
   }, [projectId]);
 
-  if (!project) return <p>Project not found</p>;
+  // console.log(projectId,"projectId")
+  // console.log(plots,"plots")
+
+  if (!plots) return <p>Project not found</p>;
 
   return (
     <div className="plot-container product-detail">
@@ -29,12 +37,12 @@ const ProjectDetail = ({ mood }) => {
         <div className="page-head-title">
           <div className="page-tools">
             <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
-            <h2>{project.name}</h2>
+            <h2>{projectName}</h2>
           </div>
           <Breadcrumb />
         </div>
       </div>
-      <PlotDrawCard mood={mood}/>
+      <PlotDrawCard data={plots} mood={mood} setAlert={setAlert}/>
     </div>
   );
 };

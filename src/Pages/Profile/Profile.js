@@ -98,8 +98,21 @@ const Profile = ({ mood, currentUser, setAlert }) => {
       default:
         return (
           <>
-            <h4>Overview</h4>
-            <Overview userData={userData} mood={mood} setAlert={setAlert}/>
+            <div className="dashboard-title-box">
+              <h4>Overview</h4>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={userData.status === "active"}
+                  onChange={() => {
+                    userData.status =
+                      userData.status === "active" ? "inactive" : "active";
+                  }}
+                />
+                <span className="slider"></span>
+              </label>
+            </div>
+            <Overview userData={userData} mood={mood} setAlert={setAlert} />
           </>
         );
     }

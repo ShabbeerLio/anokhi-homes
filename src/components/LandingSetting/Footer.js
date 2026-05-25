@@ -8,8 +8,16 @@ import { LucidePlus } from "lucide-react";
 import NiEdit from "../../icons/ni-edit";
 import NiDelete from "../../icons/ni-delete";
 import AddLocationModal from "../Modals/AddLocationModal";
+import {
+  deleteFooterContact,
+  deleteSocialMedia,
+  updateFooter,
+} from "../../Pages/LandingSetting/LandingApi";
+import { getLandingPage } from "../../Redux/Slices/AppSlices";
+import { useDispatch } from "react-redux";
 
-const Home = ({ setAlert }) => {
+const Home = ({ data, setAlert }) => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState(""); // "banner" | "service" | "testimonial"
   const [isEditMode, setIsEditMode] = useState(false);
@@ -57,97 +65,57 @@ const Home = ({ setAlert }) => {
   };
 
   const [homePageData, setHomePageData] = useState({
-    contact: [
-      {
-        id: 1,
-        title: "Phone Number",
-        content: "+91 1234567890",
-      },
-      {
-        id: 2,
-        title: "Email Address",
-        content: "anokhihomesprivetlimted@gmail.com",
-      },
-      {
-        id: 3,
-        title: "Location",
-        content: "Patna, Bihar",
-      },
-    ],
-    socialmedia: [
-      {
-        id: 4,
-        title: "Youtube",
-        content: "https://www.youtube.com",
-      },
-      {
-        id: 3,
-        title: "Instagram",
-        content: "https://www.instagram.com",
-      },
-      {
-        id: 1,
-        title: "Facebook",
-        content: "https://www.facebook.com",
-      },
-      {
-        id: 2,
-        title: "Twitter",
-        content: "https://www.twitter.com",
-      },
-      {
-        id: 4,
-        title: "LinkedIn",
-        // content: "https://www.linkedin.com",
-      },
-    ],
+    contact: [],
+    socialmedia: [],
   });
 
-  const handleSave = () => {
-    if (type === "contact" || type === "socialmedia") {
-      if (isEditMode) {
-        setHomePageData((prev) => ({
-          ...prev,
-          [type]: prev[type].map((item) =>
-            item.id === selectedItem.id ? { ...item, ...formData } : item,
-          ),
-        }));
-      } else {
-        setHomePageData((prev) => ({
-          ...prev,
-          [type]: [
-            ...prev[type],
-            {
-              id: Date.now(),
-              ...formData,
-            },
-          ],
-        }));
-      }
+  useEffect(() => {
+    if (data) {
+      setHomePageData(data);
     }
+  }, [data]);
 
-    setAlert({
-      message: `${isEditMode ? "Updated" : "Added"} successfully!`,
-      status: "Success",
-    });
+  const handleSave = async () => {
+    try {
+      let updatedData = {
+        ...homePageData,
+        contact: [...(homePageData.contact || [])],
+        socialmedia: [...(homePageData.socialmedia || [])],
+      };
 
-    setTimeout(() => setAlert(null), 3000);
-    setFormData({});
-    setOpen(false);
-  };
+      if (type === "contact" || type === "socialmedia") {
+        if (isEditMode) {
+          updatedData[type] = updatedData[type].map((item) =>
+            item._id === selectedItem._id
+              ? {
+                  ...item,
+                  ...formData,
+                }
+              : item,
+          );
+        } else {
+          updatedData[type].push({
+            ...formData,
+          });
+        }
+      }
 
-  const handleDelete = (section, id) => {
-    setHomePageData((prev) => ({
-      ...prev,
-      [section]: prev[section].filter((item) => item.id !== id),
-    }));
+      const res = await updateFooter(updatedData);
+      dispatch(getLandingPage());
+      setHomePageData(res);
 
-    setAlert({
-      message: "Deleted successfully!",
-      status: "Success",
-    });
+      setAlert({
+        message: `${isEditMode ? "Updated" : "Added"} successfully!`,
+        status: "Success",
+      });
 
-    setTimeout(() => setAlert(null), 3000);
+      setTimeout(() => setAlert(null), 3000);
+
+      setFormData({});
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -163,11 +131,9 @@ const Home = ({ setAlert }) => {
       <div className="user-card-box">
         {homePageData.contact.map((contact) => (
           <LandingCard
-            key={contact.id}
+            key={contact._id}
             p={contact}
-            // action="delete"
             onEdit={() => handleEdit("contact", contact)}
-            onDelete={() => handleDelete("contact", contact.id)}
           />
         ))}
       </div>
@@ -185,10 +151,9 @@ const Home = ({ setAlert }) => {
       <div className="user-card-box">
         {homePageData.socialmedia.map((socialmedia) => (
           <LandingCard
-            key={socialmedia.id}
+            key={socialmedia._id}
             p={socialmedia}
             onEdit={() => handleEdit("socialmedia", socialmedia)}
-            onDelete={() => handleDelete("socialmedia", socialmedia.id)}
           />
         ))}
       </div>
@@ -206,6 +171,7 @@ const Home = ({ setAlert }) => {
                 value={formData.title || ""}
                 onChange={handleChange}
                 placeholder="Office Title"
+                disabled
               />
 
               <textarea

@@ -9,8 +9,13 @@ import { LucidePlus } from 'lucide-react'
 import ViewModal from '../Modals/ViewModal'
 import NiDelete from '../../icons/ni-delete'
 import NiEdit from '../../icons/ni-edit'
+import { useDispatch } from 'react-redux'
+import { getLandingPage } from '../../Redux/Slices/AppSlices'
+import { deletePdf, deleteThumbnail, updateDocuments, uploadImage, uploadPdf } from '../../Pages/LandingSetting/LandingApi'
+import { FaFilePdf } from "react-icons/fa6";
 
-const Gallery = ({ setAlert }) => {
+const Gallery = ({ data, setAlert }) => {
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [type, setType] = useState("");
     const [isEditMode, setIsEditMode] = useState(false);
@@ -25,29 +30,33 @@ const Gallery = ({ setAlert }) => {
     };
 
     const handleChange = (e) => {
-        const { name, files } = e.target;
-        const file = files[0];
-
-        if (!file) return;
-
-        // IMAGE (thumbnail)
-        if (type === "thumbnail") {
+        const { name, value, files } = e.target;
+        if (files) {
+            const file = files[0];
+            if (!file) return;
+            if (type === "thumbnail") {
+                setFormData((prev) => ({
+                    ...prev,
+                    image: file,
+                    preview: URL.createObjectURL(file),
+                }));
+            }
+            if (type === "pdf") {
+                setFormData((prev) => ({
+                    ...prev,
+                    file: file,
+                    fileName: file.name,
+                }));
+            }
+        } else {
             setFormData((prev) => ({
                 ...prev,
-                image: file,
-                preview: URL.createObjectURL(file),
-            }));
-        }
-
-        // PDF
-        if (type === "pdf") {
-            setFormData((prev) => ({
-                ...prev,
-                file: file,
-                fileName: file.name,
+                [name]: value,
             }));
         }
     };
+
+    console.log(data, "data")
 
     useEffect(() => {
         if (selectedItem) {
@@ -72,83 +81,145 @@ const Gallery = ({ setAlert }) => {
     };
 
     const [homePageData, setHomePageData] = useState({
-        thumbnail: [
-            { id: 1, image: Icon1 },
-            { id: 2, image: Icon2 },
-            { id: 3, image: Icon3 },
-            { id: 4, image: Icon4 },
-        ],
-        pdf: [
-            { id: 1, image: Icon1 },
-            { id: 2, image: Icon2 },
-            { id: 3, image: Icon3 },
-            { id: 4, image: Icon4 },
-        ],
+        thumbnail: [],
+        pdf: [],
     });
 
-    const handleSave = () => {
-        if (type === "thumbnail" || type === "pdf") {
-            if (isEditMode) {
-                setHomePageData((prev) => ({
-                    ...prev,
-                    [type]: prev[type].map((item) =>
-                        item.id === selectedItem.id
-                            ? {
-                                ...item,
-                                ...(type === "thumbnail" && {
-                                    image: formData.preview || item.image,
-                                }),
-                                ...(type === "pdf" && {
-                                    file: formData.file || item.file,
-                                    fileName: formData.fileName || item.fileName,
-                                }),
-                            }
-                            : item
-                    ),
-                }));
-            } else {
-                setHomePageData((prev) => ({
-                    ...prev,
-                    [type]: [
-                        ...prev[type],
-                        {
-                            id: Date.now(),
-                            ...(type === "thumbnail" && {
-                                image: formData.preview,
-                            }),
-                            ...(type === "pdf" && {
-                                file: formData.file,
-                                fileName: formData.fileName,
-                            }),
-                        },
-                    ],
-                }));
-            }
+    useEffect(() => {
+        if (data) {
+            setHomePageData(data);
         }
-        console.log(homePageData,"homePageData")
+    }, [data]);
 
-        setAlert({
-            message: `${isEditMode ? "Updated" : "Added"} successfully!`,
-            status: "Success",
-        });
+    const handleSave = async () => {
+        try {
+            let updatedData = {
+                ...homePageData,
+                thumbnail: [...(homePageData.thumbnail || [])],
+                pdf: [...(homePageData.pdf || [])],
+            };
+            /* ================= THUMBNAIL ================= */
+            if (type === "thumbnail") {
+                let uploadedImage = null;
+                // upload only if new file selected
+                if (formData.image instanceof File) {
+                    uploadedImage = await uploadImage(
+                        formData.image
+                    );
+                }
+                if (isEditMode) {
+                    updatedData.thumbnail =
+                        updatedData.thumbnail.map((item) =>
+                            item._id === selectedItem._id
+                                ? {
+                                    ...item,
 
-        setTimeout(() => setAlert(null), 3000);
-        setFormData({});
-        setOpen(false);
+                                    image:
+                                        uploadedImage?.url ||
+                                        item.image,
+
+                                    public_id:
+                                        uploadedImage?.public_id ||
+                                        item.public_id,
+                                }
+                                : item
+                        );
+
+                } else {
+
+                    updatedData.thumbnail.push({
+                        image: uploadedImage.url,
+
+                        public_id:
+                            uploadedImage.public_id,
+                    });
+                }
+            }
+
+            /* ================= PDF ================= */
+
+            if (type === "pdf") {
+                let uploadedPdf = null;
+
+                // upload only if file selected
+                if (formData.file instanceof File) {
+                    uploadedPdf = await uploadPdf(
+                        formData.file
+                    );
+                }
+                if (isEditMode) {
+                    updatedData.pdf =
+                        updatedData.pdf.map((item) =>
+                            item._id === selectedItem._id
+                                ? {
+                                    ...item,
+                                    file:
+                                        uploadedPdf?.file ||
+                                        item.file,
+                                    fileName:
+                                        uploadedPdf?.fileName ||
+                                        item.fileName,
+                                    public_id:
+                                        uploadedPdf?.public_id ||
+                                        item.public_id,
+                                }
+                                : item
+                        );
+                } else {
+                    updatedData.pdf.push({
+                        file: uploadedPdf.file,
+                        fileName:
+                            uploadedPdf.fileName,
+                        public_id:
+                            uploadedPdf.public_id,
+                    });
+                }
+            }
+            /* ================= SAVE ================= */
+            await updateDocuments(updatedData);
+            setHomePageData(updatedData);
+            dispatch(getLandingPage());
+            setAlert({
+                message: `${isEditMode
+                    ? "Updated"
+                    : "Added"
+                    } successfully!`,
+                status: "Success",
+            });
+            setTimeout(() => setAlert(null), 3000);
+            setFormData({});
+            setOpen(false);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    const handleDelete = (section, id) => {
-        setHomePageData((prev) => ({
-            ...prev,
-            [section]: prev[section].filter((item) => item.id !== id),
-        }));
-
-        setAlert({
-            message: "Deleted successfully!",
-            status: "Success",
-        });
-
-        setTimeout(() => setAlert(null), 3000);
+    const handleDelete = async (section, id) => {
+        try {
+            // ================= THUMBNAIL =================
+            if (section === "thumbnail") {
+                await deleteThumbnail(id);
+            }
+            // ================= PDF =================
+            if (section === "pdf") {
+                await deletePdf(id);
+            }
+            // UPDATE LOCAL STATE
+            setHomePageData((prev) => ({
+                ...prev,
+                [section]: prev[section].filter(
+                    (item) => item._id !== id
+                ),
+            }));
+            dispatch(getLandingPage());
+            setAlert({
+                message: "Deleted successfully!",
+                status: "Success",
+            });
+            setTimeout(() => setAlert(null), 3000);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -165,13 +236,13 @@ const Gallery = ({ setAlert }) => {
                 </div>
             </div>
             <div className="user-card-box">
-                {homePageData.thumbnail.map((p) => (
+                {homePageData.thumbnail?.map((p) => (
                     <LandingCard
-                        key={p.id}
+                        key={p._id}
                         p={p}
                         action="delete"
                         onEdit={() => handleEdit("thumbnail", p)}
-                        onDelete={() => handleDelete("thumbnail", p.id)}
+                        onDelete={() => handleDelete("thumbnail", p._id)}
                     />
                 ))}
             </div>
@@ -187,9 +258,9 @@ const Gallery = ({ setAlert }) => {
                 </div>
             </div>
             <div className="user-card-box">
-                {homePageData.pdf.map((p) => (
+                {homePageData.pdf?.map((p) => (
                     <div
-                        key={p.id}
+                        key={p._id}
                         className="plot-card card"
                         onClick={() => handlePreviewPdf(p.file)}
                         style={{ cursor: "pointer" }}
@@ -212,7 +283,7 @@ const Gallery = ({ setAlert }) => {
                             <span
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDelete("pdf", p.id);
+                                    handleDelete("pdf", p._id);
                                 }}
                             >
                                 <NiDelete />
@@ -233,7 +304,12 @@ const Gallery = ({ setAlert }) => {
                 <div className="field">
                     {type === "thumbnail" && (
                         <>
-                            <input type="file" accept="image/*" onChange={handleChange} />
+                            <input
+                                type="file"
+                                name="image"
+                                accept="image/*"
+                                onChange={handleChange}
+                            />
 
                             {(formData.preview || formData.image) && (
                                 <img src={formData.preview || formData.image} width="100" />
@@ -242,10 +318,15 @@ const Gallery = ({ setAlert }) => {
                     )}
                     {type === "pdf" && (
                         <>
-                            <input type="file" accept="application/pdf" onChange={handleChange} />
+                            <input
+                                type="file"
+                                name="file"
+                                accept="application/pdf"
+                                onChange={handleChange}
+                            />
 
                             {(formData.fileName || selectedItem?.fileName) && (
-                                <p>📄 {formData.fileName || selectedItem?.fileName}</p>
+                                <p><FaFilePdf /> {formData.fileName || selectedItem?.fileName}</p>
                             )}
                         </>
                     )}
@@ -268,15 +349,13 @@ const Gallery = ({ setAlert }) => {
                 <div className="user-card-bottom view-box">
                     {previewPdf && (
                         <iframe
-                            src={URL.createObjectURL(previewPdf)}
-                            title="PDF Preview"
+                            src={`${previewPdf}#toolbar=0`}
                             width="100%"
                             height="600px"
                         />
                     )}
                 </div>
             </ViewModal>
-
         </>
     )
 }

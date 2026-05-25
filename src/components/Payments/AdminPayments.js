@@ -4,7 +4,7 @@ import Charts from "../Dashboard/Charts";
 import PaymentsData from "./PaymentData";
 import PaymentTable from "./PaymentTable";
 
-const AdminPayments = ({ mood, setAlert }) => {
+const AdminPayments = ({payment, mood, setAlert }) => {
   const totalCollection = PaymentsData.reduce(
     (sum, p) => sum + p.paidAmount,
     0,
@@ -48,7 +48,7 @@ const AdminPayments = ({ mood, setAlert }) => {
         />
       </div>
       <h4>Payments</h4>
-      <PaymentTable data={PaymentsData} mood={mood} setAlert={setAlert} />
+      <PaymentTable data={payment} mood={mood} setAlert={setAlert} />
       <h4>Collection Trend</h4>
       <div className="card">
         <Charts

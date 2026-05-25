@@ -1,86 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NiEdit from "../../icons/ni-edit";
 import NiDelete from "../../icons/ni-delete";
 import { LucidePlus } from "lucide-react";
+import { useDispatch } from "react-redux";
+import {
+  deletePolicySection,
+  updatePolicies,
+} from "../../Pages/LandingSetting/LandingApi";
+import { getLandingPage } from "../../Redux/Slices/AppSlices";
 
-const PolicyPage = ({ setAlert }) => {
+const PolicyPage = ({ data, setAlert }) => {
+  const dispatch = useDispatch();
   const [activeType, setActiveType] = useState("privacy");
   const [isEditing, setIsEditing] = useState(false);
 
   const [PolicyData, setPolicyData] = useState({
     privacy: {
       title: "Privacy Policy",
-      lastUpdated: "05 Jan 2026",
-      sections: [
-        {
-          id: 1,
-          heading: "Introduction",
-          content:
-            "We value your privacy and are committed to protecting your personal information.",
-        },
-        {
-          id: 2,
-          heading: "Information We Collect",
-          content:
-            "We may collect personal details such as name, email, phone number, and usage data.",
-        },
-        {
-          id: 3,
-          heading: "How We Use Information",
-          content:
-            "We use your information to improve our services and provide better user experience.",
-        },
-      ],
+      lastUpdated: "",
+      sections: [],
     },
 
     termcondition: {
       title: "Terms & Conditions",
-      lastUpdated: "07 Jan 2026",
-      sections: [
-        {
-          id: 4,
-          heading: "Acceptance of Terms",
-          content:
-            "By using our website, you agree to comply with our terms and conditions.",
-        },
-        {
-          id: 5,
-          heading: "User Responsibilities",
-          content:
-            "Users must provide accurate information and use the platform legally.",
-        },
-        {
-          id: 6,
-          heading: "Limitation of Liability",
-          content:
-            "We are not responsible for any indirect damages arising from usage.",
-        },
-      ],
+      lastUpdated: "",
+      sections: [],
     },
 
     cancellationrefund: {
       title: "Cancellation & Refund Policy",
-      lastUpdated: "03 Feb 2026",
-      sections: [
-        {
-          id: 7,
-          heading: "Cancellation Policy",
-          content: "Users can cancel services within 24 hours of booking.",
-        },
-        {
-          id: 8,
-          heading: "Refund Policy",
-          content:
-            "Refunds will be processed within 7 working days after approval.",
-        },
-        {
-          id: 9,
-          heading: "Non-Refundable Cases",
-          content: "Certain services are non-refundable once initiated.",
-        },
-      ],
+
+      lastUpdated: "",
+      sections: [],
     },
   });
+
+  useEffect(() => {
+    if (data) {
+      setPolicyData(data);
+    }
+  }, [data]);
 
   const [formData, setFormData] = useState(null);
 
@@ -104,59 +63,103 @@ const PolicyPage = ({ setAlert }) => {
   };
 
   // 👉 Save section
-  const handleSave = () => {
-    setPolicyData((prev) => ({
-      ...prev,
-      [activeType]: {
-        ...prev[activeType],
-        sections: prev[activeType].sections.map((sec) =>
-          sec.id === formData.id ? formData : sec,
-        ),
-      },
-    }));
-
-    setIsEditing(false);
-    setFormData(null);
-
-    setAlert({
-      message: "Updated successfully!",
-      status: "Success",
-    });
-    setTimeout(() => setAlert(null), 3000);
+  const handleSave = async () => {
+    try {
+      const updatedPolicies = {
+        ...PolicyData,
+        [activeType]: {
+          ...PolicyData[activeType],
+          lastUpdated: new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+          sections: PolicyData[activeType].sections.map((sec) =>
+            sec._id === formData._id ? formData : sec,
+          ),
+        },
+      };
+      const res = await updatePolicies(updatedPolicies);
+      setPolicyData(res);
+      dispatch(getLandingPage());
+      setIsEditing(false);
+      setFormData(null);
+      setAlert({
+        message: "Updated successfully!",
+        status: "Success",
+      });
+      setTimeout(() => setAlert(null), 3000);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // 👉 Add section
-  const handleAdd = () => {
-    const newSection = {
-      id: Date.now(),
-      heading: "New Section",
-      content: "Write here...",
-    };
+  const handleAdd = async () => {
+    try {
+      const newSection = {
+        heading: "New Section",
 
-    setPolicyData((prev) => ({
-      ...prev,
-      [activeType]: {
-        ...prev[activeType],
-        sections: [...prev[activeType].sections, newSection],
-      },
-    }));
+        content: "Write here...",
+      };
+
+      const updatedPolicies = {
+        ...PolicyData,
+
+        [activeType]: {
+          ...PolicyData[activeType],
+
+          lastUpdated: new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+
+          sections: [...PolicyData[activeType].sections, newSection],
+        },
+      };
+
+      const res = await updatePolicies(updatedPolicies);
+      
+      setPolicyData(res);
+
+      setAlert({
+        message: "Section added successfully!",
+
+        status: "Success",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // 👉 Delete section
-  const handleDelete = (id) => {
-    setPolicyData((prev) => ({
-      ...prev,
-      [activeType]: {
-        ...prev[activeType],
-        sections: prev[activeType].sections.filter((sec) => sec.id !== id),
-      },
-    }));
+  const handleDelete = async (id) => {
+    try {
+      await deletePolicySection(activeType, id);
 
-    setAlert({
-      message: "Deleted successfully!",
-      status: "Success",
-    });
-    setTimeout(() => setAlert(null), 3000);
+      setPolicyData((prev) => ({
+        ...prev,
+
+        [activeType]: {
+          ...prev[activeType],
+
+          sections: prev[activeType].sections.filter((sec) => sec._id !== id),
+        },
+      }));
+      dispatch(getLandingPage());
+      setAlert({
+        message: "Deleted successfully!",
+
+        status: "Success",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const current = PolicyData[activeType];
@@ -185,11 +188,13 @@ const PolicyPage = ({ setAlert }) => {
       </div>
 
       {/* Sections */}
-      <h4>{current.title} (Updated on : {current.lastUpdated})</h4>
+      <h4>
+        {current.title} (Updated on : {current.lastUpdated})
+      </h4>
       <div className="">
-        {current.sections.map((sec) => (
+        {current?.sections?.map((sec) => (
           <div
-            key={sec.id}
+            key={sec._id}
             className="plot-card card"
             style={{ marginBottom: "1rem" }}
           >
@@ -198,7 +203,7 @@ const PolicyPage = ({ setAlert }) => {
               <p className="plot-modal">
                 {sec.heading && <strong>Heading : </strong>}
 
-                {isEditing && formData?.id === sec.id ? (
+                {isEditing && formData?._id === sec._id ? (
                   <div className="field">
                     <input
                       name="heading"
@@ -215,7 +220,7 @@ const PolicyPage = ({ setAlert }) => {
               <p className="plot-modal">
                 <strong>Content : </strong>
 
-                {isEditing && formData?.id === sec.id ? (
+                {isEditing && formData?._id === sec._id ? (
                   <div className="field">
                     <textarea
                       name="content"
@@ -231,22 +236,21 @@ const PolicyPage = ({ setAlert }) => {
 
             {/* Actions */}
             <div className="plot-card-actions dots">
-              {isEditing && formData?.id === sec.id ? (
-                <>
-                </>
+              {isEditing && formData?._id === sec._id ? (
+                <></>
               ) : (
                 <>
                   <span onClick={() => handleEdit(sec)}>
                     <NiEdit />
                   </span>
 
-                  <span onClick={() => handleDelete(sec.id)}>
+                  <span onClick={() => handleDelete(sec._id)}>
                     <NiDelete />
                   </span>
                 </>
               )}
             </div>
-            {isEditing && formData?.id === sec.id && (
+            {isEditing && formData?._id === sec._id && (
               <div className="modal-actions">
                 <button onClick={handleSave}>Save</button>
                 <button onClick={() => setIsEditing(false)}>Cancel</button>

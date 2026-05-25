@@ -11,6 +11,7 @@ import NiUser from "../../icons/ni-user";
 import NiBooking from "../../icons/ni-booking";
 import { useNavigate } from "react-router-dom";
 import NiDownload from "../../icons/ni-download";
+import formatDate from "../DateFormate/DateFormate";
 
 const PaymentCard = ({
   item,
@@ -39,11 +40,11 @@ const PaymentCard = ({
       <div className="user-card-top">
         <div className="user-card-title">
           <div className="user-card-name">
-            <h4>
-              {item.client}
+            <h4 style={{ textTransform: "capitalize" }}>
+              {item?.customer?.name}
               {/* <span>({item.phone})</span> */}
               <span
-                className={`status ${item.status === "Completed" ? "active" : item.status === "Pending" ? "pending" : "failed"}`}
+                className={`status ${item.status === "completed" ? "active" : item.status === "pending" ? "pending" : item.status === "approved" ? "active" : "failed"}`}
               >
                 {item.status}
               </span>
@@ -94,18 +95,22 @@ const PaymentCard = ({
           <p>Plot</p>
           <p>Amount</p>
           <p>Mode</p>
-          {/* <p>Due Status</p> */}
+          {/* {item.paymentMode !== "cash" && (
+            <p>Transaction ID</p>
+          )} */}
         </div>
         <div className="user-card-bottom-right">
-          <p>{item.date}</p>
-          <p>{item.phone}</p>
-          <p>{item.project}</p>
-          <p>₹{paid.toLocaleString()}</p>
-          <p>{item.mode}</p>
-          {/* <p>{item.dueStatus}</p> */}
+          <p>{formatDate(item?.createdAt)}</p>
+          <p>{item?.customer?.phone}</p>
+          <p>{item?.booking?.plot?.plotId}, {item?.booking?.colony?.name}, {item?.booking?.location?.name}</p>
+          <p>₹{item.amount}</p>
+          <p>{item.paymentMode}</p>
+          {/* {item.paymentMode !== "cash" && (
+            <p>{item.transactionId}</p>
+          )} */}
         </div>
       </div>
-      {mood === "admin" && item.status === "Pending" && (
+      {mood === "admin" && item.status === "pending" && (
         <div className="modal-actions">
           <button
             className="site-visit-approval status active"
@@ -173,7 +178,7 @@ const PaymentCard = ({
       <ViewModal
         open={viewOpen}
         onClose={() => setViewOpen(false)}
-        title={item.client}
+        title={item?.customer?.name}
       >
         <div className="user-card-bottom view-box">
           <div className="user-card-bottom-left">
@@ -181,15 +186,19 @@ const PaymentCard = ({
             <p>Plot</p>
             <p>Amount Paid</p>
             <p>Mode</p>
-            <p>Status</p>
+            {/* {item?.paymentMode !== "cash" && (
+              <p>Transaction ID</p>
+            )} */}
             <p>Report</p>
           </div>
           <div className="user-card-bottom-right">
-            <p>{item.date}</p>
-            <p>{item.project}</p>
-            <p>₹{item.paidAmount}</p>
-            <p>{item.mode}</p>
-            <p>{item.status}</p>
+            <p>{formatDate(item?.createdAt)}</p>
+            <p>{item?.booking?.plot?.plotId}, {item?.booking?.colony?.name}, {item?.booking?.location?.name}</p>
+            <p>₹{item.amount}</p>
+            <p>{item.paymentMode}</p>
+            {/* {item?.paymentMode !== "cash" && (
+              <p>{item.transactionId}</p>
+            )} */}
             <div className="table-filters">
               <button
                 className={`view-report-btn ${showReport ? "active" : ""}`}
@@ -228,11 +237,12 @@ const PaymentCard = ({
               Transaction Details
               <span className="download-btn"><NiDownload /></span>
             </h5>
-
-            <p>
-              <strong>Transaction ID:</strong>{" "}
-              {item.payments?.[0]?.transactionId || "-"}
-            </p>
+            {item.paymentMode !== "cash" && (
+              <p>
+                <strong>Transaction ID:</strong>{" "}
+                {item.transactionId}
+              </p>
+            )}
             <p>
               <strong>Added By:</strong> Admin
             </p>

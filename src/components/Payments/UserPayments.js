@@ -17,11 +17,11 @@ const payments = [
   },
 ];
 
-const UserPayments = ({ mood, staffType, setAlert }) => {
+const UserPayments = ({payment, mood, staffType, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
       {/* <h4>Payments</h4> */}
-      <PaymentTable data={PaymentsData} mood={mood} setAlert={setAlert} />
+      <PaymentTable data={payment} mood={mood} setAlert={setAlert} />
     </div>
   );
 };

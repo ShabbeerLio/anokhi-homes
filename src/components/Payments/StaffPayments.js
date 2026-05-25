@@ -17,7 +17,7 @@ const payments = [
   },
 ];
 
-const StaffPayments = ({mood, staffType, setAlert }) => {
+const StaffPayments = ({payment, mood, staffType, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
       {staffType === "accounts" && (
@@ -30,7 +30,7 @@ const StaffPayments = ({mood, staffType, setAlert }) => {
           </div>
           <h4>Payments</h4>
           <PaymentTable
-            data={payments}
+            data={payment}
             actions={["Add Payment", "Verify", "Generate Receipt"]}
           />
         </>
@@ -38,7 +38,7 @@ const StaffPayments = ({mood, staffType, setAlert }) => {
 
       {(staffType === "marketing" || staffType === "operations") && (
         <>
-          <PaymentTable data={PaymentsData} mood={mood}  setAlert={setAlert}/>
+          <PaymentTable data={payment} mood={mood}  setAlert={setAlert}/>
         </>
       )}
     </div>

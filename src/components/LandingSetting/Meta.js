@@ -1,169 +1,215 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NiEdit from "../../icons/ni-edit";
+import { updateMeta } from "../../Pages/LandingSetting/LandingApi";
+import { useDispatch } from "react-redux";
+import { getLandingPage } from "../../Redux/Slices/AppSlices";
 
-const Meta = ({ setAlert }) => {
-    const [activePage, setActivePage] = useState("home");
-    const [isEditing, setIsEditing] = useState(false);
+const Meta = ({ data, setAlert }) => {
+  const dispatch = useDispatch();
+  const [activePage, setActivePage] = useState("home");
+  const [isEditing, setIsEditing] = useState(false);
 
-    const [metaData, setMetaData] = useState({
-        home: { title: "Home Title", description: "Home Description", keywords: "Home Keywords", canonical: "Home Canonical" },
-        about: { title: "About Title", description: "About Description", keywords: "About Keywords", canonical: "About Canonical" },
-        gallery: { title: "Gallery Title", description: "Gallery Description", keywords: "Gallery Keywords", canonical: "Gallery Canonical" },
-        documents: { title: "Documents Title", description: "Documents Description", keywords: "Documents Keywords", canonical: "Documents Canonical" },
-        contact: { title: "Contact Title", description: "Contact Description", keywords: "Contact Keywords", canonical: "Contact Canonical" },
-    });
+  const [metaData, setMetaData] = useState({
+    home: {
+      title: "",
+      description: "",
+      keywords: "",
+      canonical: "",
+    },
 
-    const [formData, setFormData] = useState(metaData.home);
+    about: {
+      title: "",
+      description: "",
+      keywords: "",
+      canonical: "",
+    },
 
-    // switch page
-    const handleTabChange = (page) => {
-        setActivePage(page);
-        setFormData(metaData[page]);
-    };
+    gallery: {
+      title: "",
+      description: "",
+      keywords: "",
+      canonical: "",
+    },
 
-    // input change
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
+    documents: {
+      title: "",
+      description: "",
+      keywords: "",
+      canonical: "",
+    },
 
-    // save
-    const handleSave = () => {
-        setMetaData((prev) => ({
-            ...prev,
-            [activePage]: formData,
-        }));
+    contact: {
+      title: "",
+      description: "",
+      keywords: "",
+      canonical: "",
+    },
+  });
 
-        setIsEditing(false);
+  useEffect(() => {
+    if (data) {
+      setMetaData(data);
+      setFormData(data[activePage] || {});
+    }
+  }, [data, activePage]);
 
-        setAlert({
-            message: "Meta saved successfully!",
-            status: "Success",
-        });
+  const [formData, setFormData] = useState({});
 
-        setTimeout(() => setAlert(null), 3000);
-    };
-    const handleEdit = () => {
-        setIsEditing(true);
-        setFormData(metaData[activePage]); // load current data
-    };
+  // switch page
+  const handleTabChange = (page) => {
+    setActivePage(page);
+    setFormData(metaData[page] || {});
+    setIsEditing(false);
+  };
 
-    return (
-        <>
-            <div className="table-filters">
-                <h4>SEO Meta Data</h4>
-                <div className="page-tools">
-                    {Object.keys(metaData).map((page) => (
-                        <button
-                            key={page}
-                            className={activePage === page ? "active" : ""}
-                            onClick={() => handleTabChange(page)}
-                        >
-                            {page.toUpperCase()}
-                        </button>
-                    ))}
-                </div>
-            </div>
-            <h4>{activePage.charAt(0).toUpperCase() + activePage.slice(1)}</h4>
-            <div className="plot-card card">
-                <div className="plot-details meta-details">
+  // input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-                    {/* TITLE */}
-                    <p className="plot-modal">
-                        <strong>Title : </strong>
+  // save
+  const handleSave = async () => {
+    try {
+      const updatedMeta = {
+        ...metaData,
 
-                        {isEditing ? (
-                            <div className="field">
-                                <input
-                                    name="title"
-                                    value={formData.title}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        ) : (
-                            <span>{metaData[activePage].title || "-"}</span>
-                        )}
-                    </p>
+        [activePage]: {
+          ...formData,
+        },
+      };
 
-                    {/* DESCRIPTION */}
-                    <p className="plot-modal">
-                        <strong>Meta Description : </strong>
+      const res = await updateMeta(updatedMeta);
 
-                        {isEditing ? (
-                            <div className="field">
+      setMetaData(res);
 
-                                <textarea
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        ) : (
-                            <span>{metaData[activePage].description || "-"}</span>
-                        )}
-                    </p>
+      setIsEditing(false);
+      dispatch(getLandingPage());
+      setAlert({
+        message: "Meta saved successfully!",
+        status: "Success",
+      });
 
-                    {/* KEYWORDS */}
-                    <p className="plot-modal">
-                        <strong>Meta Keywords : </strong>
+      setTimeout(() => setAlert(null), 3000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleEdit = () => {
+    setIsEditing(true);
+    setFormData(metaData[activePage]); // load current data
+  };
 
-                        {isEditing ? (
-                            <div className="field">
+  return (
+    <>
+      <div className="table-filters">
+        <h4>SEO Meta Data</h4>
+        <div className="page-tools">
+          {Object.keys(metaData).map((page) => (
+            <button
+              key={page}
+              className={activePage === page ? "active" : ""}
+              onClick={() => handleTabChange(page)}
+            >
+              {page.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+      <h4>{activePage.charAt(0).toUpperCase() + activePage.slice(1)}</h4>
+      <div className="plot-card card">
+        <div className="plot-details meta-details">
+          {/* TITLE */}
+          <p className="plot-modal">
+            <strong>Title : </strong>
 
-                                <input
-                                    name="keywords"
-                                    value={formData.keywords}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        ) : (
-                            <span>{metaData[activePage].keywords || "-"}</span>
-                        )}
-                    </p>
+            {isEditing ? (
+              <div className="field">
+                <input
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                />
+              </div>
+            ) : (
+              <span>{metaData[activePage].title || "-"}</span>
+            )}
+          </p>
 
-                    {/* CANONICAL */}
-                    <p className="plot-modal">
-                        <strong>Canonical : </strong>
+          {/* DESCRIPTION */}
+          <p className="plot-modal">
+            <strong>Meta Description : </strong>
 
-                        {isEditing ? (
-                            <div className="field">
+            {isEditing ? (
+              <div className="field">
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                />
+              </div>
+            ) : (
+              <span>{metaData[activePage].description || "-"}</span>
+            )}
+          </p>
 
-                                <input
-                                    name="canonical"
-                                    value={formData.canonical}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        ) : (
-                            <span>{metaData[activePage].canonical || "-"}</span>
-                        )}
-                    </p>
+          {/* KEYWORDS */}
+          <p className="plot-modal">
+            <strong>Meta Keywords : </strong>
 
-                </div>
-                <div className="plot-card-actions dots">
-                    {!isEditing ? (
-                        <span onClick={handleEdit}>
-                            <NiEdit />
-                        </span>
-                    ) : (
-                        <>
-                        </>
-                    )}
-                </div>
-                {isEditing && (
-                    <div className="modal-actions">
-                        <button
-                            onClick={() => {
-                                handleSave();
-                            }}
-                        >
-                            Save
-                        </button>
-                    </div>
-                )}
-            </div>
-        </>
-    );
+            {isEditing ? (
+              <div className="field">
+                <input
+                  name="keywords"
+                  value={formData.keywords}
+                  onChange={handleChange}
+                />
+              </div>
+            ) : (
+              <span>{metaData[activePage].keywords || "-"}</span>
+            )}
+          </p>
+
+          {/* CANONICAL */}
+          <p className="plot-modal">
+            <strong>Canonical : </strong>
+
+            {isEditing ? (
+              <div className="field">
+                <input
+                  name="canonical"
+                  value={formData.canonical}
+                  onChange={handleChange}
+                />
+              </div>
+            ) : (
+              <span>{metaData[activePage].canonical || "-"}</span>
+            )}
+          </p>
+        </div>
+        <div className="plot-card-actions dots">
+          {!isEditing ? (
+            <span onClick={handleEdit}>
+              <NiEdit />
+            </span>
+          ) : (
+            <></>
+          )}
+        </div>
+        {isEditing && (
+          <div className="modal-actions">
+            <button
+              onClick={() => {
+                handleSave();
+              }}
+            >
+              Save
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
 };
 
 export default Meta;

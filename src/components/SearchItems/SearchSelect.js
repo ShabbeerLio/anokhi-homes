@@ -15,15 +15,19 @@ const SearchSelect = ({
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
 
+  // console.log(options,"options")
+
   // 🔍 Filter logic
-  const filteredOptions = options.filter((option) =>
-    searchKeys.some((key) =>
+  const filteredOptions = options?.filter((option) =>
+    searchKeys?.some((key) =>
       option[key]
         ?.toString()
-        .toLowerCase()
-        .includes(search.toLowerCase())
+        ?.toLowerCase()
+        ?.includes(search?.toLowerCase())
     )
   );
+
+  // console.log(filteredOptions,"filteredOptions")
 
   // 🖱 Close dropdown on outside click
   useEffect(() => {
@@ -73,7 +77,7 @@ const SearchSelect = ({
 
           {filteredOptions.map((option) => (
             <div
-              key={option.id}
+              key={option._id}
               className="ss-item"
               onClick={() => {
                 onChange(option);

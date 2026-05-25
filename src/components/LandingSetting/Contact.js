@@ -8,9 +8,12 @@ import { LucidePlus } from 'lucide-react'
 import NiEdit from '../../icons/ni-edit'
 import NiDelete from '../../icons/ni-delete'
 import AddLocationModal from '../Modals/AddLocationModal'
+import { deleteContact, updateContact } from '../../Pages/LandingSetting/LandingApi'
+import { getLandingPage } from '../../Redux/Slices/AppSlices'
+import { useDispatch } from 'react-redux'
 
-const Home = ({ setAlert }) => {
-
+const Home = ({ data, setAlert }) => {
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [type, setType] = useState(""); // "banner" | "service" | "testimonial"
     const [isEditMode, setIsEditMode] = useState(false);
@@ -48,77 +51,120 @@ const Home = ({ setAlert }) => {
     };
 
     const [homePageData, setHomePageData] = useState({
-        address: [
-            {
-                id: 1,
-                title: "Head Office",
-                content: "406,4th Floor, Pandey Plaza, Exhibition Road, Patna - 800001",
-                phone: "+919876543210",
-            },
-            {
-                id: 2,
-                title: "Branch Office 1",
-                content: "Basement of Najo Bazar, JK Tower, Qamaruddin Gunj, Biharsharif, Nalanda - 803101",
-            },
-            {
-                id: 3,
-                title: "Branch Office 2",
-                content: "Beside Prabha Inn, Baitarani Road Rajgir, Nalanda, Bihar - 803116",
-                phone: "+919876543210",
-            },
-        ],
-
+        address: [],
     });
 
-    const handleSave = () => {
-        if (type === "address") {
-            if (isEditMode) {
-                setHomePageData((prev) => ({
-                    ...prev,
-                    address: prev.address.map((item) =>
-                        item.id === selectedItem.id
-                            ? { ...item, ...formData }
-                            : item
-                    ),
-                }));
-            } else {
-                setHomePageData((prev) => ({
-                    ...prev,
-                    address: [
-                        ...prev.address,
-                        {
-                            id: Date.now(),
-                            ...formData,
-                        },
-                    ],
-                }));
-            }
+    useEffect(() => {
+        if (data) {
+            setHomePageData(data);
         }
+    }, [data]);
 
-        setAlert({
-            message: `${isEditMode ? "Updated" : "Added"} successfully!`,
-            status: "Success",
-        });
+    // const [homePageData, setHomePageData] = useState({
+    //     address: [
+    //         {
+    //             id: 1,
+    //             title: "Head Office",
+    //             content: "406,4th Floor, Pandey Plaza, Exhibition Road, Patna - 800001",
+    //             phone: "+919876543210",
+    //         },
+    //         {
+    //             id: 2,
+    //             title: "Branch Office 1",
+    //             content: "Basement of Najo Bazar, JK Tower, Qamaruddin Gunj, Biharsharif, Nalanda - 803101",
+    //         },
+    //         {
+    //             id: 3,
+    //             title: "Branch Office 2",
+    //             content: "Beside Prabha Inn, Baitarani Road Rajgir, Nalanda, Bihar - 803116",
+    //             phone: "+919876543210",
+    //         },
+    //     ],
 
-        setTimeout(() => setAlert(null), 3000);
-        setFormData({});
-        setOpen(false);
+    // });
+
+    const handleSave = async () => {
+        try {
+
+            let updatedData = {
+                ...homePageData,
+                address: [...(homePageData.address || [])],
+            };
+
+            if (type === "address") {
+
+                if (isEditMode) {
+
+                    updatedData.address =
+                        updatedData.address.map((item) =>
+                            item._id === selectedItem._id
+                                ? {
+                                    ...item,
+                                    ...formData,
+                                }
+                                : item
+                        );
+
+                } else {
+
+                    updatedData.address.push({
+                        ...formData,
+                    });
+                }
+            }
+
+            const res = await updateContact(updatedData);
+
+            setHomePageData(res);
+            dispatch(getLandingPage());
+            setAlert({
+                message: `${isEditMode
+                    ? "Updated"
+                    : "Added"
+                    } successfully!`,
+                status: "Success",
+            });
+
+            setTimeout(
+                () => setAlert(null),
+                3000
+            );
+
+            setFormData({});
+            setOpen(false);
+
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    const handleDelete = (section, id) => {
-        if (section === "address") {
+    const handleDelete = async (
+        section,
+        id
+    ) => {
+        try {
+            await deleteContact(id);
             setHomePageData((prev) => ({
                 ...prev,
-                address: prev.address.filter((item) => item.id !== id),
+                address:
+                    prev.address.filter(
+                        (item) =>
+                            item._id !== id
+                    ),
             }));
+            dispatch(getLandingPage());
+            setAlert({
+                message:
+                    "Deleted successfully!",
+                status: "Success",
+            });
+            setTimeout(
+                () => setAlert(null),
+                3000
+            );
+        } catch (error) {
+            console.log(error);
         }
-
-        setAlert({
-            message: "Deleted successfully!",
-            status: "Success",
-        });
-
-        setTimeout(() => setAlert(null), 3000);
     };
 
     return (
@@ -137,11 +183,11 @@ const Home = ({ setAlert }) => {
             <div className="user-card-box">
                 {homePageData.address.map((address) => (
                     <LandingCard
-                        key={address.id}
+                        key={address._id}
                         p={address}
                         action="delete"
                         onEdit={() => handleEdit("address", address)}
-                        onDelete={() => handleDelete("address", address.id)}
+                        onDelete={() => handleDelete("address", address._id)}
                     />
                 ))}
             </div>
@@ -165,7 +211,8 @@ const Home = ({ setAlert }) => {
                                 placeholder="Office Title"
                             />
                             <input
-                                name="title"
+                                type='number'
+                                name="phone"
                                 value={formData.phone || ""}
                                 onChange={handleChange}
                                 placeholder="Office Phone"

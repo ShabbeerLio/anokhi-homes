@@ -26,12 +26,12 @@ const visits = [
   },
 ];
 
-const AdminSiteVisit = ({ mood, setAlert }) => {
+const AdminSiteVisit = ({siteVisits, mood, setAlert }) => {
   return (
     <div className="dashboard-wrapper">
       {/* ================= STATS ================= */}
       <div className="dashboard-grid">
-        <DashboardCard title="Total Visits" value="120" icons = <NiSitevisit /> />
+        <DashboardCard title="Total Visits" value={siteVisits?.length} icons = <NiSitevisit /> />
         {/* <DashboardCard title="Today's Visits" value="12" icons = <NiSitevisit /> /> */}
         <DashboardCard title="Total Completed" value="80" icons = <NiSitevisit /> />
         <DashboardCard title="Total Resheduled" value="5" icons = <NiSitevisit /> />
@@ -42,14 +42,8 @@ const AdminSiteVisit = ({ mood, setAlert }) => {
       {/* Filters */}
       <h4>Site Visits</h4>
       <VisitTable
-        data={visits}
-        actions={[
-          "Edit",
-          "Delete",
-          "Reassign",
-          "Change Status",
-          "Convert Booking",
-        ]}
+        data={siteVisits}
+        
         mood={mood}
         setAlert={setAlert}
       />

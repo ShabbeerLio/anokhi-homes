@@ -1,21 +1,25 @@
 import React, { useState } from "react";
-// import "./Signup.css";
 import { useNavigate, Link } from "react-router-dom";
 import NiClosseye from "../../icons/ni-closseye";
 import NiOpenEye from "../../icons/ni-openEye";
 import { ChevronLeft } from "lucide-react";
 import NiTick from "../../icons/ni-tick";
+import { uploadImage } from "../../Pages/LandingSetting/LandingApi";
+import { useDispatch } from "react-redux";
+import { getAgentByReferralId } from "../../Redux/Slices/AppSlices";
+import Host from "../../Host/Host";
 
 const Signup = ({ mood, setAlert }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
+  const [referalMsg, setReferralMsg] = useState(null)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    referralCode: "",
-    referralName: "",
+    referralId: "",
     password: "",
 
     address: "",
@@ -38,43 +42,73 @@ const Signup = ({ mood, setAlert }) => {
     nomineeAadharPhoto: null,
   });
 
+
   /* ================= REFERRAL ================= */
-  const handleReferralCheck = async (code) => {
-    // simulate API
-    if (code.length > 3) {
+  const handleReferralCheck =
+    async (code) => {
       setFormData((prev) => ({
         ...prev,
-        referralCode: code,
-        referralName: "Agent Rahul",
+        referralId: code,
       }));
-    }
-  };
+      if (code.length < 9) return;
+      try {
+        const res =
+          await dispatch(getAgentByReferralId(code));
+
+        setReferralMsg(res)
+      } catch (error) {
+        setReferralMsg(null)
+      }
+    };
 
   /* ================= OTP ================= */
   const verifyOtp = () => {
     if (formData.emailOtp === "123456") {
-      setFormData((prev) => ({ ...prev, isEmailVerified: true }));
+      setFormData((prev) => ({
+        ...prev,
+        isEmailVerified: true,
+      }));
       setAlert({
-        message: "Email Verified successfully!",
+        message:
+          "Email verified successfully",
         status: "Success",
       });
-      setTimeout(() => {
-        setAlert(null);
-      }, 5000);
     } else {
       setAlert({
         message: "Invalid OTP",
-        status: "Erroe",
+        status: "Error",
       });
-      setTimeout(() => {
-        setAlert(null);
-      }, 5000);
     }
+    setTimeout(() => {
+      setAlert(null);
+    }, 3000);
   };
+
+  // EMAIL VALIDATION
+  // const emailRegex =
+  //   /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // if (!emailRegex.test(formData.email)) {
+
+  //   setAlert({
+  //     message: "Please enter valid email",
+  //     status: "Error",
+  //   });
+
+  //   setTimeout(() => {
+  //     setAlert(null);
+  //   }, 3000);
+
+  //   return;
+  // }
 
   /* ================= VALIDATIONS ================= */
   const canGoStep2 =
-    formData.name && formData.email && formData.phone && formData.password && formData.referralCode;
+    formData.name &&
+    formData.email &&
+    formData.phone &&
+    formData.password &&
+    formData.referralId;
 
   const canGoStep3 =
     formData.address &&
@@ -89,32 +123,136 @@ const Signup = ({ mood, setAlert }) => {
   const canFinish =
     formData.nomineeName &&
     formData.nomineeRelation &&
-    formData.nomineeAadharNumber;
+    formData.nomineeAadharNumber &&
+    formData.nomineeAadharPhoto;
 
   /* ================= FINAL SUBMIT ================= */
-  const handleFinish = () => {
-    if (formData.accountNumber !== formData.confirmAccountNumber) {
-      // return (alert("Account numbers do not match"));
-      navigate("/dashboard");
+  const handleFinish = async (e) => {
+    e.preventDefault();
+    try {
+      if (
+        formData.accountNumber !==
+        formData.confirmAccountNumber
+      ) {
+        setAlert({
+          message: "Account numbers do not match",
+          status: "Error",
+        });
+        setTimeout(() => {
+          setAlert(null);
+        }, 5000);
+        return;
+      }
+      let panPhotoUrl = "";
+      let aadharPhotoUrl = "";
+      let nomineeAadharPhotoUrl = "";
+      if (formData.panPhoto) {
+        const panUpload =
+          await uploadImage(formData.panPhoto);
+        panPhotoUrl = panUpload.url;
+      }
+      if (formData.aadharPhoto) {
+        const aadharUpload =
+          await uploadImage(formData.aadharPhoto);
+        aadharPhotoUrl = aadharUpload.url;
+      }
+      if (formData.nomineeAadharPhoto) {
+        const nomineeUpload =
+          await uploadImage(
+            formData.nomineeAadharPhoto
+          );
+        nomineeAadharPhotoUrl =
+          nomineeUpload.url;
+      }
+
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+
+        role: mood,
+
+        // MLM
+        referralId: formData.referralId,
+        position: formData.position,
+
+        // PERSONAL
+        address: formData.address,
+
+        // PAN
+        panNumber: formData.panNumber,
+        panPhoto: panPhotoUrl,
+
+        // AADHAR
+        aadharNumber: formData.aadharNumber,
+        aadharPhoto: aadharPhotoUrl,
+
+        // BANK
+        bankName: formData.bankName,
+        accountNumber: formData.accountNumber,
+        ifsc: formData.ifsc,
+
+        // NOMINEE
+        nomineeName: formData.nomineeName,
+        nomineeRelation: formData.nomineeRelation,
+        nomineeAadharNumber:
+          formData.nomineeAadharNumber,
+        nomineeAadharPhoto:
+          nomineeAadharPhotoUrl,
+      };
+      console.log(payload, "FINAL PAYLOAD");
+
+      const res = await fetch(
+        `${Host}/api/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setAlert({
+          message:
+            data.msg || data.error || "Registration failed",
+          status: "Error",
+        });
+        setTimeout(() => {
+          setAlert(null);
+        }, 5000);
+
+        return;
+      }
+
+      localStorage.setItem(
+        "token",
+        data.token
+      );
       setAlert({
-        message: "Account numbers do not match",
+        message:
+          "Registration Successful!",
+        status: "Success",
+      });
+      setTimeout(() => {
+        setAlert(null);
+        setFormData(null)
+      }, 5000);
+      navigate("/dashboard");
+      setFormData({})
+    } catch (error) {
+      console.log(error);
+      setAlert({
+        message: "Something went wrong",
         status: "Error",
       });
       setTimeout(() => {
         setAlert(null);
       }, 5000);
     }
-
-    console.log("FINAL DATA:", formData);
-    // alert("Agent Registered Successfully 🚀");
-    setAlert({
-      message: "Registration Request Submitted Successfully! Please check email for further informations.",
-      status: "Success",
-    });
-    navigate("/");
-    setTimeout(() => {
-      setAlert(null);
-    }, 5000);
   };
 
   const isAccountMatch =
@@ -149,7 +287,7 @@ const Signup = ({ mood, setAlert }) => {
           <h2>{mood === "agent" ? "Associate Signup" : "Signup"}</h2>
         </div>
         {mood === "user" && (
-          <>
+          <form onSubmit={handleFinish}>
             <input
               placeholder="Name"
               value={formData.name}
@@ -159,14 +297,21 @@ const Signup = ({ mood, setAlert }) => {
             />
 
             <input
+              type="email"
               placeholder="Email"
               value={formData.email}
+              pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+              required
               onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
+                setFormData({
+                  ...formData,
+                  email: e.target.value,
+                })
               }
             />
 
             <input
+              type="number"
               placeholder="Phone"
               value={formData.phone}
               onChange={(e) =>
@@ -191,23 +336,18 @@ const Signup = ({ mood, setAlert }) => {
               </span>
             </div>
             <button
+              type="submit"
               className={`role-${mood}`}
-              onClick={() => setAlert({
-                message: "Registered successfully!",
-                status: "Success",
-              })
-              }
-
             >
               Signup
             </button>
             <p className="auth-footer">
               Already have account? <Link to="/login">Sign in</Link>
             </p>
-          </>
+          </form>
         )}
         {mood === "staff" && (
-          <>
+          <form onSubmit={handleFinish}>
             <input
               placeholder="Name"
               value={formData.name}
@@ -217,14 +357,21 @@ const Signup = ({ mood, setAlert }) => {
             />
 
             <input
+              type="email"
               placeholder="Email"
               value={formData.email}
+              pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+              required
               onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
+                setFormData({
+                  ...formData,
+                  email: e.target.value,
+                })
               }
             />
 
             <input
+              type="number"
               placeholder="Phone"
               value={formData.phone}
               onChange={(e) =>
@@ -250,36 +397,29 @@ const Signup = ({ mood, setAlert }) => {
             </div>
 
             {/* Optional staff role */}
-            <input
+            {/* <input
               placeholder="Department / Role"
               onChange={(e) =>
                 setFormData({ ...formData, role: e.target.value })
               }
-            />
-            <button className={`role-${mood}`} onClick={() => {
-              navigate("/dashboard");
-              setAlert({
-                message: "Registration Successful!",
-                status: "Success",
-              })
-              setTimeout(() => {
-                setAlert(null);
-              }, 5000);
-            }
-            }>
+            /> */}
+            <button className={`role-${mood}`} type="submit">
               Sign Up
             </button>
             <p className="auth-footer">
               Already have account? <Link to="/login">Sign in</Link>
             </p>
-          </>
+          </form>
         )}
         {mood === "agent" && (
           <>
             <p>Step {step} of 3</p>
             {/* ================= STEP 1 ================= */}
             {step === 1 && (
-              <>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                setStep(2);
+              }}>
                 <input
                   placeholder="Name (as per Aadhaar)"
                   value={formData.name}
@@ -289,11 +429,16 @@ const Signup = ({ mood, setAlert }) => {
                 />
 
                 <input
-                  type="mail"
+                  type="email"
                   placeholder="Email"
                   value={formData.email}
+                  pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                  required
                   onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
+                    setFormData({
+                      ...formData,
+                      email: e.target.value,
+                    })
                   }
                 />
                 <div className="password-field">
@@ -314,6 +459,7 @@ const Signup = ({ mood, setAlert }) => {
                 </div>
 
                 <input
+                  type="number"
                   placeholder="Phone"
                   value={formData.phone}
                   onChange={(e) =>
@@ -323,27 +469,53 @@ const Signup = ({ mood, setAlert }) => {
 
                 <input
                   placeholder="Referral Code"
-                  value={formData.referralCode}
+                  value={formData.referralId}
                   onChange={(e) => handleReferralCheck(e.target.value)}
                 />
 
-                {formData.referralName && (
-                  <p>Referred by: {formData.referralName}</p>
-                )}
+                {referalMsg !== null && (
+                  referalMsg?.payload?.msg ?
+                    <>
+                      <p style={{ color: "red" }}>{referalMsg?.payload?.msg}</p>
+                    </>
+                    :
+                    <>
+                      <p style={{ color: "green" }}>Referred by: {referalMsg?.payload?.name}</p>
+                    </>
 
-                <button className={canGoStep2 ? `role-${mood}` : ""} disabled={!canGoStep2} onClick={() => setStep(2)}>
+                )}
+                <div className="plot-modal field">
+                  <select
+                    value={formData.position}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        position: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select Position</option>
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                  </select>
+                </div>
+
+                <button type="submit" className={canGoStep2 ? `role-${mood}` : ""} disabled={!canGoStep2} >
                   Next
                 </button>
 
                 <p className="auth-footer">
                   Already have account? <Link to="/login">Sign in</Link>
                 </p>
-              </>
+              </form>
             )}
 
             {/* ================= STEP 2 ================= */}
             {step === 2 && (
-              <>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                setStep(3);
+              }}>
                 <input
                   placeholder="Address"
                   value={formData.address}
@@ -452,15 +624,15 @@ const Signup = ({ mood, setAlert }) => {
                 </div>
                 {formData.isEmailVerified ? `` : <p className="email-otp-messge" style={{ color: "red", cursor: "pointer" }}>Resend OTP</p>}
 
-                <button className={canGoStep3 ? `role-${mood}` : ""} disabled={!canGoStep3} onClick={() => setStep(3)}>
+                <button type="submit" className={canGoStep3 ? `role-${mood}` : ""} disabled={!canGoStep3} >
                   Next
                 </button>
-              </>
+              </form>
             )}
 
             {/* ================= STEP 3 ================= */}
             {step === 3 && (
-              <>
+              <form onSubmit={handleFinish}>
                 <input
                   placeholder="Nominee Name"
                   value={formData.nomineeName}
@@ -511,15 +683,15 @@ const Signup = ({ mood, setAlert }) => {
                   }
                 />
 
-                <button className={canFinish ? `role-${mood}` : ""} disabled={!canFinish} onClick={handleFinish}>
+                <button type="submit" className={canFinish ? `role-${mood}` : ""} disabled={!canFinish} >
                   Finish
                 </button>
-              </>
+              </form>
             )}
           </>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

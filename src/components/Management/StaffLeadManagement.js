@@ -1,16 +1,32 @@
 import React from "react";
 import DashboardCard from "../Cards/DashboardCard";
 import NiManagement from "../../icons/ni-management";
+import DataTable from "./DataTable";
 
-const StaffLeadManagement = ({ staffType }) => {
+const StaffLeadManagement = ({ leads, mood, setAlert, staffType }) => {
   return (
     <div className="dashboard-wrapper">
       {staffType === "marketing" && (
         <>
           <div className="dashboard-grid">
-            <DashboardCard title="Total Leads" value="120" icons = <NiManagement />/>
-            <DashboardCard title="New Leads" value="10" icons = <NiManagement />/>
-            <DashboardCard title="Without Follow-up" value="7" icons = <NiManagement />/>
+            <DashboardCard
+              title="Total Leads"
+              value={leads?.length}
+              icons=<NiManagement />
+            />
+            <DashboardCard
+              title="New Leads"
+              value={leads?.filter((lead) => lead.status === "new").length}
+              icons=<NiManagement />
+            />
+            <DashboardCard
+              title="Without Follow-up"
+              value={
+                leads?.filter((lead) => lead.status === "without_follow_up")
+                  .length
+              }
+              icons=<NiManagement />
+            />
           </div>
 
           {/* <div className="card">
@@ -25,11 +41,25 @@ const StaffLeadManagement = ({ staffType }) => {
         </>
       )}
 
+      <h4>Leads</h4>
+      <DataTable data={leads} mood={mood} setAlert={setAlert} dashboard={""} />
+
       {staffType === "operations" && (
         <>
           <div className="dashboard-grid">
-            <DashboardCard title="Site Visits Scheduled" value="12" />
-            <DashboardCard title="Awaiting Visit" value="6" />
+            <DashboardCard
+              title="Site Visits Scheduled"
+              value={
+                leads?.filter((lead) => lead.status === "site_visit_scheduled")
+                  .length
+              }
+            />
+            <DashboardCard
+              title="Awaiting Visit"
+              value={
+                leads?.filter((lead) => lead.status === "awaiting_visit").length
+              }
+            />
           </div>
         </>
       )}
@@ -37,8 +67,14 @@ const StaffLeadManagement = ({ staffType }) => {
       {staffType === "accounts" && (
         <>
           <div className="dashboard-grid">
-            <DashboardCard title="View Leads" value="120" />
-            <DashboardCard title="Booking Status" value="45" />
+            <DashboardCard title="View Leads" value={leads?.length} />
+            <DashboardCard
+              title="Booking Status"
+              value={
+                leads?.filter((lead) => lead.status === "booking_confirmed")
+                  .length
+              }
+            />
           </div>
         </>
       )}

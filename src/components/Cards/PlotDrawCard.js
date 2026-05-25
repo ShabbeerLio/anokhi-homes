@@ -6,92 +6,104 @@ import { useNavigate, useParams } from "react-router-dom";
 import { TOOLS } from "../PlotDraw/Tools";
 import ProjectData from "../../Pages/Plot/PlotData";
 import { polygonArea } from "../PlotDraw/geometry";
+import Host from "../../Host/Host";
+import axios from "axios";
 
-const PlotDrawCard = ({ mood }) => {
+const PlotDrawCard = ({ data, mood, setAlert }) => {
   const { projectId } = useParams();
-  const [project, setProject] = useState(null);
+  // console.log(data,"data")
+  // const [project, setProject] = useState(null);
 
   const [tool, setTool] = useState(TOOLS.POLYGON);
-  const [mainPlot, setMainPlot] = useState(null);
   const [plots, setPlots] = useState([]);
+  const [mainPlot, setMainPlot] = useState(null);
   const [selectedType, setSelectedType] = useState("FOR_SALE");
   const [selectedPlot, setSelectedPlot] = useState(null);
 
   useEffect(() => {
-    const found = ProjectData.flatMap((p) => p.plots).find(
-      (x) => x.id === projectId,
-    );
-    setProject(found || null);
-  }, [projectId]);
+    if (!projectId || !data) return;
 
-  useEffect(() => {
-    if (!project?.layout) return;
+    setMainPlot(data.mainPlot || null);
+    setPlots(data.plots || []);
+  }, [data, projectId]);
 
-    setMainPlot({
-      ...project.layout.mainPlot,
-      area: polygonArea(project.layout.mainPlot.points),
-    });
-
-    setPlots(
-      project.layout.plots.map((p) => ({
-        ...p,
-        area: polygonArea(p.points),
-      })),
-    );
-  }, [project]);
-
+  // console.log(mainPlot,"mainPlot")
+  // console.log(plots,"plots")
   const updatePlot = (id, changes) => {
-    setPlots((plots) =>
-      plots.map((p) => {
-        if (p.id !== id) return p;
+    setPlots((prevPlots) =>
+      prevPlots.map((p) => {
+        if (p._id !== id) return p;
 
-        // 🔥 If function → dragging / resize
+        let updatedPlot;
+
+        // Drag / resize
         if (typeof changes === "function") {
-          return {
+          updatedPlot = {
             ...p,
             points: changes(p.points),
           };
+        } else {
+          // Modal form update
+          updatedPlot = {
+            ...p,
+            ...changes,
+          };
         }
 
-        // 🔥 If object → modal edits
-        return { ...p, ...changes };
+        // 🔥 sync selected plot
+        if (selectedPlot?._id === id) {
+          setSelectedPlot(updatedPlot);
+        }
+
+        return updatedPlot;
       }),
     );
   };
+
   useEffect(() => {
     if (!selectedPlot) return;
-
-    const fresh = plots.find((p) => p.id === selectedPlot.id);
-    if (fresh) setSelectedPlot(fresh);
-  }, [plots]);
+    const fresh = plots.find((p) => p._id === selectedPlot._id);
+    if (fresh) {
+      setSelectedPlot(fresh);
+    }
+  }, [plots, selectedPlot]);
 
   const saveLayout = async () => {
-  try {
+    try {
+      const token = localStorage.getItem("token");
 
-    const layout = {
-      mainPlot,
-      plots
-    };
+      const layout = {
+        mainPlot,
+        plots,
+      };
 
-    // const res = await fetch(
-    //   `http://localhost:8000/api/colony/layout/${projectId}`,
-    //   {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     },
-    //     body: JSON.stringify({ layout })
-    //   }
-    // );
+      const res = await axios.post(
+        `${Host}/api/plot/save/${projectId}`,
+        { layout },
+        {
+          headers: {
+            "auth-token": token,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-    // const data = await res.json();
+      console.log("Layout Saved", res.data);
+      setAlert({
+        message: "Plot Saved successfully!",
+        status: "Success",
+      });
+      setTimeout(() => setAlert(null), 3000);
+    } catch (error) {
+      console.error(error);
 
-    console.log("Layout Saved", layout);
-
-  } catch (error) {
-    console.error(error);
-  }
-};
+      setAlert({
+        message: "Failed To Save Plot!",
+        status: "Error",
+      });
+      setTimeout(() => setAlert(null), 3000);
+    }
+  };
 
   return (
     <>
@@ -118,7 +130,7 @@ const PlotDrawCard = ({ mood }) => {
         selectedType={selectedType}
         onSelectPlot={setSelectedPlot}
         updatePlot={updatePlot}
-         saveLayout={saveLayout}
+        saveLayout={saveLayout}
       />
 
       {selectedPlot && (

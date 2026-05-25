@@ -124,7 +124,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
 
             <div className="table-filters">
                 <div className="page-head-title">
-                    <h2>Offers & Discounts</h2>
+                    <h2>Matching Rewards & Awards</h2>
                     <Breadcrumb />
                 </div>
 

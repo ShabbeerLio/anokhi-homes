@@ -46,7 +46,7 @@ const Dashboard = ({ mood }) => {
 
   const quickActions = {
     admin: [
-      { label: "Add Agent / Staff / Customer" },
+      { label: "Add Associate / Staff / Customer" },
       { label: "Add Booking" },
       { label: "Add Payment (Received)" },
     ],

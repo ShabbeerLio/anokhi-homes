@@ -15,6 +15,8 @@ import AddLocationModal from "../../components/Modals/AddLocationModal";
 import ActionModal from "../../components/Modals/ActionModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NiClosseye from "../../icons/ni-closseye";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../../Redux/Slices/AppSlices";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -202,6 +204,15 @@ const DATA = [
 ];
 
 const Other = ({ mood, setAlert }) => {
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.app);
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, []);
+
+  console.log(users, "users")
+
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -234,10 +245,10 @@ const Other = ({ mood, setAlert }) => {
     }
   }, [selectedUser]);
 
-  const filteredData = DATA.filter((item) => {
+  const filteredData = users?.filter((item) => {
     // Role filter
     const matchesRole =
-      filter === "all" || item.user.toLowerCase() === filter.toLowerCase();
+      filter === "all" || item.role?.toLowerCase() === filter?.toLowerCase();
 
     // Search filter
     const searchValue = search.toLowerCase();
@@ -256,10 +267,10 @@ const Other = ({ mood, setAlert }) => {
     setCurrentPage(1);
   }, [filter]);
 
-  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredData?.length / ITEMS_PER_PAGE);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentData = filteredData.slice(
+  const currentData = filteredData?.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE,
   );
@@ -305,6 +316,8 @@ const Other = ({ mood, setAlert }) => {
     }
   };
 
+  console.log(filter, "filter")
+
   return (
     <div className="plot-container">
       {/* Filters */}
@@ -337,15 +350,36 @@ const Other = ({ mood, setAlert }) => {
             />
           </div>
           <div className="filter-buttons">
-            {["all", "Customer", "staff", "associate"].map((f) => (
-              <button
-                key={f}
-                className={filter === f ? "active" : ""}
-                onClick={() => setFilter(f)}
-              >
-                {f.toUpperCase()}
-              </button>
-            ))}
+            {/* {["all", "Customer", "staff", "associate"].map((f) => ( */}
+            <button
+              // key={f}
+              className={filter === "all" ? "active" : ""}
+              onClick={() => setFilter("all")}
+            >
+              All
+            </button>
+            <button
+              // key={f}
+              className={filter === "user" ? "active" : ""}
+              onClick={() => setFilter("user")}
+            >
+              Customer
+            </button>
+            <button
+              // key={f}
+              className={filter === "staff" ? "active" : ""}
+              onClick={() => setFilter("staff")}
+            >
+              Staff
+            </button>
+            <button
+              // key={f}
+              className={filter === "agent" ? "active" : ""}
+              onClick={() => setFilter("agent")}
+            >
+              Associate
+            </button>
+            {/* ))} */}
           </div>
           <div className="page-toggle">
             <span
@@ -377,13 +411,13 @@ const Other = ({ mood, setAlert }) => {
             <span>Actions</span>
           </div>
 
-          {currentData.map((item) => (
+          {currentData?.map((item) => (
             <div key={item.id} className="table-row">
               <img src={item.avatar} alt="" />
               <span>
-                {item.user === "staff"
+                {item.role === "staff"
                   ? "Staff"
-                  : item.user === "associate"
+                  : item.role === "agent"
                     ? "Associate"
                     : "Customer"}
               </span>
@@ -575,55 +609,55 @@ const Other = ({ mood, setAlert }) => {
 
         {/* Common Fields */}
         {/* {formData.user && ( */}
-          <>
-            <div className="field">
-              <input
-                placeholder="Name (as per Aadhaar) "
-                value={formData.name || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-              />
-            </div>
+        <>
+          <div className="field">
+            <input
+              placeholder="Name (as per Aadhaar) "
+              value={formData.name || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
+          </div>
 
-            <div className="field">
-              <input
-                type="email"
-                placeholder="Email"
-                value={formData.email || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
-            </div>
+          <div className="field">
+            <input
+              type="email"
+              placeholder="Email"
+              value={formData.email || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+            />
+          </div>
 
-            <div className="field">
-              <input
-                placeholder="Phone"
-                value={formData.phone || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-              />
-            </div>
+          <div className="field">
+            <input
+              placeholder="Phone"
+              value={formData.phone || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
+            />
+          </div>
 
-            <div className="field password-field">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={formData.password || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
-              <span
-                className="password-eye"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <NiClosseye /> : <NiOpenEye />}
-              </span>
-            </div>
-          </>
+          <div className="field password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={formData.password || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+            />
+            <span
+              className="password-eye"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <NiClosseye /> : <NiOpenEye />}
+            </span>
+          </div>
+        </>
         {/* )} */}
 
         {/* Agent Only */}
