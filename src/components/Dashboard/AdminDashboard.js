@@ -13,9 +13,25 @@ import { FaAngleRight } from "react-icons/fa6";
 import NiCross from "../../icons/ni-cross";
 import NiInfo from "../../icons/ni-info";
 import NiTick from "../../icons/ni-tick";
+import {
+  getAccountDetails,
+  getBooking,
+  getLeads,
+} from "../../Redux/Slices/AppSlices";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { userDetail, leads, booking } = useSelector((state) => state.app);
+
+  useEffect(() => {
+    dispatch(getAccountDetails());
+    dispatch(getLeads());
+    dispatch(getBooking());
+  }, []);
+
   const revenueData = [
     { month: "Mon", revenue: 500 },
     { month: "Tue", revenue: 600 },
@@ -42,7 +58,6 @@ const AdminDashboard = () => {
       <h4>Stats</h4>
       {/* ================= STATS ================= */}
       <div className="dashboard-grid">
-        
         <DashboardCard
           title="Total Revenue"
           value="₹12,50,000"
@@ -53,7 +68,11 @@ const AdminDashboard = () => {
           value="₹50,000"
           icons={<NiPayments />}
         />
-        <DashboardCard title="Agents Income" value="₹12,00,000" icons={<NiTeams />} />
+        <DashboardCard
+          title="Agents Income"
+          value="₹12,00,000"
+          icons={<NiTeams />}
+        />
         <DashboardCard
           title="Total Bookings"
           value="89"
@@ -69,63 +88,31 @@ const AdminDashboard = () => {
         <DashboardCard title="Active Agents" value="12" icons={<NiTeams />} />
       </div>
 
-
-
       <div className="dashboard-box">
         {/* ================= RECENT ACTIVITY ================= */}
         <div className=" dashboard-box-left">
           <div className="dashboard-title-box">
             <h4>Recent Bookings</h4>
-            <Link to="/bookings" className="view-all"> <FaAngleRight /> View All</Link>
+            <Link to="/bookings" className="view-all">
+              {" "}
+              <FaAngleRight /> View All
+            </Link>
           </div>
-          {/* <div className=" table card">
-            <div className="dashboard-activity table-head">
-              <span>S.No.</span>
-              <span>Plot</span>
-              <span>Customer</span>
-              <span>Amount</span>
-              <span>Status</span>
-              <span>Actions</span>
-            </div>
-
-            <div
-              // key={item.id}
-              className="dashboard-activity table-row"
-              // onClick={() => navigate(`/user/${item.id}`, { state: item })}
-              style={{ cursor: "pointer" }}
-            >
-              <span>1</span>
-              <span>A-12</span>
-              <span>Rahul</span>
-
-              <span>₹12,00,000</span>
-
-              <span className={`status active`}>Confirmed</span>
-
-              <span className="dots">⋮</span>
-            </div>
-            <div
-              className="dashboard-activity table-row"
-              style={{ cursor: "pointer" }}
-            >
-              <span>2</span>
-              <span>A-13</span>
-              <span>Raj</span>
-
-              <span>₹10,00,000</span>
-
-              <span className={`status pending`}>Pending</span>
-
-              <span className="dots">⋮</span>
-            </div>
-          </div> */}
+          
           <div className="user-card-box">
-            {BookingData.slice(0, 2).map((item) => (
-              <BookingCard
-                item={item}
-                dashboard={() => handleNavigate()}
-              />
-            ))}
+            {booking.length === 0 ? (
+              <p>No Bookings Found</p>
+            ) : (
+              booking
+                .slice(0, 2)
+                .map((item) => (
+                  <BookingCard
+                    item={item}
+                    dashboard={() => navigate("/bookings")}
+                    mood={"user"}
+                  />
+                ))
+            )}
           </div>
         </div>
 
@@ -134,9 +121,17 @@ const AdminDashboard = () => {
           <h6 style={{ margin: "1.5rem 0 .5rem 0" }}>System Alerts</h6>
           <div className="dashboard-alerts ">
             <ul>
-              <li className="alert-items danger card"> <NiCross /> 3 Plots on hold expiring soon</li>
-              <li className="alert-items warning card"> <NiInfo /> 5 Overdue payments</li>
-              <li className="alert-items success card"><NiTick /> 2 Unassigned leads</li>
+              <li className="alert-items danger card">
+                {" "}
+                <NiCross /> 3 Plots on hold expiring soon
+              </li>
+              <li className="alert-items warning card">
+                {" "}
+                <NiInfo /> 5 Overdue payments
+              </li>
+              <li className="alert-items success card">
+                <NiTick /> 2 Unassigned leads
+              </li>
             </ul>
           </div>
         </div>

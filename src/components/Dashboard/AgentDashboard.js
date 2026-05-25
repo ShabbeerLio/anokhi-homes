@@ -8,6 +8,12 @@ import BookingCard from "../Cards/BookingCard";
 import BookingData from "../Data/BookingData";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  getAccountDetails,
+  getBooking,
+} from "../../Redux/Slices/AppSlices";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const salesData = [
   { month: "Jan", sales: 2 },
@@ -18,6 +24,13 @@ const salesData = [
 
 const AgentDashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { userDetail, booking } = useSelector((state) => state.app);
+
+  useEffect(() => {
+    dispatch(getAccountDetails());
+    dispatch(getBooking());
+  }, []);
   const handleNavigate = () => {
     navigate("/bookings");
   };
@@ -51,7 +64,10 @@ const AgentDashboard = () => {
         <div className=" dashboard-box-left">
           <div className="dashboard-title-box">
             <h4>Recent Bookings</h4>
-            <Link to="/bookings" className="view-all"> <FaAngleRight /> View All</Link>
+            <Link to="/bookings" className="view-all">
+              {" "}
+              <FaAngleRight /> View All
+            </Link>
           </div>
           {/* <div className="table card">
             <div className="dashboard-activity table-head">
@@ -88,10 +104,19 @@ const AgentDashboard = () => {
             </div>
           </div> */}
           <div className="user-card-box">
-            {BookingData.slice(0, 2).map((item) => (
-              <BookingCard item={item} 
-              dashboard={handleNavigate}/>
-            ))}
+            {booking.length === 0 ? (
+              <p>No Bookings Found</p>
+            ) : (
+              booking
+                .slice(0, 2)
+                .map((item) => (
+                  <BookingCard
+                    item={item}
+                    dashboard={() => navigate("/bookings")}
+                    mood={"user"}
+                  />
+                ))
+            )}
           </div>
         </div>
         <div className=" dashboard-box-right">
