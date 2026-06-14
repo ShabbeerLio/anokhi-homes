@@ -9,11 +9,20 @@ import { ChevronLeft } from "lucide-react";
 import NiShare from "../../icons/ni-share";
 import NiCode from "../../icons/ni-code";
 import NiLink from "../../icons/ni-link";
+import NiUser from "../../icons/ni-user";
+import { useDispatch, useSelector } from "react-redux";
+import { getAccountDetails } from "../../Redux/Slices/AppSlices";
 
 const Profile = ({ mood, currentUser, setAlert }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const userData = location.state;
+  console.log(userData, "userData")
+  const dispatch = useDispatch();
+  const { userDetail } = useSelector((state) => state.app);
+  useEffect(() => {
+    dispatch(getAccountDetails());
+  }, []);
 
   /* ================= SAFETY ================= */
 
@@ -23,7 +32,8 @@ const Profile = ({ mood, currentUser, setAlert }) => {
 
   //   if (!userData) return null;
 
-  const isOwnProfile = currentUser?.id === userData?.id;
+  const isOwnProfile = userDetail?._id === userData?._id;
+  console.log(isOwnProfile, "isOwnProfile")
 
   /* ================= TAB VISIBILITY LOGIC ================= */
 
@@ -31,25 +41,25 @@ const Profile = ({ mood, currentUser, setAlert }) => {
     const tabs = [];
 
     // USER PROFILE
-    if (userData.user === "customer") {
+    if (userData.role === "customer") {
       if (mood === "admin" || mood === "staff" || isOwnProfile) {
         tabs.push("Overview");
       }
     }
 
     // AGENT PROFILE
-    if (userData.user === "associate") {
+    if (userData.role === "agent") {
       if (
         mood === "admin" ||
         mood === "staff" ||
-        (mood === "associate" && isOwnProfile)
+        (mood === "agent" && isOwnProfile)
       ) {
         tabs.push("Overview", "Report");
       }
     }
 
     // STAFF PROFILE
-    if (userData.user === "staff") {
+    if (userData.role === "staff") {
       if (mood === "admin") {
         tabs.push("Overview", "Permissions");
       }
@@ -100,17 +110,19 @@ const Profile = ({ mood, currentUser, setAlert }) => {
           <>
             <div className="dashboard-title-box">
               <h4>Overview</h4>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={userData.status === "active"}
-                  onChange={() => {
-                    userData.status =
-                      userData.status === "active" ? "inactive" : "active";
-                  }}
-                />
-                <span className="slider"></span>
-              </label>
+              {userData.status !== "approval" && (
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    checked={userData.status === "active"}
+                    onChange={() => {
+                      userData.status =
+                        userData.status === "active" ? "inactive" : "active";
+                    }}
+                  />
+                  <span className="slider"></span>
+                </label>
+              )}
             </div>
             <Overview userData={userData} mood={mood} setAlert={setAlert} />
           </>
@@ -118,7 +130,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
     }
   };
 
-  const referralCode = `AGENT-${userData?.id || "0001"}`;
+  const referralCode = userData?.referralId;
   const referralLink = `${window.location.origin}/register?ref=${referralCode}`;
 
   const handleCopy = (text) => {
@@ -142,10 +154,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
         url: referralLink,
       });
     } else {
-      window.open(
-        `https://wa.me/?text=${encodeURIComponent(message)}`,
-        "_blank",
-      );
+
     }
   };
 
@@ -166,16 +175,28 @@ const Profile = ({ mood, currentUser, setAlert }) => {
         <div className="profile-sidebar">
           <div className="profile-card card">
             <div className="profile-top">
-              <img
-                src={userData.avatar}
-                alt={userData.name}
-                className="profile-avatar"
-              />
+              {userData?.avatar ? (
+                <img
+                  src={userData.avatar}
+                  alt={userData.name}
+                  className="profile-avatar"
+                />
+              ) : (
+                <div className="profile-avatar-placeholder">
+                  <NiUser />
+                </div>
+              )}
               <h3>{userData.name}</h3>
               <p className="role">
-                {userData.user}, {userData.status}
+                {userData.role === "staff"
+                  ? "Staff"
+                  : userData.role === "agent"
+                    ? "Associate"
+                    : userData.role === "admin"
+                      ? "Admin"
+                      : "Customer"}, {userData.status}
               </p>
-              {userData.user === "associate" && (
+              {userData.role === "agent" && (
                 <div className="referral-box">
                   <div className="referral-header dots">
                     {/* <h4>Referral</h4> */}
@@ -202,15 +223,6 @@ const Profile = ({ mood, currentUser, setAlert }) => {
                         >
                           <NiCode /> Copy Code
                         </span>
-
-                        {/* <span
-                          onClick={() => {
-                            handleCopy(referralLink);
-                            setShowReferralMenu(false);
-                          }}
-                        >
-                          <NiLink /> Copy Link
-                        </span> */}
 
                         <span
                           onClick={() => {

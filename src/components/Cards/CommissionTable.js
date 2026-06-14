@@ -1,83 +1,164 @@
 import React, { useState } from "react";
+
 import NiOpenEye from "../../icons/ni-openEye";
 import NiExport from "../../icons/ni-export";
 import ViewModal from "../Modals/ViewModal";
-import NiMedal from "../../icons/ni-medal";
 
-const CommissionTable = ({ item, exportToExcel, mood }) => {
+const CommissionTable = ({ index, item, exportToExcel }) => {
   const [viewOpen, setViewOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("summary");
   return (
     <>
-      <div key={item.id} className="table-row commission-table">
-        <span>{item.date}</span>
-        <span className={item.calc.isTop ? "top-agent" : ""}>{item.agent}</span>
-        <span>{item.project}</span>
-        <span>₹{item.saleAmount}</span>
-        <span>{item.calc.percent}%</span>
-        <span>₹{item.commissionAmount}</span>
-        <span>{item.cycle}</span>
-
-        <span
-          className={`status ${item.status === "Paid" ? "active" : "pending"}`}
-        >
-          {item.status}
+      <div
+        className={`table-row commission-table ${index === 0 ? "best-performer-row" : ""
+          }`}
+      >
+        <span>
+          {index === 0 && "🏆 "}
+          {item.name}
         </span>
-        <span style={{ display: "flex", alignItems: "center" }}>
-          +₹
-          {(
-            item.calc.referralBonus +
-            item.calc.cashback +
-            item.calc.topBonus
-          ).toFixed(0)}
-          {item.calc.isTop && <NiMedal />}
-        </span>
-        <span className="commission-breakdown">
-          ₹{item.calc.final.toFixed(0)}
-        </span>
-        <span>{item.calc.reward}</span>
-
+        <span>{item.designation}</span>
+        <span>{item.referralId}</span>
+        <span>₹{item.totalBusiness}</span>
+        <span>₹{item.wallet}</span>
+        <span>₹{item.totalIncome}</span>
         <div className="dots">
-          <span
-            onClick={(e) => {
-              e.stopPropagation();
-              setViewOpen(true);
-            }}
-          >
+          <span onClick={() => setViewOpen(true)}>
             <NiOpenEye />
           </span>
+
           <span onClick={() => exportToExcel([item])}>
             <NiExport />
           </span>
         </div>
       </div>
+
       <ViewModal
         open={viewOpen}
         onClose={() => setViewOpen(false)}
-        title={"Breakout"}
+        title={item.name}
       >
-        <div className="user-card-bottom view-box">
-          <div className="user-card-bottom-left">
-            <p>Base</p>
-            <p>Referral</p>
-            <p>Cashback</p>
-            <p>Bonus</p>
-            <p>TDS</p>
-            <p>Admin Charge</p>
-            <p>Total</p>
-          </div>
-          <div className="user-card-bottom-right">
-            <p>{item.calc.base}</p>
-            <p>{item.calc.referralBonus}</p>
-            <p>{item.calc.cashback}</p>
-            <p>₹{item.calc.topBonus}</p>
-            <p>-₹{item.calc.tds}</p>
-            <p>-₹{item.calc.adminCharge}</p>
-            <p style={{borderTop:"1px solid gray"}}> ₹{item.calc.final.toFixed(0)}</p>
-          </div>
+        <div className="table-filters">
+          <button
+            className={activeTab === "summary" ? "active" : ""}
+            onClick={() => setActiveTab("summary")}
+          >
+            Summary
+          </button>
+
+          <button
+            className={activeTab === "history" ? "active" : ""}
+            onClick={() => setActiveTab("history")}
+          >
+            Income History
+          </button>
+
+          <button
+            className={activeTab === "rewards" ? "active" : ""}
+            onClick={() => setActiveTab("rewards")}
+          >
+            Rewards
+          </button>
         </div>
-        {mood === "admin" && (
-          <div class="modal-actions">
-            <button>Make Payment</button>
+        
+        {activeTab === "summary" && (
+          <div className="report-view-box-right active">
+            <div className="summary-card">
+              <h5>Associate Information</h5>
+              <p><strong>Name:</strong> {item.name} </p>
+              <p><strong>Phone:</strong> {item.phone} </p>
+              <p><strong>Email:</strong> {item.email} </p>
+              <p><strong>Referral ID:</strong> {item.referralId} </p>
+              <p> <strong>Designation:</strong> {item.designation} </p>
+            </div>
+            <div className="report-view-box-right active">
+              <h5>Business</h5>
+              <p><strong>Total Business :</strong> ₹{item.totalBusiness}</p>
+              <p><strong>Wallet :</strong> ₹{item.wallet}</p>
+              <p><strong>Total Income :</strong> ₹{item.totalIncome}</p>
+            </div>
+            <div className="report-view-box-right active">
+              <h5>Income Breakdown</h5>
+              <p><strong>Direct Income :</strong> ₹{item.directIncome}</p>
+              <p><strong>Difference Income :</strong> ₹{item.differenceIncome}</p>
+              <p><strong>Matching Income :</strong> ₹{item.matchingIncome}</p>
+              <p><strong>Referral Income :</strong> ₹{item.referralIncome}</p>
+              <p><strong>Reward :</strong> ₹{item.rewardIncome}</p>
+            </div>
+            <div className="report-view-box-right active">
+              <h5>Business Breakdown</h5>
+              <p><strong>Self Business :</strong> ₹{item.selfBusiness}  </p>
+              <p><strong>Left Business :</strong> ₹{item.leftBusiness} </p>
+              <p><strong>Right Business :</strong>  ₹{item.rightBusiness}  </p>
+              <p><strong>Total Business :</strong>  ₹{item.totalBusiness} </p>
+            </div>
+
+            <div className="report-view-box-right active">
+              <h5>Commission Summary</h5>
+              <p><strong>Total Commission :</strong>  ₹{item.totalCommission} </p>
+              <p><strong>Credited :</strong>  ₹{item.creditedCommission} </p>
+              <p><strong>Pending :</strong>  ₹{item.pendingCommission} </p>
+            </div>
+
+            <div className="report-view-box-right active">
+              <h5>Current Slab</h5>
+              <p><strong>Level :</strong>{item.currentLevel} </p>
+              <p><strong>Designation :</strong>{item.currentDesignation}</p>
+              <p><strong>Rate :</strong>{item.currentRate}% </p>
+              <p><strong>Next Rank :</strong>{item.nextDesignation}</p>
+              <p><strong>Remaining :</strong>₹{item.remainingForNextRank}</p>
+            </div>
+
+          </div>
+        )}
+        {activeTab === "history" && (
+          <div className="report-view-box-right active">
+            {item.histories?.length > 0 ? (
+              item.histories.map((history) => (
+                <div className="history-card" key={history._id}>
+                  <h5>
+                    {{
+                      direct_income: "Direct Income",
+                      difference_income: "Difference Income",
+                      matching_income: "Matching Income",
+                      referal_income: "Referral Income",
+                      reward_income: "Reward Income",
+                      royalty_income: "Royalty Income",
+                      cashback_income: "Cashback Income",
+                      best_performance_income: "Best Performance Income",
+                    }[history.type] || history.type}
+                  </h5>
+                  <p><strong>Amount :</strong> ₹{history.amount}</p>
+                  <p><strong>Business :</strong> ₹{history.businessAmount || 0}</p>
+                  <p><strong>Percentage :</strong>{history.percentage}%</p>
+                  <p><strong>Status :</strong>{history.status}</p>
+                  <p> <strong>Cycle :</strong>{new Date(history.cycleDate).toLocaleDateString()} </p>
+                </div>
+              ))
+            ) : (
+              <p>No income history found</p>
+            )}
+          </div>
+        )}
+        {activeTab === "rewards" && (
+          <div className="report-view-box-right active">
+            {item.rewards?.length > 0 ? (
+              item.rewards.map((reward) => (
+                <div key={reward._id} className="reward-card">
+                  <h5>{reward.name}</h5>
+                  <p><strong>Target :</strong> ₹{reward.targetBusiness}</p>
+                  <p><strong>Reward :</strong> {reward.rewardValue}</p>
+                  <span
+                    className={`status ${reward.achieved ? "active" : "pending"
+                      }`}
+                  >
+                    {reward.achieved ? "Achieved" : "Pending"}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p>No rewards available</p>
+            )}
           </div>
         )}
       </ViewModal>

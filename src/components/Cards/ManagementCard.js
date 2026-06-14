@@ -17,29 +17,6 @@ import NiTick from "../../icons/ni-tick";
 import NiEdit from "../../icons/ni-edit";
 import NiDelete from "../../icons/ni-delete";
 import NoteItem from "../NoteItem/NoteItem";
-const agents = [
-  {
-    id: 1,
-    name: "Amit",
-    phone: "9876543210",
-    location: "Mumbai",
-    avatar: "https://i.pravatar.cc/40?img=11",
-  },
-  {
-    id: 2,
-    name: "Sana",
-    phone: "9123456789",
-    location: "Delhi",
-    avatar: "https://i.pravatar.cc/40?img=12",
-  },
-  {
-    id: 3,
-    name: "Raj",
-    phone: "9988776655",
-    location: "Pune",
-    avatar: "https://i.pravatar.cc/40?img=13",
-  },
-];
 
 const ManagementCard = ({
   item,
@@ -67,6 +44,7 @@ const ManagementCard = ({
   const [disapproveOpen, setDisapproveOpen] = useState(false);
   const [lostReason, setLostReason] = useState(item.lostReason || "");
   const [formData, setFormData] = useState({});
+  const [selectedProjects, setSelectedProjects] = useState(null);
 
   useEffect(() => {
     dispatch(getAllColonies());
@@ -349,8 +327,6 @@ setTimeout(() => setAlert(null), 3000);
       a.name.toLowerCase().includes(agentSearch.toLowerCase()) ||
       a.phone.includes(agentSearch),
   );
-
-  const [selectedProjects, setSelectedProjects] = useState(null);
   // console.log(mood, "item")
   const isSystemNote = (text) => {
     return text?.toLowerCase().includes("accepted by");

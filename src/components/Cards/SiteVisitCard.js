@@ -638,7 +638,7 @@ const SiteVisitCard = ({
                     <div>
                       <b>{p.plotNumber}</b>
                       <small style={{ display: "block", color: "#666" }}>
-                        {p.status}
+                        {p.plotType}
                       </small>
                     </div>
                   )}

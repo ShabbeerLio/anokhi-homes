@@ -12,6 +12,10 @@ import NiBooking from "../../icons/ni-booking";
 import { useNavigate } from "react-router-dom";
 import NiDownload from "../../icons/ni-download";
 import formatDate from "../DateFormate/DateFormate";
+import Host from "../../Host/Host";
+import axios from "axios";
+import { getPayments } from "../../Redux/Slices/AppSlices";
+import { useDispatch } from "react-redux";
 
 const PaymentCard = ({
   item,
@@ -22,6 +26,7 @@ const PaymentCard = ({
   dashboard,
   setAlert,
 }) => {
+  const dispatch = useDispatch();
   const [activeRow, setActiveRow] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
@@ -34,6 +39,40 @@ const PaymentCard = ({
   }, [viewOpen]);
   const paid = item.paidAmount || 0;
 
+  const handleAction = async (itemId, action, extraData = {}) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.put(
+        `${Host}/api/payment/action/${itemId}`,
+        {
+          action
+        },
+        {
+          headers: {
+            "auth-token": token,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      setAlert({
+        message: action === "approve" ? "Payment approved" : "Payment rejected",
+        status: action === "approve" ? "Success" : "Error",
+      });
+
+      dispatch(getPayments());
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        message: err.response?.data?.message || "Action failed",
+        status: "Error",
+      });
+      setTimeout(() => setAlert(null), 3000);
+    }
+  };
 
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
@@ -95,19 +134,20 @@ const PaymentCard = ({
           <p>Plot</p>
           <p>Amount</p>
           <p>Mode</p>
-          {/* {item.paymentMode !== "cash" && (
-            <p>Transaction ID</p>
-          )} */}
+          <p>Associate</p>
+          {item.paymentMode !== "cash" && <p>Transaction ID</p>}
         </div>
         <div className="user-card-bottom-right">
           <p>{formatDate(item?.createdAt)}</p>
           <p>{item?.customer?.phone}</p>
-          <p>{item?.booking?.plot?.plotId}, {item?.booking?.colony?.name}, {item?.booking?.location?.name}</p>
+          <p>
+            {item?.booking?.plot?.plotId}, {item?.booking?.colony?.name},{" "}
+            {item?.booking?.location?.name}
+          </p>
           <p>₹{item.amount}</p>
           <p>{item.paymentMode}</p>
-          {/* {item.paymentMode !== "cash" && (
-            <p>{item.transactionId}</p>
-          )} */}
+          <p>{item.agent?.name}</p>
+          {item.paymentMode !== "cash" && <p>{item.transactionId}</p>}
         </div>
       </div>
       {mood === "admin" && item.status === "pending" && (
@@ -115,12 +155,7 @@ const PaymentCard = ({
           <button
             className="site-visit-approval status active"
             onClick={() => {
-              setAlert({
-                message: "Payment approved",
-                status: "Success",
-              });
-
-              setTimeout(() => setAlert(null), 3000);
+              handleAction(item._id, "approve");
             }}
           >
             <NiTick /> Approve
@@ -129,12 +164,7 @@ const PaymentCard = ({
           <button
             className="site-visit-approval status failed"
             onClick={() => {
-              setAlert({
-                message: "Payment disapproved",
-                status: "failed",
-              });
-
-              setTimeout(() => setAlert(null), 3000);
+              handleAction(item._id, "reject");
             }}
           >
             <NiCross /> Disapprove
@@ -186,6 +216,7 @@ const PaymentCard = ({
             <p>Plot</p>
             <p>Amount Paid</p>
             <p>Mode</p>
+            <p>Payment Type</p>
             {/* {item?.paymentMode !== "cash" && (
               <p>Transaction ID</p>
             )} */}
@@ -193,9 +224,13 @@ const PaymentCard = ({
           </div>
           <div className="user-card-bottom-right">
             <p>{formatDate(item?.createdAt)}</p>
-            <p>{item?.booking?.plot?.plotId}, {item?.booking?.colony?.name}, {item?.booking?.location?.name}</p>
+            <p>
+              {item?.booking?.plot?.plotId}, {item?.booking?.colony?.name},{" "}
+              {item?.booking?.location?.name}
+            </p>
             <p>₹{item.amount}</p>
             <p>{item.paymentMode}</p>
+            <p>{item.paymentType}</p>
             {/* {item?.paymentMode !== "cash" && (
               <p>{item.transactionId}</p>
             )} */}
@@ -209,7 +244,7 @@ const PaymentCard = ({
             </div>
           </div>
         </div>
-        <div className="table-filters">
+        {/* <div className="table-filters">
           {mood !== "user" && (
             <button
               className="view-report-btn "
@@ -221,10 +256,10 @@ const PaymentCard = ({
             </button>
           )}
 
-          <button className="view-report-btn " onClick={() => { }}>
+          <button className="view-report-btn " onClick={() => {}}>
             <NiBooking /> Booking Details
           </button>
-        </div>
+        </div> */}
         <div className={`report-view-box-right ${showReport ? "active" : ""}`}>
           {/* PAYMENT DETAILS */}
           <div className="payment-details">
@@ -232,15 +267,17 @@ const PaymentCard = ({
               style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between"
-              }}>
+                justifyContent: "space-between",
+              }}
+            >
               Transaction Details
-              <span className="download-btn"><NiDownload /></span>
+              <span className="download-btn">
+                <NiDownload />
+              </span>
             </h5>
             {item.paymentMode !== "cash" && (
               <p>
-                <strong>Transaction ID:</strong>{" "}
-                {item.transactionId}
+                <strong>Transaction ID:</strong> {item.transactionId}
               </p>
             )}
             <p>
@@ -250,23 +287,10 @@ const PaymentCard = ({
               <strong>Completed By:</strong> Admin
             </p>
             <p>
-              <strong>Completed Date:</strong> {item.date}
+              <strong>Completed Date:</strong> {formatDate(item?.createdAt)}
             </p>
           </div>
 
-          {/* PAYMENT PROGRESS */}
-          {/* <div className="payment-progress">
-            <h5>Payment Progress</h5>
-
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-
-            <p>{Math.floor(progress)}% Paid</p>
-          </div> */}
           <div className="payment-note" style={{ marginTop: "1rem" }}>
             <strong>Note:</strong> 35% cancellation charges applicable.
           </div>

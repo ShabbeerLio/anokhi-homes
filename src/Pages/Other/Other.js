@@ -16,193 +16,17 @@ import ActionModal from "../../components/Modals/ActionModal";
 import DeleteModal from "../../components/Modals/DeleteModal";
 import NiClosseye from "../../icons/ni-closseye";
 import { useDispatch, useSelector } from "react-redux";
-import { getUser } from "../../Redux/Slices/AppSlices";
+import {
+  getUser,
+  addUser,
+  updateUserStatus,
+  updateUser,
+  deleteUser,
+  getAgentByReferralId,
+} from "../../Redux/Slices/AppSlices";
+import NiUser from "../../icons/ni-user";
 
-const ITEMS_PER_PAGE = 12;
-
-const DATA = [
-  {
-    id: 472,
-    user: "staff",
-    name: "Emily Ellis",
-    email: "laura@company.com",
-    phone: "9876543210",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    status: "active",
-    position: "Manager",
-    joined: "2024-01-12",
-    permissions: ["Manage Leads", "Access Reports"],
-    performance: null,
-  },
-
-  {
-    id: 473,
-    user: "associate",
-    position: "5%",
-    name: "Zoila Vittorino",
-    email: "zoila@company.com",
-    phone: "9876500001",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    status: "active",
-
-    joined: "2023-09-10",
-    referral: {
-      code: "REF123",
-      name: "Amit Kumar",
-    },
-    performance: {
-      totalSales: 4500000,
-      totalBookings: 18,
-      propertiesSold: 15,
-      commissionEarned: 450000,
-      conversionRate: 42,
-      monthlySales: [
-        { month: "Jan", sales: 200000 },
-        { month: "Feb", sales: 350000 },
-        { month: "Mar", sales: 280000 },
-        { month: "Apr", sales: 400000 },
-      ],
-    },
-
-    permissions: [],
-  },
-
-  {
-    id: 474,
-    user: "customer",
-    name: "Travis Howard",
-    email: "travis@gmail.com",
-    phone: "9000000001",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    status: "active",
-    joined: "2025-02-05",
-    permissions: [],
-    performance: null,
-    connected: {
-      name: "Rahul",
-      number: "9876543210",
-    },
-  },
-
-  {
-    id: 475,
-    user: "staff",
-    name: "Cindy Baker",
-    email: "cindy@company.com",
-    phone: "9000000002",
-    avatar: "https://i.pravatar.cc/150?img=4",
-    status: "inactive",
-    position: "Plot Manager",
-    joined: "2022-05-11",
-    permissions: ["Manage Bookings"],
-    performance: null,
-  },
-
-  {
-    id: 476,
-    user: "associate",
-    position: "6%",
-    name: "Buck Rogers",
-    email: "buck@company.com",
-    phone: "9000000003",
-    avatar: "https://i.pravatar.cc/150?img=5",
-    status: "inactive",
-    joined: "2023-03-18",
-
-    referral: {
-      code: "REF123",
-      name: "rahul Kumar",
-    },
-    performance: {
-      totalSales: 3200000,
-      totalBookings: 12,
-      propertiesSold: 10,
-      commissionEarned: 320000,
-      conversionRate: 35,
-      monthlySales: [
-        { month: "Jan", sales: 120000 },
-        { month: "Feb", sales: 220000 },
-        { month: "Mar", sales: 150000 },
-      ],
-    },
-
-    permissions: [],
-  },
-
-  {
-    id: 477,
-    user: "customer",
-    name: "Emily Watson",
-    email: "emily@gmail.com",
-    phone: "9000000004",
-    avatar: "https://i.pravatar.cc/150?img=6",
-    status: "active",
-    joined: "2025-01-22",
-    permissions: [],
-    performance: null,
-    connected: {
-      name: "Rahul",
-      number: "9876543210",
-    },
-  },
-  {
-    id: 483,
-    user: "associate",
-    name: "Ethan Wilson",
-    position: "0%",
-    email: "ethan@company.com",
-    phone: "9000000005",
-    avatar: "https://i.pravatar.cc/150?img=11",
-    status: "pending",
-    joined: "2026-01-21",
-    position: "",
-    referral: {
-      code: "REF123",
-      name: "Amit Kumar",
-    },
-    performance: {
-      totalSales: 0,
-      totalBookings: 0,
-      propertiesSold: 0,
-      commissionEarned: 0,
-      conversionRate: 0,
-      monthlySales: [],
-    },
-
-    permissions: [],
-  },
-  {
-    id: 482,
-    user: "associate",
-    name: "Ethan Wilson",
-    position: "5%",
-    email: "ethan@company.com",
-    phone: "9000000005",
-    avatar: "https://i.pravatar.cc/150?img=11",
-    status: "active",
-    joined: "2023-11-01",
-
-    referral: {
-      code: "REF123",
-      name: "Amit Kumar",
-    },
-    performance: {
-      totalSales: 5100000,
-      totalBookings: 22,
-      propertiesSold: 19,
-      commissionEarned: 510000,
-      conversionRate: 48,
-      monthlySales: [
-        { month: "Jan", sales: 400000 },
-        { month: "Feb", sales: 600000 },
-        { month: "Mar", sales: 520000 },
-      ],
-    },
-
-    permissions: [],
-  },
-];
-
+const ITEMS_PER_PAGE = 15;
 const Other = ({ mood, setAlert }) => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.app);
@@ -210,8 +34,6 @@ const Other = ({ mood, setAlert }) => {
   useEffect(() => {
     dispatch(getUser());
   }, []);
-
-  console.log(users, "users")
 
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -224,6 +46,8 @@ const Other = ({ mood, setAlert }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedDeleteUser, setSelectedDeleteUser] = useState(null);
+  const [referalMsg, setReferralMsg] = useState(null)
 
   const [formData, setFormData] = useState({
     user: "",
@@ -245,23 +69,25 @@ const Other = ({ mood, setAlert }) => {
     }
   }, [selectedUser]);
 
-  const filteredData = users?.filter((item) => {
-    // Role filter
-    const matchesRole =
-      filter === "all" || item.role?.toLowerCase() === filter?.toLowerCase();
+  const filteredData = users
+    ?.filter((item) => item.role !== "admin")
+    ?.filter((item) => {
+      // Role filter
+      const matchesRole =
+        filter === "all" || item.role?.toLowerCase() === filter?.toLowerCase();
 
-    // Search filter
-    const searchValue = search.toLowerCase();
+      // Search filter
+      const searchValue = search.toLowerCase();
 
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchValue) ||
-      item.email?.toLowerCase().includes(searchValue) ||
-      item.phone?.includes(searchValue) ||
-      item.id.toString().includes(searchValue) ||
-      item.user.toLowerCase().includes(searchValue);
+      const matchesSearch =
+        item.name.toLowerCase().includes(searchValue) ||
+        item.email?.toLowerCase().includes(searchValue) ||
+        item.phone?.includes(searchValue) ||
+        item.id.toString().includes(searchValue) ||
+        item.user.toLowerCase().includes(searchValue);
 
-    return matchesRole && matchesSearch;
-  });
+      return matchesRole && matchesSearch;
+    });
   // reset page when filter changes
   useEffect(() => {
     setCurrentPage(1);
@@ -288,35 +114,102 @@ const Other = ({ mood, setAlert }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setActiveRow]);
 
-  const handleAddUser = () => {
-    console.log("Adding user:", formData);
-    setOpen(false);
-    setAlert({ message: "User added successfully!", status: "Success" });
-    setTimeout(() => {
-      setAlert(null);
-    }, 5000);
-  };
-  const handleEditUser = () => {
-    console.log("Editing user:", formData);
-    setOpen(false);
-    setAlert({ message: "User updated successfully!", status: "Success" });
-    setTimeout(() => {
-      setAlert(null);
-    }, 5000);
-  };
+  const handleAddUser = async () => {
+    try {
+      const result = await dispatch(addUser(formData)).unwrap();
 
-  const handleReferralCheck = async (code) => {
-    // simulate API
-    if (code.length > 3) {
-      setFormData((prev) => ({
-        ...prev,
-        referralCode: code,
-        referralName: "Agent Rahul",
-      }));
+      setAlert({
+        message: result.msg || "User created successfully",
+        status: "Success",
+      });
+
+      dispatch(getUser());
+
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
+      setOpen(false);
+    } catch (error) {
+      setAlert({
+        message: error.msg || "Failed to create user",
+        status: "Error",
+      });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
+    }
+  };
+  const handleEditUser = async () => {
+    try {
+      await dispatch(
+        updateUser({
+          id: formData._id,
+          data: formData,
+        })
+      );
+
+      setOpen(false);
+
+      setAlert({
+        message: "User updated successfully",
+        status: "Success",
+      });
+      dispatch(getUser());
+
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  console.log(filter, "filter")
+  const handleReferralCheck =
+    async (code) => {
+      setFormData((prev) => ({
+        ...prev,
+        referralId: code,
+      }));
+      if (code.length < 9) return;
+      try {
+        const res =
+          await dispatch(getAgentByReferralId(code));
+
+        setReferralMsg(res)
+      } catch (error) {
+        setReferralMsg(null)
+      }
+    };
+
+  const handleStatusToggle = async (item) => {
+    try {
+      const status =
+        item.status === "active"
+          ? "inactive"
+          : "active";
+
+      await dispatch(
+        updateUserStatus({
+          id: item._id,
+          status,
+        })
+      );
+
+      setAlert({
+        message: `User ${status} successfully`,
+        status: "Success",
+      });
+      dispatch(getUser());
+
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(currentData, "currentData")
 
   return (
     <div className="plot-container">
@@ -350,7 +243,6 @@ const Other = ({ mood, setAlert }) => {
             />
           </div>
           <div className="filter-buttons">
-            {/* {["all", "Customer", "staff", "associate"].map((f) => ( */}
             <button
               // key={f}
               className={filter === "all" ? "active" : ""}
@@ -405,49 +297,57 @@ const Other = ({ mood, setAlert }) => {
             <span>Image</span>
             <span>Role</span>
             <span>Name</span>
-            <span>Connected</span>
-            <span>Referral</span>
+            <span>Designation</span>
+            <span>Referral Id</span>
             <span>Status</span>
             <span>Actions</span>
           </div>
 
           {currentData?.map((item) => (
             <div key={item.id} className="table-row">
-              <img src={item.avatar} alt="" />
+              {item?.avatar ? (
+                <img
+                  src={item.avatar}
+                  alt={item.name}
+                  className="profile-avatar"
+                />
+              ) : (
+                <NiUser />
+              )}
+              {/* <img src={item.avatar} alt="" /> */}
               <span>
                 {item.role === "staff"
                   ? "Staff"
                   : item.role === "agent"
                     ? "Associate"
-                    : "Customer"}
+                    : item.role === "admin"
+                      ? "Admin"
+                      : "Customer"}
               </span>
               <span className="title">
                 {item.name} {item.position && `(${item.position})`}
               </span>
-              <span className="title">{item.connected?.name || "-"}</span>
-              <span className="title">{item.referral?.name || "-"}</span>
+              <span className="title">{item.role !== "user" ? <>{item.designation}({item.directIncomePercent}) </> : "-"}</span>
+              <span className="title">{item.referralId || "-"}</span>
 
-              {((item.status !== "pending" && mood === "admin" || item.status !== "pending" && mood === "staff") && (
+              {((item.status !== "approval" && mood === "admin" || item.status !== "approval" && mood === "staff") && (
                 <label className="switch">
                   <input
                     type="checkbox"
                     checked={item.status === "active"}
-                    onChange={() => {
-                      item.status =
-                        item.status === "active" ? "inactive" : "active";
-                    }}
+                    onChange={() => handleStatusToggle(item)}
                   />
                   <span className="slider"></span>
                 </label>
               )) || (
-                  <span className={`status ${item.status}`}>
+                  <span className={`status ${item.status === "approval" ? "pending" : item.status}`}>
                     {item.status}
                   </span>
                 )}
 
               <div className="dots">
                 <span
-                  onClick={() => navigate(`/user/${item.id}`, { state: item })}
+                  onClick={() => navigate(`/user/${item._id}`, { state: item })}
                 >
                   <NiOpenEye />
                 </span>
@@ -455,13 +355,13 @@ const Other = ({ mood, setAlert }) => {
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
-                    setActiveRow(activeRow === item.id ? null : item.id);
+                    setActiveRow(activeRow === item._id ? null : item._id);
                   }}
                 >
                   <NiDots />
                 </span>
 
-                {activeRow === item.id && (
+                {activeRow === item._id && (
                   <ActionModal
                     item={item}
                     onClose={() => setActiveRow(null)}
@@ -471,6 +371,7 @@ const Other = ({ mood, setAlert }) => {
                       setOpen(true);
                     }}
                     onDelete={() => {
+                      setSelectedDeleteUser(item);
                       setDeleteOpen(true);
                     }}
                   />
@@ -485,16 +386,16 @@ const Other = ({ mood, setAlert }) => {
             <div className="user-card card">
               <div className="user-card-top">
                 <div className="user-card-title">
-                  <img src={item.avatar} alt="" />
+                  {/* <img src={item.avatar} alt="" /> */}
                   <div className="user-card-detail">
                     <h4>{item.name} <span>{item.position && `(${item.position})`}</span></h4>
-                    <p>{item.id}</p>
+                    {/* <p></p> */}
                   </div>
                 </div>
                 <div className="dots">
                   <span
                     onClick={() =>
-                      navigate(`/user/${item.id}`, { state: item })
+                      navigate(`/user/${item._id}`, { state: item })
                     }
                   >
                     <NiOpenEye />
@@ -503,13 +404,13 @@ const Other = ({ mood, setAlert }) => {
                   <span
                     onClick={(e) => {
                       e.stopPropagation();
-                      setActiveRow(activeRow === item.id ? null : item.id);
+                      setActiveRow(activeRow === item._id ? null : item._id);
                     }}
                   >
                     <NiDots />
                   </span>
 
-                  {activeRow === item.id && (
+                  {activeRow === item._id && (
                     <ActionModal
                       item={item}
                       onClose={() => setActiveRow(null)}
@@ -519,6 +420,7 @@ const Other = ({ mood, setAlert }) => {
                         setOpen(true);
                       }}
                       onDelete={() => {
+                        setSelectedDeleteUser(item);
                         setDeleteOpen(true);
                       }}
                     />
@@ -526,34 +428,43 @@ const Other = ({ mood, setAlert }) => {
                 </div>
               </div>
               <div className="user-card-bottom">
+                <span>Referal Id </span>
+                <span>{item.referralId}</span>
+              </div>
+              <div className="user-card-bottom">
                 <span>
-                  {item.user === "staff"
+                  {item.role === "staff"
                     ? "Staff"
-                    : item.user === "associate"
+                    : item.role === "agent"
                       ? "Associate"
-                      : "Customer"}
+                      : item.role === "admin"
+                        ? "Admin"
+                        : "Customer"}
                 </span>
                 <span className="title">
-                  {item.connected?.name || item.referral?.name || "-"}
+                  {/* {item.connected?.name || item.referralId || "-"} */}
                 </span>
-                {(item.status !== "pending" && mood === "admin" && (
+                {(item.status !== "approval" && mood === "admin" && (
                   <label className="switch">
                     <input
                       type="checkbox"
                       checked={item.status === "active"}
-                      onChange={() => {
-                        item.status =
-                          item.status === "active" ? "inactive" : "active";
-                      }}
+                      onChange={() => handleStatusToggle(item)}
                     />
                     <span className="slider"></span>
                   </label>
                 )) || (
-                    <span className={`status ${item.status}`}>
-                      {item.status === "pending" && "Pending"}
+                    <span className={`status ${item.status === "approval" ? "pending" : ""}`}>
+                      {item.status === "approval" && "Pending"}
                     </span>
                   )}
+
               </div>
+
+              {/* <div className="user-card-bottom">
+                <span>Referal By </span>
+                <span>{item.referredBy}</span>
+              </div> */}
             </div>
           ))}
         </div>
@@ -595,14 +506,14 @@ const Other = ({ mood, setAlert }) => {
         <div className="field">
           <label>User Type</label>
           <select
-            value={formData.user}
+            value={formData.role}
             onChange={(e) =>
-              setFormData({ ...formData, user: e.target.value })
+              setFormData({ ...formData, role: e.target.value })
             }
           >
             <option value="">Select Type</option>
-            <option value="customer">Customer</option>
-            <option value="associate">Associate</option>
+            <option value="user">Customer</option>
+            <option value="agent">Associate</option>
             <option value="staff">Staff</option>
           </select>
         </div>
@@ -660,23 +571,48 @@ const Other = ({ mood, setAlert }) => {
         </>
         {/* )} */}
 
-        {/* Agent Only */}
-        {formData.user === "associate" && (
-          <div className="field">
-            <input
-              placeholder="Referral Code"
-              value={formData.referralCode || ""}
-              onChange={(e) => handleReferralCheck(e.target.value)}
-            />
-          </div>
-        )}
 
-        {formData.user === "associate" && formData.referralName && (
-          <p>Referred by: {formData.referralName}</p>
+        {/* Agent Only */}
+        {formData.role === "agent" && (
+          <>
+            <div className="field password-field">
+              <input
+                placeholder="Referral Code"
+                value={formData.referralId}
+                onChange={(e) => handleReferralCheck(e.target.value)}
+              />
+            </div>
+            {referalMsg !== null && (
+              referalMsg?.payload?.msg ?
+                <>
+                  <p style={{ color: "red" }}>{referalMsg?.payload?.msg}</p>
+                </>
+                :
+                <>
+                  <p style={{ color: "green" }}>Referred by: {referalMsg?.payload?.name}</p>
+                </>
+
+            )}
+            <div className="plot-modal field">
+              <select
+                value={formData.position}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    position: e.target.value,
+                  })
+                }
+              >
+                <option value="">Select Position</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+          </>
         )}
 
         {/* Staff Only */}
-        {formData.user === "staff" && (
+        {formData.role === "staff" && (
           <div className="field">
             <input
               placeholder="Department / Role"
@@ -708,20 +644,28 @@ const Other = ({ mood, setAlert }) => {
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
           <button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
-              console.log("User deleted");
 
-              setDeleteOpen(false);
+              try {
+                await dispatch(
+                  deleteUser(selectedDeleteUser._id)
+                );
 
-              setAlert({
-                message: "User deleted successfully!",
-                status: "Success",
-              });
+                setDeleteOpen(false);
 
-              setTimeout(() => {
-                setAlert(null);
-              }, 5000);
+                setAlert({
+                  message: "User deleted successfully",
+                  status: "Success",
+                });
+                dispatch(getUser());
+
+                setTimeout(() => {
+                  setAlert(null);
+                }, 3000);
+              } catch (error) {
+                console.log(error);
+              }
             }}
           >
             Yes

@@ -12,9 +12,18 @@ import AdminLogo from "../../Assets/Logo/logo-anokhi-home-parpul.png";
 import StaffLogo from "../../Assets/Logo/logo-anokhi-home-green.png";
 import AgentLogo from "../../Assets/Logo/logo-anokhi-home-blue.png";
 import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
+import NiUser from "../../icons/ni-user";
+import { useDispatch, useSelector } from "react-redux";
+import { getAccountDetails } from "../../Redux/Slices/AppSlices";
 
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
-  const [currentUser, setCurrentUser] = useState({});
+  const dispatch = useDispatch();
+  const { userDetail } = useSelector((state) => state.app);
+  useEffect(() => {
+    dispatch(getAccountDetails());
+  }, []);
+
+  const currentUser = userDetail;
   const navigate = useNavigate();
   const [openProfile, setOpenProfile] = useState(false);
   const [openNotif, setOpenNotif] = useState(false);
@@ -23,13 +32,10 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   const notifRef = useRef();
 
   useEffect(() => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const user = JSON.parse(localStorage.getItem("user"));
-        setCurrentUser(user);
-        setMood(user.role);
-      }
-    }, []);
+    if (userDetail) {
+      setMood(userDetail?.role);
+    }
+  }, [userDetail]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -53,7 +59,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
     localStorage.removeItem("token");
   };
 
-  // console.log(currentUser,"currentUser")
+  // console.log(currentUser, "currentUser");
 
   return (
     <div className="topbar">
@@ -118,12 +124,30 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
         >
           <span>{currentUser?.user?.toUpperCase()}</span>
 
-          <img src={currentUser?.avatar} alt="profile" />
+          {currentUser?.avatar ? (
+            <img
+              src={"userData.avatar"}
+              alt={currentUser.name}
+              className="profile-avatar"
+            />
+          ) : (
+            <NiUser />
+          )}
 
           {openProfile && (
             <div className="profile-modal">
               <div className="pm-header">
-                <img src={currentUser?.avatar} />
+                {currentUser?.avatar ? (
+                  <img
+                    src={"currentUser.avatar"}
+                    alt={currentUser.name}
+                    className="profile-avatar"
+                  />
+                ) : (
+                  <div className="profile-avatar-placeholder">
+                    <NiUser />
+                  </div>
+                )}
                 <h4>{currentUser?.name}</h4>
                 <p>{currentUser?.email}</p>
               </div>
@@ -131,7 +155,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
               <div
                 className="pm-item"
                 onClick={() =>
-                  navigate(`/user/${currentUser.id}`, {
+                  navigate(`/user/${currentUser._id}`, {
                     state: currentUser,
                   })
                 }
@@ -146,7 +170,10 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
                 </span>
               </div>
 
-              <div className="pm-item" onClick={() => navigate(`/help-support`)}>
+              <div
+                className="pm-item"
+                onClick={() => navigate(`/help-support`)}
+              >
                 Help and Support
               </div>
 

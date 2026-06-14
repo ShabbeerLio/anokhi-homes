@@ -6,7 +6,7 @@ import DeleteModal from "../Modals/DeleteModal";
 import ViewModal from "../Modals/ViewModal";
 import formatDate from "../DateFormate/DateFormate";
 
-const OffersCard = ({
+const CashbackCard = ({
   item,
   setSelectedOffers,
   setIsEditMode,
@@ -43,11 +43,10 @@ const OffersCard = ({
         <div className="user-card-title">
           <div className="user-card-name">
             <h4>
-              {item.title}
-              <span
-                className={`status ${item.status === "active" ? "active" : "inactive"}`}
-              >
-                {item.status === "active" ? "Active" : "Disabled"}
+              {item?.colonyId?.name || "Cashback"}
+
+              <span className={`status ${item.active ? "active" : "inactive"}`}>
+                {item.active ? "Active" : "Disabled"}
               </span>
             </h4>
           </div>
@@ -58,7 +57,7 @@ const OffersCard = ({
             <label className="switch">
               <input
                 type="checkbox"
-                checked={item.status === "active"}
+                checked={item.active}
                 onChange={() => handleToggleStatus(item)}
               />
               <span className="slider"></span>
@@ -104,12 +103,17 @@ const OffersCard = ({
 
       <div className="user-card-bottom">
         <div className="user-card-bottom-left">
-          <p><strong>Description : </strong>{item.description}</p>
-          {isOffer && <p><strong>Price Benefit : </strong>₹{item.priceValue}</p>}
-          {isDiscount && <p><strong>Discount :</strong> {item.amount} {item.type === "percentage" ? "%" : "₹"}</p>}
-          {!isDiscount && <p><strong>User Type:</strong> {item.userType?.join(", ")}</p>}
           <p>
-            <strong>Valid Till:</strong> {formatDate(item.endDate)}
+            <strong>Cashback :</strong> {item.cashbackPercent}%
+          </p>
+          <p>
+            <strong>Complete Within :</strong> {item.completeWithinDays} Days
+          </p>
+          <p>
+            <strong>Start Date :</strong> {formatDate(item.startDate)}
+          </p>
+          <p>
+            <strong>End Date :</strong> {formatDate(item.endDate)}
           </p>
           <p className="countdown">{getRemainingDays(item.endDate)}</p>
         </div>
@@ -150,36 +154,24 @@ const OffersCard = ({
       <ViewModal
         open={viewOpen}
         onClose={() => setViewOpen(false)}
-        title={item.title}
+        title={item?.colonyId?.name || "Cashback Details"}
       >
         <div className="user-card-bottom view-box">
           <div className="user-card-bottom-left">
-            <p>Description</p>
-            {isOffer && <p>Price Value</p>}
-            {isDiscount && <p>Discount</p>}
-            {isDiscount && <p>Terms</p>}
-            {!isDiscount && <p>User Type</p>}
-            <p>Starts</p>
-            <p>Ends</p>
+            <p>Cashback</p>
+            <p>Complete Within</p>
+            <p>Start Date</p>
+            <p>End Date</p>
+            <p>Status</p>
             <p>Remaining</p>
           </div>
 
           <div className="user-card-bottom-right">
-            <p>{item.description}</p>
-
-            {isOffer && <p>₹{item.priceValue}</p>}
-
-            {isDiscount && (
-              <p>
-                {item.amount} {item.type === "percentage" ? "%" : "₹"}
-              </p>
-            )}
-
-            {isDiscount && <p>{item.terms}</p>}
-
-            <p>{item.userType?.join(", ")}</p>
+            <p>{item.cashbackPercent}%</p>
+            <p>{item.completeWithinDays} Days</p>
             <p>{formatDate(item.startDate)}</p>
             <p>{formatDate(item.endDate)}</p>
+            <p>{item.active ? "Active" : "Inactive"}</p>
             <p className="countdown">{getRemainingDays(item.endDate)}</p>
           </div>
         </div>
@@ -188,4 +180,4 @@ const OffersCard = ({
   );
 };
 
-export default OffersCard;
+export default CashbackCard;

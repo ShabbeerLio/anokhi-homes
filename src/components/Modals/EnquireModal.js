@@ -64,7 +64,7 @@ const EnquireModal = ({
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
-        source: "plot enquiry",
+        source: `plot enquiry of ${plot._id}`,
       };
       const res = await axios.post(`${Host}/api/lead/add`, payload, {
         headers: {
@@ -98,6 +98,8 @@ const EnquireModal = ({
       setTimeout(() => setAlert(null), 5000);
     }
   };
+
+  console.log(plot,"plot")
 
   return (
     <>

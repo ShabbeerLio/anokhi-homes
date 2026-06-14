@@ -78,7 +78,10 @@ const Home = ({ data, setAlert }) => {
   }, [data]);
 
   const handleSave = async () => {
-    const uploadedImage = await uploadImage(formData.image);
+    let uploadedImage = [];
+    if (formData.image) {
+      uploadedImage = await uploadImage(formData.image);
+    }
     try {
       let updatedData = {
         ...homePageData,

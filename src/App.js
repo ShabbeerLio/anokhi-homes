@@ -37,6 +37,7 @@ import PrivacyPolicy from "./Pages/PrivacyPolicy/PrivacyPolicy";
 import TermCondition from "./Pages/TermCondition/TermCondition";
 import CancellationRefund from "./Pages/CancellationRefund/CancellationRefund";
 import HelpCenter from "./Pages/HelpCenter/HelpCenter";
+import Income from "./Pages/Income/Income";
 
 const LandingLayout = ({ mood }) => {
   return (
@@ -78,7 +79,7 @@ function App() {
           <Route path="/login" element={<Login mood={mood} />} />
           <Route
             path="/signup"
-            element={<Signup mood={mood} setAlert={setAlert} />}
+            element={<Signup mood={mood} setAlert={setAlert} setMood={setMood} />}
           />
           <Route
             path="/*"
@@ -150,6 +151,10 @@ function App() {
                       <Route
                         path="/payments"
                         element={<Payments mood={mood} setAlert={setAlert} />}
+                      />
+                      <Route
+                        path="/income"
+                        element={<Income mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/settings"

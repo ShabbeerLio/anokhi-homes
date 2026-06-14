@@ -1,30 +1,20 @@
 import React from "react";
 
 const TargetLadder = ({ targets, agentSales }) => {
-  const maxTarget = targets[targets.length - 1].targetAmount;
+  console.log(targets, agentSales, "sdchabk");
+  // const maxTarget = targets[targets?.length - 1]?.targetBusiness;
+  console.log(targets, "maxTarget");
 
-  const progress = Math.min((agentSales / maxTarget) * 100, 100);
-  const getRemainingDays = (endDate) => {
-    const today = new Date();
-    const end = new Date(endDate);
-
-    const diff = end - today;
-
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-
-    if (days <= 0) return "Expired";
-
-    return `${days} days remaining`;
-  };
+  // const progress = Math?.min((agentSales / maxTarget) * 100, 100);
 
   return (
     <div className="target-ladder card">
-      <div className="ladder-road">
+      {/* <div className="ladder-road">
         <div className="ladder-progress" style={{ width: `${progress}%` }} />
 
         <div className="ladder-agent" style={{ left: `${progress}%` }}></div>
 
-        {targets.map((t, index) => {
+        {targets?.map((t, index) => {
           const position = (t.targetAmount / maxTarget) * 100;
           const unlocked = agentSales >= t.targetAmount;
 
@@ -36,11 +26,10 @@ const TargetLadder = ({ targets, agentSales }) => {
             >
               <span className="ladder-icon">{t.icon}</span>
               <p>₹{t.targetAmount}</p>
-              <p className="ladder-time">{getRemainingDays(t.endDate)}</p>
             </div>
           );
         })}
-      </div>
+      </div> */}
 
       <div className="ladder-sales">
         <strong>Your Sales:</strong> ₹{agentSales}

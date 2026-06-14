@@ -8,7 +8,7 @@
 .team-leader-box-left {
   width: 15%;
 }
-.team-leader-box-left img{
+.team-leader-box-left img {
   width: 100%;
   aspect-ratio: 2/2;
   object-fit: cover;
@@ -17,14 +17,14 @@
 .team-leader-box-right {
   width: 85%;
 }
-.team-leader-box-right h4{
-    margin: 0;
+.team-leader-box-right h4 {
+  margin: 0;
   margin-bottom: 1rem;
   font-size: 20px;
 }
-.team-leader-box-right p{
-    margin: 0;
-    font-size: 14px;
+.team-leader-box-right p {
+  margin: 0;
+  font-size: 14px;
 }
 
 .team-graph {
@@ -49,7 +49,7 @@
   z-index: 10;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
-.center-node h4{
+.center-node h4 {
   margin: 0;
 }
 
@@ -86,6 +86,81 @@
   border-top: 1px solid #eee;
 } */
 
-.team-table.table-head, .team-table.table-row {
-grid-template-columns: 120px 1fr 1fr 1fr 60px;
+.team-table.table-head,
+.team-table.table-row {
+  grid-template-columns: 80px 1fr 1fr 1.5fr 1fr 1fr 1fr;
+}
+
+.searchItem.team-search {
+  padding: 5px 5px 5px 10px !important;
+}
+.searchItem.team-search svg{
+  width: 30px;
+  height: 30px;
+}
+.searchItem.team-search button:hover{
+  color: white;
+  background: var(--mood-color);
+}
+
+.team-tree-container {
+  padding: 20px;
+}
+
+.tree-node {
+  position: relative;
+}
+
+.tree-card {
+  margin-bottom: 10px;
+  /* padding: 12px; */
+  /* border-radius: 10px; */
+  /* background: #fff; */
+  /* border: 1px solid #ececec; */
+  position: relative;
+}
+
+.tree-card::before {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: -10px;
+  width: 2px;
+  height: calc(100% + 20px);
+  background: #d9d9d9;
+}
+
+.tree-card::after {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: 45px;
+  width: 16px;
+  height: 2px;
+  background: #d9d9d9;
+}
+
+.tree-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tree-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.tree-toggle {
+  font-size: 12px;
+}
+
+.tree-card-body {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 14px;
 }

@@ -45,6 +45,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/plot", label: "Plots", icon: <NiTool /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
+      { path: "/income", label: "Income", icon: <NiPayments /> },
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/commission", label: "Commission", icon: <NiCommission /> },
@@ -63,6 +64,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
+      { path: "/income", label: "Income", icon: <NiPayments /> },
       { path: "/commission", label: "Commission", icon: <NiCommission /> },
       {
         path: "/offers-discounts",
@@ -77,6 +79,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
+      { path: "/income", label: "Income", icon: <NiPayments /> },
       { path: "/commission", label: "Commission", icon: <NiCommission /> },
       {
         path: "/offers-discounts",
@@ -112,15 +115,15 @@ function Sidebar({ closeMobile, mood }) {
           </NavLink>
         )}
         {mood === "user" && (
-           <div className="footer-col">
-                    {/* <h4>Follow Us</h4> */}
-                    <div className="social-icons">
-                        <Link><FaFacebook /></Link>
-                        <Link><AiFillInstagram /></Link>
-                        <Link><FaLinkedin /></Link>
-                        <Link><FaXTwitter /></Link>
-                    </div>
-                </div>
+          <div className="footer-col">
+            {/* <h4>Follow Us</h4> */}
+            <div className="social-icons">
+              <Link><FaFacebook /></Link>
+              <Link><AiFillInstagram /></Link>
+              <Link><FaLinkedin /></Link>
+              <Link><FaXTwitter /></Link>
+            </div>
+          </div>
         )}
       </div>
       <NavLink to="/settings" className="menu single" onClick={handleClick}>

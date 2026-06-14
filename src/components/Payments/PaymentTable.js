@@ -12,7 +12,7 @@ import { getBooking, getPayments } from "../../Redux/Slices/AppSlices";
 import axios from "axios";
 import Host from "../../Host/Host";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 15;
 
 const PaymentTable = ({ data, mood, setAlert }) => {
   const dispatch = useDispatch();
@@ -21,6 +21,9 @@ const PaymentTable = ({ data, mood, setAlert }) => {
   useEffect(() => {
     dispatch(getBooking());
   }, []);
+
+
+  console.log(data,"data")
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -39,7 +42,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
     }
   }, [selectedPayment]);
 
-  console.log(booking, "booking");
+  // console.log(booking, "booking");
 
   const filtered = useMemo(() => {
     return data?.filter((payment) => {
@@ -200,7 +203,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
         {paginated.length === 0 ? (
           <p>No Payment Found</p>
         ) : (
-          paginated.reverse().map((item) => (
+          paginated?.reverse().map((item) => (
             <PaymentCard
               item={item}
               setSelectedPayment={setSelectedPayment}

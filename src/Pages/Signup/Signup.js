@@ -9,12 +9,13 @@ import { useDispatch } from "react-redux";
 import { getAgentByReferralId } from "../../Redux/Slices/AppSlices";
 import Host from "../../Host/Host";
 
-const Signup = ({ mood, setAlert }) => {
+const Signup = ({ mood, setAlert, setMood }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
-  const [referalMsg, setReferralMsg] = useState(null)
+  const [referalMsg, setReferralMsg] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -130,6 +131,7 @@ const Signup = ({ mood, setAlert }) => {
   const handleFinish = async (e) => {
     e.preventDefault();
     try {
+      setSaving(true);
       if (
         formData.accountNumber !==
         formData.confirmAccountNumber
@@ -228,19 +230,16 @@ const Signup = ({ mood, setAlert }) => {
         return;
       }
 
-      localStorage.setItem(
-        "token",
-        data.token
-      );
+      localStorage.setItem("token", data.token);
       setAlert({
-        message:
-          "Registration Successful!",
+        message: "Registration Successful!",
         status: "Success",
       });
       setTimeout(() => {
         setAlert(null);
         setFormData(null)
       }, 5000);
+      setMood(mood)
       navigate("/dashboard");
       setFormData({})
     } catch (error) {
@@ -252,6 +251,7 @@ const Signup = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 5000);
+      setSaving(false);
     }
   };
 
@@ -683,8 +683,8 @@ const Signup = ({ mood, setAlert }) => {
                   }
                 />
 
-                <button type="submit" className={canFinish ? `role-${mood}` : ""} disabled={!canFinish} >
-                  Finish
+                <button type="submit" className={canFinish ? `role-${mood}` : ""} disabled={!canFinish} disabled={saving}>
+                  {saving ? "Finishing..." : " Finish"}
                 </button>
               </form>
             )}

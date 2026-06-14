@@ -56,7 +56,7 @@ const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
           <>
             <div className="field">
               <label>Plot ID</label>
-              <input value={plot.plotId || ""} disabled />
+              <input value={plot.plotId || ""} />
             </div>
 
             <div className="field">

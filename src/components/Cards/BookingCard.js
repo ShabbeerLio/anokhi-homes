@@ -148,7 +148,7 @@ const BookingCard = ({
   const currentStage = (() => {
     if (!bookingPaid) return "booking";
     if (bookingPaid && !agreementPaid) return "agreement";
-    if (agreementPaid && !fullPaid) return "registry";
+    if (agreementPaid && !fullPaid) return "full";
     return "completed";
   })();
 
@@ -169,12 +169,13 @@ const BookingCard = ({
         : 0;
 
   const registryProgress =
-    currentStage === "registry"
-      ? getProgressPercent(registryDaysLeft, item.paymentSchedule?.agreement?.dueDays)
+    currentStage === "full"
+      ? getProgressPercent(registryDaysLeft, item.paymentSchedule?.full?.dueDays)
       : fullPaid
         ? 100
         : 0;
 
+  console.log(bookingProgress, "bookingProgress")
   const handleBookingAction = async (bookingId, action, note = "") => {
     try {
       const token = localStorage.getItem("token");
@@ -450,7 +451,7 @@ const BookingCard = ({
               <div
                 className="progress-fill"
                 style={{
-                  width: `${item.status === "pending" ? bookingProgress : 0}%`,
+                  width: `${(item.status === "pending" || item.status === "confirmed") ? bookingProgress : 0}%`,
                 }}
               >
                 <span>
@@ -471,7 +472,7 @@ const BookingCard = ({
               <div
                 className="progress-fill"
                 style={{
-                  width: `${item.status === "pending" ? agreementProgress : 0}%`,
+                  width: `${(item.status === "pending" || item.status === "confirmed") ? agreementProgress : 0}%`,
                 }}
               >
                 <span>
@@ -492,7 +493,7 @@ const BookingCard = ({
               <div
                 className="progress-fill"
                 style={{
-                  width: `${item.status === "pending" ? registryProgress : 0}%`,
+                  width: `${(item.status === "pending" || item.status === "confirmed") ? registryProgress : 0}%`,
                 }}
               >
                 <span>
@@ -713,7 +714,7 @@ const BookingCard = ({
                   <option value="">Select Payment Type</option>
                   <option value="booking">Booking</option>
                   <option value="agreement">Agreement</option>
-                  <option value="full">Full Payment</option>
+                  <option value="full">Registry</option>
                 </select>
               </div>
               <div className="field">

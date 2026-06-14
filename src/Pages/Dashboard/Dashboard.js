@@ -11,8 +11,15 @@ import { useNavigate } from "react-router-dom";
 import AddLocationModal from "../../components/Modals/AddLocationModal";
 import RenderFormFields from "./RenderFormFields";
 import OffersDiscoountData from "../OffersDiscounts/OffersDiscountData";
+import { useDispatch, useSelector } from "react-redux";
+import { getAccountDetails } from "../../Redux/Slices/AppSlices";
 
-const Dashboard = ({ mood }) => {
+const Dashboard = ({ mood, setMood }) => {
+  const dispatch = useDispatch();
+  const { userDetail } = useSelector((state) => state.app);
+  useEffect(() => {
+    dispatch(getAccountDetails());
+  }, []);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [actionType, setActionType] = useState("");
@@ -95,22 +102,11 @@ const Dashboard = ({ mood }) => {
     return `${days} days remaining`;
   };
 
-  let name = "Rahul";
-  if (mood === "admin") {
-    name = "Nawaz";
-  } else if (mood === "staff") {
-    name = "Shabbeer";
-  } else if (mood === "agent") {
-    name = "Amit";
-  } else if (mood === "user") {
-    name = "Rahul";
-  }
-
   return (
     <div className="plot-container">
       <div className="table-filters">
         <div className="page-head-title">
-          <h2>Welcome {name.toUpperCase()}</h2>
+          <h2>Welcome {userDetail?.name}</h2>
           <Breadcrumb />
         </div>
       </div>

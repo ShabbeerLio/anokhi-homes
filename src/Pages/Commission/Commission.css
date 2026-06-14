@@ -4,7 +4,7 @@
 
 .table-head.commission-table,
 .table-row.commission-table {
-  grid-template-columns: 1fr 1fr 1fr 1fr 60px 1fr 60px 1fr 1fr 1fr 1fr 50px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 60px;
 }
 
 .top-agent {
@@ -32,7 +32,7 @@
   gap: 1rem;
   width: 100%;
 }
-.admin-config .field{
+.admin-config .field {
   width: 100%;
 }
 
@@ -46,4 +46,10 @@
   border: 1px solid #bcbcbc2e;
   background-color: transparent;
   color: #9f9f9f;
+}
+
+.best-performer-row {
+  background: rgb(255, 240, 155);
+  border-radius: 1.75rem;
+  padding: 10px 12px;
 }
