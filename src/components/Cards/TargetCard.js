@@ -5,6 +5,8 @@ import ActionModal from "../Modals/ActionModal";
 import DeleteModal from "../Modals/DeleteModal";
 import ViewModal from "../Modals/ViewModal";
 import NiEdit from "../../icons/ni-edit";
+import NiTick from "../../icons/ni-tick";
+import NiCross from "../../icons/ni-cross";
 
 const TargetCard = ({
   item,
@@ -23,7 +25,9 @@ const TargetCard = ({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const progress = Math.min((agentSales / item.targetBusiness) * 100, 100);
-  console.log(myRewards, "myRewards");
+  const userReward = myRewards?.find((r) => r.reward?._id === item._id);
+  const canClaim = userReward?.status === "unclaimed";
+
   return (
     <div className="user-card card">
       {/* HEADER */}
@@ -33,6 +37,13 @@ const TargetCard = ({
           <div className="user-card-name">
             <h4>
               ₹{item.rewardCash} / {item.rewardName}
+              {userReward?.status === "claimed" && (
+                <span
+                  className={`status ${userReward?.status === "claimed" && "active"}`}
+                >
+                  Claimed ({userReward?.selectedOption})
+                </span>
+              )}
               {/* <span
                 className={`status ${item.status === "active" ? "active" : "inactive"}`}
               >
@@ -113,6 +124,23 @@ const TargetCard = ({
 
         <p>{Math.floor(progress)}% Completed</p>
       </div>
+      {canClaim && mood === "agent" && (
+        <div className="modal-actions">
+          <button
+            className="site-visit-approval status active"
+            onClick={() => ClaimCash(userReward._id)}
+          >
+            <NiTick /> Get Cash
+          </button>
+
+          <button
+            className="site-visit-approval status active"
+            onClick={() => ClaimGift(userReward._id)}
+          >
+            <NiTick /> Get Gift
+          </button>
+        </div>
+      )}
     </div>
   );
 };

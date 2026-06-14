@@ -9,7 +9,7 @@ import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import AddLocationModal from "../../components/Modals/AddLocationModal";
 import NiSearch from "../../icons/ni-search";
 import { useDispatch, useSelector } from "react-redux";
-import { getProjects } from "../../Redux/Slices/AppSlices";
+import { getCashback, getProjects } from "../../Redux/Slices/AppSlices";
 import Host from "../../Host/Host";
 import axios from "axios";
 
@@ -19,10 +19,11 @@ const Projects = ({ mood, setAlert }) => {
   const { plotId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { projects } = useSelector((state) => state.app);
+  const { projects, cashbackData } = useSelector((state) => state.app);
 
   useEffect(() => {
     dispatch(getProjects(plotId));
+    dispatch(getCashback());
   }, [plotId]);
 
   const [open, setOpen] = useState(false);
@@ -205,21 +206,46 @@ const Projects = ({ mood, setAlert }) => {
           </div>
         ) : (
           projects
+
             ?.filter((p) =>
               p?.name?.toLowerCase().includes(search?.toLowerCase() || ""),
             )
-            .map((p) => (
-              <PlotCard
-                p={p}
-                plotId={plotId}
-                mood={mood}
-                setSelectedProject={setSelectedProject}
-                setIsEditMode={setIsEditMode}
-                setOpen={setOpen}
-                setAlert={setAlert}
-                onDelete={handleDeleteProject}
-              />
-            ))
+
+            .map((p) => {
+              const cashback = cashbackData?.find(
+                (c) => c.colonyId?._id === p._id,
+              );
+
+              return (
+                <PlotCard
+                  key={p._id}
+                  p={p}
+                  cashback={cashback}
+                  plotId={plotId}
+                  mood={mood}
+                  setSelectedProject={setSelectedProject}
+                  setIsEditMode={setIsEditMode}
+                  setOpen={setOpen}
+                  setAlert={setAlert}
+                  onDelete={handleDeleteProject}
+                />
+              );
+            })
+          // ?.filter((p) =>
+          //   p?.name?.toLowerCase().includes(search?.toLowerCase() || ""),
+          // )
+          // .map((p) => (
+          //   <PlotCard
+          //     p={p}
+          //     plotId={plotId}
+          //     mood={mood}
+          //     setSelectedProject={setSelectedProject}
+          //     setIsEditMode={setIsEditMode}
+          //     setOpen={setOpen}
+          //     setAlert={setAlert}
+          //     onDelete={handleDeleteProject}
+          //   />
+          // ))
         )}
       </div>
 
@@ -274,7 +300,7 @@ const Projects = ({ mood, setAlert }) => {
           <label>Area in sqft</label>
 
           <input
-          type="number"
+            type="number"
             value={formData.area}
             onChange={(e) =>
               setFormData({

@@ -218,6 +218,15 @@
 }
 
 @media (max-width: 768px) {
+  .card.table-box {
+    overflow: auto;
+  }
+  .table {
+    width: 936px;
+  }
+  .user-card-box {
+    grid-template-columns: repeat(1, 1fr);
+  }
   .table-filters {
     flex-direction: column;
     align-items: flex-start;
@@ -227,4 +236,7 @@
     width: 100%;
     gap: 10px !important;
   }
+  .filter-buttons {
+    overflow: auto;
+}
 }

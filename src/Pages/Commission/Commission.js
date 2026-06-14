@@ -29,7 +29,7 @@ const Commission = ({ mood }) => {
     }, []);
 
     const commissionData = incomeSummary || [];
-    console.log(commissionData,"commissionData")
+    console.log(commissionData, "commissionData")
 
     const formatCycleDate = (date) => {
         if (!date) return "-";
@@ -182,7 +182,7 @@ const Commission = ({ mood }) => {
                         />
                     </div>
 
-                    <div className="searchItem">
+                    {/* <div className="searchItem">
                         <select
                             value={cycleFilter}
                             onChange={(e) =>
@@ -207,9 +207,9 @@ const Commission = ({ mood }) => {
                                 </option>
                             ))}
                         </select>
-                    </div>
+                    </div> */}
 
-                    <div className="searchItem">
+                    {/* <div className="searchItem">
                         <select
                             value={statusFilter}
                             onChange={(e) =>
@@ -230,7 +230,7 @@ const Commission = ({ mood }) => {
                                 Credited
                             </option>
                         </select>
-                    </div>
+                    </div> */}
 
                     <button
                         className="add-button"
@@ -244,35 +244,37 @@ const Commission = ({ mood }) => {
                 </div>
             </div>
 
-            <div className="table card">
-                <div className="table-head commission-table">
-                    <span>Name</span>
-                    <span>Designation</span>
-                    <span>Referral ID</span>
-                    <span>Business</span>
-                    <span>Wallet</span>
-                    <span>Total Income</span>
-                    <span>Action</span>
-                </div>
+            <div className="card table-box">
+                <div className="table ">
+                    <div className="table-head commission-table">
+                        <span>Name</span>
+                        <span>Designation</span>
+                        <span>Referral ID</span>
+                        <span>Business</span>
+                        <span>Wallet</span>
+                        <span>Total Income</span>
+                        <span>Action</span>
+                    </div>
 
-                {paginatedData.length === 0 ? (
-                    <p >
-                        No Commission Found
-                    </p>
-                ) : (
-                    paginatedData.map(
-                        (item, index) => (
-                            <CommissionTable
-                                key={item._id}
-                                index={index}
-                                item={item}
-                                mood={mood}
-                                exportToExcel={
-                                    exportToExcel
-                                }
-                            />
-                        )
-                    ))}
+                    {paginatedData.length === 0 ? (
+                        <p >
+                            No Commission Found
+                        </p>
+                    ) : (
+                        paginatedData.map(
+                            (item, index) => (
+                                <CommissionTable
+                                    key={item._id}
+                                    index={index}
+                                    item={item}
+                                    mood={mood}
+                                    exportToExcel={
+                                        exportToExcel
+                                    }
+                                />
+                            )
+                        ))}
+                </div>
             </div>
 
             <div className="pagination">

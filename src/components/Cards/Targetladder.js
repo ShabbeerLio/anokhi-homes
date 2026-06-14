@@ -32,7 +32,7 @@ const TargetLadder = ({ targets, agentSales }) => {
       </div> */}
 
       <div className="ladder-sales">
-        <strong>Your Sales:</strong> ₹{agentSales}
+        <strong>Team Matching Business:</strong> ₹{agentSales}
       </div>
     </div>
   );

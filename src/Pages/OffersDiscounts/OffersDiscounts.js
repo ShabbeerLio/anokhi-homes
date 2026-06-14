@@ -54,10 +54,8 @@ const OffersDiscounts = ({ mood, setAlert }) => {
   } = useSelector((state) => state.app);
   useEffect(() => {
     dispatch(getAccountDetails());
-    if (mood === "agent") {
-      dispatch(getMyRewards());
-    }
   }, []);
+  console.log(myRewards, "myRewards");
   const [tab, setTab] = useState("offers");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -82,6 +80,10 @@ const OffersDiscounts = ({ mood, setAlert }) => {
 
     if (tab === "targets") {
       dispatch(getRewards());
+      if (mood === "agent") {
+        console.log(mood, "moood");
+        dispatch(getMyRewards());
+      }
     }
     if (tab === "cashback") {
       dispatch(getCashback());
@@ -330,70 +332,72 @@ const OffersDiscounts = ({ mood, setAlert }) => {
           <Breadcrumb />
         </div>
       </div>
-      <div className="filter-grid page-tools table-filters">
-        {mood === "admin" &&
-          (tab === "offers" || tab === "discounts" || tab === "cashback") && (
-            <button
-              className="add-button"
-              onClick={() => {
-                setSelectedOffers(null);
-                setIsEditMode(false);
-                setFormData({});
-                setOpen(true);
-              }}
-            >
-              <LucidePlus /> Add
-            </button>
-          )}
-
-        <div className="searchItem">
-          <NiSearch />
-          <input
-            placeholder="Search title"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-
-        {/* TABS */}
-
-        <div className="filter-buttons">
-          {mood === "admin" && (
-            <>
+      <div className="table-filters">
+        <div className="page-tools">
+          {mood === "admin" &&
+            (tab === "offers" || tab === "discounts" || tab === "cashback") && (
               <button
-                className={tab === "royalty" ? "active" : ""}
-                onClick={() => setTab("royalty")}
+                className="add-button"
+                onClick={() => {
+                  setSelectedOffers(null);
+                  setIsEditMode(false);
+                  setFormData({});
+                  setOpen(true);
+                }}
               >
-                Royalty Holders
+                <LucidePlus /> Add
               </button>
-            </>
-          )}
-          <button
-            className={tab === "offers" ? "active" : ""}
-            onClick={() => setTab("offers")}
-          >
-            Festival Offers
-          </button>
+            )}
 
-          <button
-            className={tab === "discounts" ? "active" : ""}
-            onClick={() => setTab("discounts")}
-          >
-            Bonanza
-          </button>
+          <div className="searchItem">
+            <NiSearch />
+            <input
+              placeholder="Search title"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
 
-          <button
-            className={tab === "targets" ? "active" : ""}
-            onClick={() => setTab("targets")}
-          >
-            Rewards
-          </button>
-          <button
-            className={tab === "cashback" ? "active" : ""}
-            onClick={() => setTab("cashback")}
-          >
-            Cashback
-          </button>
+          {/* TABS */}
+
+          <div className="filter-buttons">
+            {mood === "admin" && (
+              <>
+                <button
+                  className={tab === "royalty" ? "active" : ""}
+                  onClick={() => setTab("royalty")}
+                >
+                  Royalty Holders
+                </button>
+              </>
+            )}
+            <button
+              className={tab === "offers" ? "active" : ""}
+              onClick={() => setTab("offers")}
+            >
+              Festival Offers
+            </button>
+
+            <button
+              className={tab === "discounts" ? "active" : ""}
+              onClick={() => setTab("discounts")}
+            >
+              Bonanza
+            </button>
+
+            <button
+              className={tab === "targets" ? "active" : ""}
+              onClick={() => setTab("targets")}
+            >
+              Rewards
+            </button>
+            <button
+              className={tab === "cashback" ? "active" : ""}
+              onClick={() => setTab("cashback")}
+            >
+              Cashback
+            </button>
+          </div>
         </div>
       </div>
 
@@ -403,7 +407,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
           <h4>Sales Target Ladder</h4>
           <TargetLadder
             targets={rewards}
-            agentSales={userDetail?.selfBusiness || 0}
+            agentSales={userDetail?.matchedBusiness || 0}
           />
         </>
       )}
@@ -414,7 +418,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
             <TargetCard
               key={item._id}
               item={item}
-              agentSales={userDetail?.selfBusiness}
+              agentSales={userDetail?.matchedBusiness}
               setSelectedOffers={setSelectedOffers}
               setIsEditMode={setIsEditMode}
               setOpen={setOpen}

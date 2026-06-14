@@ -19,7 +19,7 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
         </span>
         <span>{item.designation}</span>
         <span>{item.referralId}</span>
-        <span>₹{item.totalBusiness}</span>
+        <span>₹{item.selfBusiness}</span>
         <span>₹{item.wallet}</span>
         <span>₹{item.totalIncome}</span>
         <div className="dots">

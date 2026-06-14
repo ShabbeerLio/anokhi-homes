@@ -424,7 +424,7 @@ const BookingCard = ({
 
           <div className="user-card-bottom-right">
             <p>{formatDate(item?.createdAt)}</p>
-            <p>{item?.plot?.plotId}, {item?.colony?.name}, {item?.location?.name}</p>
+            <p>{item?.plot?.plotNumber}, {item?.colony?.name}, {item?.location?.name}</p>
             {mood !== "agent" && <p>{item?.agent?.name}</p>}
             <p>{item?.plotArea}</p>
             {!isApproval ? (

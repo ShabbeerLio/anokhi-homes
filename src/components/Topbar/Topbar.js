@@ -15,6 +15,7 @@ import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
 import NiUser from "../../icons/ni-user";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountDetails } from "../../Redux/Slices/AppSlices";
+import NiDrawr from "../../icons/ni-drawr";
 
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   const dispatch = useDispatch();
@@ -65,7 +66,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
     <div className="topbar">
       <div className="top-left">
         <button className="mobile-btn" onClick={() => setMobileOpen((v) => !v)}>
-          ☰
+          <NiDrawr />
         </button>
         <span className="logo">
           {/* <MainLogo /> */}

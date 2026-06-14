@@ -179,7 +179,7 @@ const CommissionSetting = ({ setAlert }) => {
                         </div>
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     <h4>Commission Levels</h4>
                     <div className="levels-config card">
                         <div className="level-head">
@@ -251,7 +251,7 @@ const CommissionSetting = ({ setAlert }) => {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

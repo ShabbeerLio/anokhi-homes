@@ -292,93 +292,95 @@ const Other = ({ mood, setAlert }) => {
 
       {/* Table */}
       {viewItem === false ? (
-        <div className="table card">
-          <div className="table-head">
-            <span>Image</span>
-            <span>Role</span>
-            <span>Name</span>
-            <span>Designation</span>
-            <span>Referral Id</span>
-            <span>Status</span>
-            <span>Actions</span>
-          </div>
-
-          {currentData?.map((item) => (
-            <div key={item.id} className="table-row">
-              {item?.avatar ? (
-                <img
-                  src={item.avatar}
-                  alt={item.name}
-                  className="profile-avatar"
-                />
-              ) : (
-                <NiUser />
-              )}
-              {/* <img src={item.avatar} alt="" /> */}
-              <span>
-                {item.role === "staff"
-                  ? "Staff"
-                  : item.role === "agent"
-                    ? "Associate"
-                    : item.role === "admin"
-                      ? "Admin"
-                      : "Customer"}
-              </span>
-              <span className="title">
-                {item.name} {item.position && `(${item.position})`}
-              </span>
-              <span className="title">{item.role !== "user" ? <>{item.designation}({item.directIncomePercent}) </> : "-"}</span>
-              <span className="title">{item.referralId || "-"}</span>
-
-              {((item.status !== "approval" && mood === "admin" || item.status !== "approval" && mood === "staff") && (
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    checked={item.status === "active"}
-                    onChange={() => handleStatusToggle(item)}
-                  />
-                  <span className="slider"></span>
-                </label>
-              )) || (
-                  <span className={`status ${item.status === "approval" ? "pending" : item.status}`}>
-                    {item.status}
-                  </span>
-                )}
-
-              <div className="dots">
-                <span
-                  onClick={() => navigate(`/user/${item._id}`, { state: item })}
-                >
-                  <NiOpenEye />
-                </span>
-
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveRow(activeRow === item._id ? null : item._id);
-                  }}
-                >
-                  <NiDots />
-                </span>
-
-                {activeRow === item._id && (
-                  <ActionModal
-                    item={item}
-                    onClose={() => setActiveRow(null)}
-                    onEdit={(booking) => {
-                      setSelectedUser(booking);
-                      setIsEditMode(true);
-                      setOpen(true);
-                    }}
-                    onDelete={() => {
-                      setSelectedDeleteUser(item);
-                      setDeleteOpen(true);
-                    }}
-                  />
-                )}
-              </div>
+        <div className="card table-box">
+          <div className="table ">
+            <div className="table-head">
+              <span>Image</span>
+              <span>Role</span>
+              <span>Name</span>
+              <span>Designation</span>
+              <span>Referral Id</span>
+              <span>Status</span>
+              <span>Actions</span>
             </div>
-          ))}
+
+            {currentData?.map((item) => (
+              <div key={item.id} className="table-row">
+                {item?.avatar ? (
+                  <img
+                    src={item.avatar}
+                    alt={item.name}
+                    className="profile-avatar"
+                  />
+                ) : (
+                  <NiUser />
+                )}
+                {/* <img src={item.avatar} alt="" /> */}
+                <span>
+                  {item.role === "staff"
+                    ? "Staff"
+                    : item.role === "agent"
+                      ? "Associate"
+                      : item.role === "admin"
+                        ? "Admin"
+                        : "Customer"}
+                </span>
+                <span className="title">
+                  {item.name} {item.position && `(${item.position})`}
+                </span>
+                <span className="title">{item.role !== "user" ? <>{item.designation}({item.directIncomePercent}) </> : "-"}</span>
+                <span className="title">{item.referralId || "-"}</span>
+
+                {((item.status !== "approval" && mood === "admin" || item.status !== "approval" && mood === "staff") && (
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      checked={item.status === "active"}
+                      onChange={() => handleStatusToggle(item)}
+                    />
+                    <span className="slider"></span>
+                  </label>
+                )) || (
+                    <span className={`status ${item.status === "approval" ? "pending" : item.status}`}>
+                      {item.status}
+                    </span>
+                  )}
+
+                <div className="dots">
+                  <span
+                    onClick={() => navigate(`/user/${item._id}`, { state: item })}
+                  >
+                    <NiOpenEye />
+                  </span>
+
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveRow(activeRow === item._id ? null : item._id);
+                    }}
+                  >
+                    <NiDots />
+                  </span>
+
+                  {activeRow === item._id && (
+                    <ActionModal
+                      item={item}
+                      onClose={() => setActiveRow(null)}
+                      onEdit={(booking) => {
+                        setSelectedUser(booking);
+                        setIsEditMode(true);
+                        setOpen(true);
+                      }}
+                      onDelete={() => {
+                        setSelectedDeleteUser(item);
+                        setDeleteOpen(true);
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="user-card-box">

@@ -94,17 +94,17 @@
 .searchItem.team-search {
   padding: 5px 5px 5px 10px !important;
 }
-.searchItem.team-search svg{
+.searchItem.team-search svg {
   width: 30px;
   height: 30px;
 }
-.searchItem.team-search button:hover{
+.searchItem.team-search button:hover {
   color: white;
   background: var(--mood-color);
 }
 
 .team-tree-container {
-  padding: 20px;
+  padding: 20px 0 20px 20px;
 }
 
 .tree-node {
@@ -163,4 +163,12 @@
   flex-wrap: wrap;
   margin-top: 10px;
   font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .tree-card-top {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
 }

@@ -90,8 +90,8 @@
 .dashboard-box-left p {
   color: #9f9f9f;
 }
-.offer-slide p{
-margin: 0 0 10px 0;
+.offer-slide p {
+  margin: 0 0 10px 0;
 }
 .dashboard-box-left .user-card-box {
   grid-template-columns: repeat(2, 1fr);
@@ -242,60 +242,78 @@ margin: 0 0 10px 0;
   gap: 1rem;
 }
 
-.field label{
+.field label {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
 
-.offer-carousel{
-  height:130px;
-  overflow:hidden;
-  position:relative;
+.offer-carousel {
+  height: 130px;
+  overflow: hidden;
+  position: relative;
 }
 
-.offer-slide{
-  position:absolute;
-  width:100%;
-  opacity:0;
-  transform:translateY(20px);
-  transition:0.6s ease;
+.offer-slide {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.6s ease;
 }
 
-.offer-slide.active{
-  opacity:1;
-  transform:translateY(0);
+.offer-slide.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.offer-badge{
-  display:inline-block;
-  margin-top:6px;
-  background:#e0f2fe;
-  color:#0284c7;
-  padding:4px 10px;
-  border-radius:6px;
-  font-size:12px;
+.offer-badge {
+  display: inline-block;
+  margin-top: 6px;
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
 }
 
-.discount-badge{
-  display:inline-block;
-  margin-top:6px;
-  background:#dcfce7;
-  color:#16a34a;
-  padding:4px 10px;
-  border-radius:6px;
-  font-size:12px;
+.discount-badge {
+  display: inline-block;
+  margin-top: 6px;
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
 }
 
-.offer-dates{
-  margin-top:6px;
-  font-size:12px;
-  color:#777;
+.offer-dates {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #777;
 }
 
-.countdown{
-  font-weight:600;
-  color:#ff7a00 !important;
+.countdown {
+  font-weight: 600;
+  color: #ff7a00 !important;
 }
 
+@media (max-width: 768px) {
+  .dashboard-box {
+    flex-direction: column;
+  }
+  .dashboard-box-left,
+  .dashboard-box-right {
+    width: 100%;
+  }
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dashboard-charts {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .dashboard-box-left .user-card-box {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

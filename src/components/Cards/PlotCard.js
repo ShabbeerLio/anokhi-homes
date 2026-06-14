@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import NiEdit from "../../icons/ni-edit";
 import NiDelete from "../../icons/ni-delete";
 import DeleteModal from "../Modals/DeleteModal";
+import NiDiscount from "../../icons/ni-discount";
 
 const PlotCard = ({
   p,
+  cashback,
   plotId,
   mood,
   setSelectedProject,
@@ -16,6 +18,7 @@ const PlotCard = ({
 }) => {
   const navigate = useNavigate();
   const [deleteOpen, setDeleteOpen] = useState(false);
+  console.log(cashback, "cashback");
   return (
     <>
       <div
@@ -31,9 +34,20 @@ const PlotCard = ({
         </div>
         <div className="plot-details">
           <h3>{p.name}</h3>
-          <p className="plot-card-price">{p.priceRange} / sqft</p>
-          <p>{p.area}</p>
+          <p className="plot-card-price">₹{p.priceRange} / sqft</p>
+          <p>Area: {p.area} sqft</p>
           {/* <p>{p.details}</p> */}
+          {cashback && (
+            <div className="cashback-badge">
+              <div className="cashback-badge-left">
+                <NiDiscount />
+              </div>
+              <div className="cashback-badge-right">
+                {cashback.cashbackPercent}% Cashback
+                <span>Collect full payment within {cashback.completeWithinDays} days</span>
+              </div>
+            </div>
+          )}
         </div>
         {mood !== "user" && (
           <div className="plot-card-actions dots">
