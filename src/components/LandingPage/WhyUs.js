@@ -12,7 +12,7 @@ import icon1 from "../../Assets/icons/location.png"
 import icon2 from "../../Assets/icons/support.png"
 import icon3 from "../../Assets/icons/environment.png"
 import icon4 from "../../Assets/icons//road access.png"
-import icon5 from "../../Assets/icons/modern infra.webp"
+import icon5 from "../../Assets/icons/modern-infra.png"
 import icon6 from "../../Assets/icons/water supply.png"
 
 const WhyUs = () => {
