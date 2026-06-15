@@ -10,8 +10,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import PlotCardUsers from "../Cards/PlotCardUsers";
 
-const Projects = () => {
-    const plot = PlotData[0]
+const Projects = ({data}) => {
+    
+    const plot = data
     return (
         <div className="landing-pages">
             <h2>Latest Projects</h2>
@@ -33,7 +34,7 @@ const Projects = () => {
                 }}
                 className="projects-swiper"
             >
-                {plot.plots.map((p, index) => (
+                {plot?.map((p, index) => (
                     <SwiperSlide key={index}>
                         <PlotCardUsers p={p} />
                     </SwiperSlide>

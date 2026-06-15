@@ -134,12 +134,16 @@
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 768px) {
+  .footer-logo {
+    width: 50%;
+  }
   .footer-top {
     grid-template-columns: 1fr;
   }
 .footer-col ul {
     flex-direction: column;
+    gap: 0.7rem;
 }
 .footer-col ul li {
     border: none;

@@ -2,7 +2,8 @@ import React from "react";
 import LBreadcrumb from "../../components/LandingPage/LBreadcrumb";
 import PolicyData from "../../components/Data/PolicyData";
 
-const CancellationRefund = () => {
+const CancellationRefund = ({ data }) => {
+  console.log(data, "policies");
   return (
     <>
       <div className="landing-head-box">
@@ -15,15 +16,11 @@ const CancellationRefund = () => {
       </div>
 
       <div className="landing-pages">
-        {PolicyData.map((item) => (
-          <>
-            {item.cancellationrefund.sections.map((s) => (
-              <>
-                {s.heading && <h2>{s.heading}</h2>}
-                {s.content && <p>{s.content}</p>}
-              </>
-            ))}
-          </>
+        {data?.policies?.cancellationrefund?.sections?.map((section) => (
+          <div key={section._id}>
+            {section.heading && <h2>{section.heading}</h2>}
+            {section.content && <p>{section.content}</p>}
+          </div>
         ))}
       </div>
     </>

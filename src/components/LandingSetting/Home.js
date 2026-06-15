@@ -27,22 +27,36 @@ const Home = ({ data, setAlert }) => {
   const [visibleCount, setVisibleCount] = useState(5);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+  const { name, value, files } = e.target;
 
-    if (files) {
-      const file = files[0];
-      setFormData((prev) => ({
-        ...prev,
-        [name]: file,
-        preview: URL.createObjectURL(file), // for preview
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+  if (files && files[0]) {
+    const file = files[0];
+
+    // 1 MB = 1024 * 1024 bytes
+    if (file.size > 1024 * 1024) {
+      setAlert({
+        message: "Please upload an image smaller than 1 MB",
+        status: "Error",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+
+      e.target.value = "";
+      return;
     }
-  };
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: file,
+      preview: URL.createObjectURL(file),
+    }));
+  } else {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+};
 
   useEffect(() => {
     if (selectedItem) {

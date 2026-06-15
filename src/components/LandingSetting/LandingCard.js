@@ -15,7 +15,7 @@ const LandingCard = ({ p, action, onEdit, onDelete }) => {
         {p?.fileName && <p>📄 {p?.fileName}</p>}
         <p>{p?.description || p?.content}</p>
         {p?.subdescription && <p>{p?.subdescription}</p>}
-        {p?.phone && <p>📞 {p?.phone}</p>}
+        {/* {p?.phone && <p>📞 {p?.phone}</p>} */}
         {p?.alt && <p>Alt Tag: {p?.alt}</p>}
       </div>
 

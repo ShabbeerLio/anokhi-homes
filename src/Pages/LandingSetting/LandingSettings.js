@@ -21,7 +21,7 @@ const LandingSetting = ({ mood, setAlert }) => {
   useEffect(() => {
     dispatch(getLandingPage());
   }, []);
-    console.log(landingPage, "landingPage");
+    // console.log(landingPage, "landingPage");
   const navigate = useNavigate();
 
   /* ================= ROLE BASED TABS ================= */

@@ -18,7 +18,7 @@ const PlotCard = ({
 }) => {
   const navigate = useNavigate();
   const [deleteOpen, setDeleteOpen] = useState(false);
-  console.log(cashback, "cashback");
+  // console.log(cashback, "cashback");
   return (
     <>
       <div

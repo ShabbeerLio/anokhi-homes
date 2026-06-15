@@ -23,6 +23,7 @@ const Gallery = ({ data, setAlert }) => {
     const [formData, setFormData] = useState({});
     const [previewPdf, setPreviewPdf] = useState(null);
     const [previewOpen, setPreviewOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     const handlePreviewPdf = (file) => {
         setPreviewPdf(file);
@@ -93,6 +94,7 @@ const Gallery = ({ data, setAlert }) => {
 
     const handleSave = async () => {
         try {
+            setSaving(true)
             let updatedData = {
                 ...homePageData,
                 thumbnail: [...(homePageData.thumbnail || [])],
@@ -189,7 +191,9 @@ const Gallery = ({ data, setAlert }) => {
             setTimeout(() => setAlert(null), 3000);
             setFormData({});
             setOpen(false);
+            setSaving(false)
         } catch (error) {
+            setSaving(false)
             console.log(error);
         }
     };
@@ -246,7 +250,7 @@ const Gallery = ({ data, setAlert }) => {
                     />
                 ))}
             </div>
-            <div className="table-filters">
+            {/* <div className="table-filters">
                 <h4>PDF</h4>
                 <div className="page-tools">
                     <button
@@ -256,8 +260,8 @@ const Gallery = ({ data, setAlert }) => {
                         <LucidePlus /> Add
                     </button>
                 </div>
-            </div>
-            <div className="user-card-box">
+            </div> */}
+            {/* <div className="user-card-box">
                 {homePageData.pdf?.map((p) => (
                     <div
                         key={p._id}
@@ -291,7 +295,7 @@ const Gallery = ({ data, setAlert }) => {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div> */}
             <AddLocationModal
                 open={open}
                 onClose={() => setOpen(false)}
@@ -336,8 +340,9 @@ const Gallery = ({ data, setAlert }) => {
                         onClick={() => {
                             handleSave();
                         }}
+                        disabled={saving}
                     >
-                        {isEditMode ? "Update " : "Add"}
+                        {saving ? "Saving..." : isEditMode ? "Update " : "Add"}
                     </button>
                 </div>
             </AddLocationModal>

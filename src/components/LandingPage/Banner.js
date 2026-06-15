@@ -2,25 +2,24 @@ import React from "react";
 import "./Banner.css";
 import { Phone, Send } from "lucide-react";
 
-const Banner = () => {
+const Banner = ({data}) => {
     return (
         <section className="hero">
             {/* LEFT */}
             <div className="hero-left">
                 <h1>
-                    Build <br />
+                    {data?.title}
+                    {/* Build <br />
                     Beautiful <br />
-                    Applications
+                    Applications */}
                 </h1>
 
                 <p>
-                    Components, plugins, blocks, and layouts built with MUI, styled with
-                    Tailwind, and packaged with Vite in a beautiful harmony.
+                    {data?.description}
                 </p>
 
                 <div className="hero-actions">
-                    <button className="btn primary"><Phone />Call Now</button>
-                    <button className="btn secondary"><Send />Enquire Now</button>
+                    <button className="btn primary"><Send />Enquire Now</button>
                 </div>
             </div>
 

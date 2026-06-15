@@ -8,15 +8,15 @@ import Services from "../../components/LandingPage/Services";
 import Testimonial from "../../components/LandingPage/Testimonial";
 import Counter from "../../components/LandingPage/Counter";
 
-const Home = () => {
+const Home = ({data, allColonies}) => {
   return (
     <>
-      <Banner />
-      <About />
+      <Banner data={data?.home?.banner}/>
+      <About data={data?.about}/>
       <Counter/>
-      <Projects />
-      <Services />
-      <Testimonial />
+      <Projects data={allColonies}/>
+      <Services data={data?.home}/>
+      <Testimonial data={data?.home}/>
       <CTA />
     </>
   );

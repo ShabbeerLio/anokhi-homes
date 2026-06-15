@@ -210,13 +210,13 @@ const Home = ({ data, setAlert }) => {
                                 onChange={handleChange}
                                 placeholder="Office Title"
                             />
-                            <input
+                            {/* <input
                                 type='number'
                                 name="phone"
                                 value={formData.phone || ""}
                                 onChange={handleChange}
                                 placeholder="Office Phone"
-                            />
+                            /> */}
 
                             <textarea
                                 name="content"

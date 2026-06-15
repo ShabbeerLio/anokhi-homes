@@ -17,16 +17,31 @@ const Gallery = ({ data, setAlert }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
+  const [saving, setSaving] = useState(null)
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
-    if (files) {
+    if (files && files[0]) {
       const file = files[0];
+
+      // 1 MB = 1024 * 1024 bytes
+      if (file.size > 1024 * 1024) {
+        setAlert({
+          message: "Please upload an image smaller than 1 MB",
+          status: "Error",
+        });
+
+        setTimeout(() => setAlert(null), 3000);
+
+        e.target.value = "";
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         [name]: file,
-        preview: URL.createObjectURL(file), // for preview
+        preview: URL.createObjectURL(file),
       }));
     } else {
       setFormData((prev) => ({
@@ -72,6 +87,7 @@ const Gallery = ({ data, setAlert }) => {
     const uploadedImage = await uploadImage(formData.image);
 
     try {
+      setSaving(true)
       let updatedData = {
         ...homePageData,
         gallery: [...(homePageData.gallery || [])],
@@ -113,8 +129,10 @@ const Gallery = ({ data, setAlert }) => {
       });
       setTimeout(() => setAlert(null), 3000);
       setOpen(false);
+      setSaving(false)
       setFormData({});
     } catch (error) {
+      setSaving(false)
       console.log(error);
     }
   };
@@ -191,8 +209,9 @@ const Gallery = ({ data, setAlert }) => {
             onClick={() => {
               handleSave();
             }}
+            disabled={saving}
           >
-            {isEditMode ? "Update " : "Add"}
+            {saving ? "Saving..." : isEditMode ? "Update " : "Add"}
           </button>
         </div>
       </AddLocationModal>

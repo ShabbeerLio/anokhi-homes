@@ -3,23 +3,9 @@ import LBreadcrumb from "../../components/LandingPage/LBreadcrumb";
 import "./Documents.css";
 import NiOpenEye from "../../icons/ni-openEye";
 
-const Documents = () => {
+const Documents = ({ data }) => {
+  console.log(data.documents, "data")
   const [activeImage, setActiveImage] = useState(null);
-
-  const documentsData = {
-    thumbnail: [
-      { id: 1, image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470" },
-      { id: 2, image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee" },
-    ],
-    pdf: [
-      {
-        id: 1,
-        file: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-        fileName: "Project Brochure",
-        thumbnail: "https://cdn-icons-png.flaticon.com/512/337/337946.png",
-      },
-    ],
-  };
 
   useEffect(() => {
     const esc = (e) => e.key === "Escape" && setActiveImage(null);
@@ -41,12 +27,12 @@ const Documents = () => {
       <div className="landing-pages">
 
         {/* ✅ THUMBNAILS */}
-        <h3 className="section-title">Thumbnail</h3>
+        {/* <h3 className="section-title">Thumbnail</h3> */}
         <div className="document-grid">
-          {documentsData.thumbnail.map((item) => (
+          {data?.documents?.thumbnail?.map((item) => (
             <div
               className="document-item"
-              key={item.id}
+              key={item._id}
               onClick={() => setActiveImage(item.image)}
             >
               <img src={item.image} alt="thumbnail" />
@@ -55,17 +41,17 @@ const Documents = () => {
         </div>
 
         {/* ✅ PDF */}
-        <h3 className="section-title">Documents (PDF)</h3>
+        {/* <h3 className="section-title">Documents (PDF)</h3> */}
         <div className="document-grid">
-          {documentsData.pdf.map((item) => (
+          {data?.documents?.pdf?.map((item) => (
             <div
               className="document-item pdf-item"
-              key={item.id}
+              key={item._id}
               onClick={() => window.open(item.file, "_blank")}
             >
               {/* <img src={item.thumbnail} alt="pdf" /> */}
               <h4>{item.fileName}</h4>
-              <NiOpenEye/>
+              <NiOpenEye />
 
               <span className="pdf-badge">PDF</span>
             </div>

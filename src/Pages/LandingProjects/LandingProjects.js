@@ -1,10 +1,9 @@
 import React from 'react'
 import LBreadcrumb from '../../components/LandingPage/LBreadcrumb'
-import PlotData from "../Plot/PlotData"
 import PlotCardUsers from '../../components/Cards/PlotCardUsers'
 
-const LandingProjects = () => {
-    const plot = PlotData[0]
+const LandingProjects = ({data}) => {
+    const plot = data;
     return (
         <>
             <div className="landing-head-box">
@@ -18,7 +17,7 @@ const LandingProjects = () => {
             <div className="landing-pages">
                 <div className="plot-grid ">
 
-                    {plot.plots.map((p, index) => (
+                    {plot?.map((p, index) => (
                         <PlotCardUsers p={p} />
                     ))}
                 </div>

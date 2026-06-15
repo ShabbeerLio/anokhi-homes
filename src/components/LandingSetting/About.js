@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import LandingCard from "./LandingCard";
 import Icon1 from "../../Assets/icons/Plot Sale Services.png";
 import AddLocationModal from "../Modals/AddLocationModal";
-import { updateAbout, uploadImage } from "../../Pages/LandingSetting/LandingApi";
+import {
+  updateAbout,
+  uploadImage,
+} from "../../Pages/LandingSetting/LandingApi";
 import { useDispatch } from "react-redux";
 import { getLandingPage } from "../../Redux/Slices/AppSlices";
 
@@ -13,16 +16,31 @@ const About = ({ data, setAlert }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
+  const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
-    if (files) {
+    if (files && files[0]) {
       const file = files[0];
+
+      // 1 MB = 1024 * 1024 bytes
+      if (file.size > 1024 * 1024) {
+        setAlert({
+          message: "Please upload an image smaller than 1 MB",
+          status: "Error",
+        });
+
+        setTimeout(() => setAlert(null), 3000);
+
+        e.target.value = "";
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         [name]: file,
-        preview: URL.createObjectURL(file), // for preview
+        preview: URL.createObjectURL(file),
       }));
     } else {
       setFormData((prev) => ({
@@ -40,13 +58,6 @@ const About = ({ data, setAlert }) => {
     }
   }, [selectedItem]);
 
-  const handleAdd = (section) => {
-    setType(section);
-    setSelectedItem(null);
-    setIsEditMode(false);
-    setOpen(true);
-  };
-
   const handleEdit = (section, item) => {
     setType(section);
     setSelectedItem(item);
@@ -54,7 +65,7 @@ const About = ({ data, setAlert }) => {
     setOpen(true);
   };
 
-//   console.log(data, "data");
+  //   console.log(data, "data");
   const [homePageData, setHomePageData] = useState({
     about: {},
     mission: {},
@@ -68,8 +79,16 @@ const About = ({ data, setAlert }) => {
   }, [data]);
 
   const handleSave = async () => {
-    const uploadedImage = await uploadImage(formData.image);
     try {
+      setSaving(true);
+      let imageUrl = null;
+
+      // Upload only if image is a File object
+      if (formData.image instanceof File) {
+        const uploadedImage = await uploadImage(formData.image);
+        imageUrl = uploadedImage?.url;
+      }
+
       let updatedData = {
         ...homePageData,
         about: { ...homePageData.about },
@@ -77,17 +96,16 @@ const About = ({ data, setAlert }) => {
         vision: { ...homePageData.vision },
       };
 
-      // ================= ABOUT =================
-
       if (type === "about") {
         updatedData.about = {
           ...updatedData.about,
           ...formData,
-          image: uploadedImage.url || updatedData.about.image,
+
+          // if uploaded use new image
+          // otherwise keep existing image/link
+          image: imageUrl || formData.image || updatedData.about.image,
         };
       }
-
-      // ================= MISSION =================
 
       if (type === "mission") {
         updatedData.mission = {
@@ -95,8 +113,6 @@ const About = ({ data, setAlert }) => {
           ...formData,
         };
       }
-
-      // ================= VISION =================
 
       if (type === "vision") {
         updatedData.vision = {
@@ -106,7 +122,9 @@ const About = ({ data, setAlert }) => {
       }
 
       await updateAbout(updatedData);
+
       setHomePageData(updatedData);
+
       dispatch(getLandingPage());
 
       setAlert({
@@ -118,9 +136,10 @@ const About = ({ data, setAlert }) => {
 
       setFormData({});
       setOpen(false);
+      setSaving(false);
     } catch (error) {
       console.log(error);
-
+      setSaving(false);
       setAlert({
         message: "Failed to update",
         status: "Error",
@@ -155,7 +174,20 @@ const About = ({ data, setAlert }) => {
         <div className="field">
           {type === "about" && (
             <>
-              <input type="file" name="image" onChange={handleChange} />
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleChange}
+              />
+
+              {/* <input
+                type="text"
+                name="image"
+                value={typeof formData.image === "string" ? formData.image : ""}
+                onChange={handleChange}
+                placeholder="Or paste image URL"
+              /> */}
               <input
                 name="title"
                 value={formData.title || ""}
@@ -175,7 +207,13 @@ const About = ({ data, setAlert }) => {
                 placeholder="Service Sub-Description"
               />
 
-              {formData.preview && <img src={formData.preview} width="80" />}
+              {(formData.preview || formData.image) && (
+                <img
+                  src={formData.preview || formData.image}
+                  alt=""
+                  width="80"
+                />
+              )}
             </>
           )}
 
@@ -204,8 +242,9 @@ const About = ({ data, setAlert }) => {
             onClick={() => {
               handleSave();
             }}
+            disabled={saving}
           >
-            {isEditMode ? "Update " : "Add"}
+            {saving ? "Saving..." : isEditMode ? "Update " : "Add"}
           </button>
         </div>
       </AddLocationModal>

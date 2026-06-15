@@ -5,19 +5,18 @@ const PlotCardUsers = ({ p }) => {
   const navigate = useNavigate();
   return (
     <div
-      key={p.id}
+      key={p._id}
       className="plot-card card"
-      onClick={() => navigate(`/projects/${p.id}`)}
+      onClick={() => navigate(`/projects/${p._id}`)}
     >
       <div className="plot-img">
-        <img src={p.img} alt={p.title} />
+        <img src={p.image} alt={p.name} />
         {/* <span className="offer">{p.offer}</span> */}
       </div>
       <div className="plot-details">
         <h3>{p.name}</h3>
-        <p className="plot-card-price">{p.price}</p>
-        <p>{p.area}</p>
-        <p>{p.details}</p>
+        <p className="plot-card-price">{p.priceRange}/sqft</p>
+        <p>Area: {p.area}</p>
       </div>
     </div>
   );

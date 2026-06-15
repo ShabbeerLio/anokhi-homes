@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, BrowserRouter, Outlet } from "react-router-dom";
 import Home from "./Pages/Home/Home";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -38,18 +38,28 @@ import TermCondition from "./Pages/TermCondition/TermCondition";
 import CancellationRefund from "./Pages/CancellationRefund/CancellationRefund";
 import HelpCenter from "./Pages/HelpCenter/HelpCenter";
 import Income from "./Pages/Income/Income";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllColonies, getLandingPage } from "./Redux/Slices/AppSlices";
 
-const LandingLayout = ({ mood }) => {
+const LandingLayout = ({ mood, data }) => {
   return (
     <div className="landing-page">
       <Navbar mood={mood} />
       <Outlet />
-      <Footer />
+      <Footer data={data}/>
     </div>
   );
 };
 
 function App() {
+  const dispatch = useDispatch();
+  const { landingPage, allColonies } = useSelector((state) => state.app);
+
+  useEffect(() => {
+    dispatch(getLandingPage());
+    dispatch(getAllColonies());
+  }, []);
+
   const [dark, setDark] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mood, setMood] = useState("staff");
@@ -60,26 +70,45 @@ function App() {
       <div className={`app ${dark ? "dark" : ""} mood-${mood}`}>
         <Alert item={alert} />
         <Routes>
-          <Route element={<LandingLayout mood={mood} />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/projects" element={<LandingProjects setAlert={setAlert}/>} />
+          <Route element={<LandingLayout mood={mood} data={landingPage}/>}>
+            <Route path="/" element={<Home data={landingPage} allColonies={allColonies}/>} />
+            <Route path="/about" element={<About data={landingPage} />} />
+            <Route
+              path="/projects"
+              element={
+                <LandingProjects setAlert={setAlert} data={allColonies} />
+              }
+            />
             <Route
               path="/projects/:projectId"
-              element={<LandingProjectDetail setAlert={setAlert}/>}
+              element={<LandingProjectDetail setAlert={setAlert} data={allColonies}/>}
             />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/documents" element={<Documents />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/term-condition" element={<TermCondition />} />
-            <Route path="/cancellation-refund" element={<CancellationRefund />} />
+            <Route path="/gallery" element={<Gallery data={landingPage} />} />
+            <Route
+              path="/documents"
+              element={<Documents data={landingPage} />}
+            />
+            <Route path="/contact" element={<Contact data={landingPage} />} />
+            <Route
+              path="/privacy-policy"
+              element={<PrivacyPolicy data={landingPage} />}
+            />
+            <Route
+              path="/term-condition"
+              element={<TermCondition data={landingPage} />}
+            />
+            <Route
+              path="/cancellation-refund"
+              element={<CancellationRefund data={landingPage} />}
+            />
           </Route>
           <Route path="/role" element={<RoleSelect setMood={setMood} />} />
           <Route path="/login" element={<Login mood={mood} />} />
           <Route
             path="/signup"
-            element={<Signup mood={mood} setAlert={setAlert} setMood={setMood} />}
+            element={
+              <Signup mood={mood} setAlert={setAlert} setMood={setMood} />
+            }
           />
           <Route
             path="/*"
@@ -176,9 +205,7 @@ function App() {
                       />
                       <Route
                         path="/help-support"
-                        element={
-                          <HelpCenter mood={mood} setAlert={setAlert} />
-                        }
+                        element={<HelpCenter mood={mood} setAlert={setAlert} />}
                       />
                       <Route
                         path="/user/:id"
