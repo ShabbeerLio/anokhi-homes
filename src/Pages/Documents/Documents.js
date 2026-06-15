@@ -4,7 +4,7 @@ import "./Documents.css";
 import NiOpenEye from "../../icons/ni-openEye";
 
 const Documents = ({ data }) => {
-  console.log(data.documents, "data")
+  // console.log(data?.documents, "data")
   const [activeImage, setActiveImage] = useState(null);
 
   useEffect(() => {
@@ -42,22 +42,20 @@ const Documents = ({ data }) => {
 
         {/* ✅ PDF */}
         {/* <h3 className="section-title">Documents (PDF)</h3> */}
-        <div className="document-grid">
+        {/* <div className="document-grid">
           {data?.documents?.pdf?.map((item) => (
             <div
               className="document-item pdf-item"
               key={item._id}
               onClick={() => window.open(item.file, "_blank")}
             >
-              {/* <img src={item.thumbnail} alt="pdf" /> */}
               <h4>{item.fileName}</h4>
               <NiOpenEye />
 
               <span className="pdf-badge">PDF</span>
             </div>
           ))}
-        </div>
-
+        </div> */}
       </div>
 
       {/* ✅ Lightbox */}

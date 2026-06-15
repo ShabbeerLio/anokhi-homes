@@ -6,7 +6,7 @@ import Mission from "../../Assets/icons/mission.png"
 import Vision from "../../Assets/icons/vision.png"
 
 const About = ({data}) => {
-    console.log(data,"data")
+    // console.log(data,"data")
     return (
         <>
             <div className="landing-head-box">

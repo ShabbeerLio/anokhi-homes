@@ -7,7 +7,7 @@ import { GiDoubleStreetLights } from "react-icons/gi";
 import { GiWaterfall } from "react-icons/gi";
 
 const About = ({ data }) => {
-  console.log(data,"data")
+  // console.log(data,"data")
   const items = [
     { title: "Security", icons: <Cctv /> },
     { title: "Road", icons: <TbRoad /> },
