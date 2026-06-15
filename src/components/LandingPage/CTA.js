@@ -11,9 +11,9 @@ const CTA = () => {
                     <img src={sell} alt="" />
                 </div>
                 <div className="testimonial-box-right">
-                    <h2>Looking To Sell Your Property</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure ipsam est quidem molestiae esse eaque animi eligendi velit at nulla ab quam, soluta natus perferendis.</p>
-                    <button className="btn primary"> <TextQuote />Get Quote</button>
+                    <h2>Find the Perfect Property for Your Future</h2>
+                    <p>Discover verified plots, homes, and investment opportunities designed to match your lifestyle, budget, and long-term goals.</p>
+                    <button className="btn primary"> <TextQuote />Know Offers</button>
                 </div>
             </div>
         </div>

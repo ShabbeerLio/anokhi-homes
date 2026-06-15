@@ -7,6 +7,7 @@ import Projects from "../../components/LandingPage/Projects";
 import Services from "../../components/LandingPage/Services";
 import Testimonial from "../../components/LandingPage/Testimonial";
 import Counter from "../../components/LandingPage/Counter";
+import WhyUs from "../../components/LandingPage/WhyUs";
 
 const Home = ({data, allColonies}) => {
   return (
@@ -15,6 +16,7 @@ const Home = ({data, allColonies}) => {
       <About data={data?.about}/>
       <Counter/>
       <Projects data={allColonies}/>
+      <WhyUs/>
       <Services data={data?.home}/>
       <Testimonial data={data?.home}/>
       <CTA />
