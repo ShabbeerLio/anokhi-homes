@@ -18,10 +18,10 @@
 .about-left h3 {
   color: #4d4d4d;
 }
-.app.dark .landing-pages h2,
+/* .app.dark .landing-pages h2,
 .about-left h3 {
   color: #fff;
-}
+} */
 .about-right {
   width: 50%;
 }

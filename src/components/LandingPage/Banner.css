@@ -187,4 +187,12 @@
 }
 }
 
-@media (max-width: 500px) {}
+@media (max-width: 768px) {
+  .hero{
+    gap: 2rem;
+  }
+  .hero-left h1{
+    margin: 0;
+    font-size: 32px;
+  }
+}

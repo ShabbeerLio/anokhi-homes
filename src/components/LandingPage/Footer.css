@@ -59,6 +59,8 @@
   color: #9f9f9f;
   text-decoration: none;
   transition: color 0.3s;
+  display: flex;
+  align-items: center;
 }
 
 .footer-col ul li a:hover {

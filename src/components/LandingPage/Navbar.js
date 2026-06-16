@@ -13,6 +13,7 @@ import AdminLogo from "../../Assets/Logo/logo-anokhi-home-parpul.png";
 import StaffLogo from "../../Assets/Logo/logo-anokhi-home-green.png";
 import AgentLogo from "../../Assets/Logo/logo-anokhi-home-blue.png";
 import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
+import NiDocuments from "../../icons/ni-documents";
 
 const Navbar = ({ mood }) => {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ const Navbar = ({ mood }) => {
             to="/documents"
           >
             {" "}
-            <NiGallery /> Documents
+            <NiDocuments /> Documents
           </NavLink>
           <NavLink
             onClick={() => setNavActive(false)}

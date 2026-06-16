@@ -67,8 +67,9 @@ const WhyUs = () => {
                 <div className="why-us-head">
                     <h2>Why Anokhi Homes is the Perfect Choice</h2>
                     <p>
-                        Discover the exceptional features that make our plots the ideal
-                        investment for your future home.
+                        We specialize in providing affordable plots in the peaceful city of Rajgir through our premium project, Rajgir Green Valley. Our expertise spans residential property sales, land development, and comprehensive plot booking services.
+
+                        With strong presence in both Patna and Rajgir, we aim to provide reliable and transparent real estate solutions that help you build your dreams on solid foundations.
                     </p>
                 </div>
 

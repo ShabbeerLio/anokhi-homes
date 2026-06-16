@@ -5,3 +5,8 @@
   width: 80% !important;
   object-fit: contain !important;
 }
+
+.service-images img{
+  width: 40% !important;
+  height: 100px !important;
+}

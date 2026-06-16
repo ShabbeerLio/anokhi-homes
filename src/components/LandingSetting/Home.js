@@ -27,36 +27,36 @@ const Home = ({ data, setAlert }) => {
   const [visibleCount, setVisibleCount] = useState(5);
 
   const handleChange = (e) => {
-  const { name, value, files } = e.target;
+    const { name, value, files } = e.target;
 
-  if (files && files[0]) {
-    const file = files[0];
+    if (files && files[0]) {
+      const file = files[0];
 
-    // 1 MB = 1024 * 1024 bytes
-    if (file.size > 1024 * 1024) {
-      setAlert({
-        message: "Please upload an image smaller than 1 MB",
-        status: "Error",
-      });
+      // 1 MB = 1024 * 1024 bytes
+      if (file.size > 1024 * 1024) {
+        setAlert({
+          message: "Please upload an image smaller than 1 MB",
+          status: "Error",
+        });
 
-      setTimeout(() => setAlert(null), 3000);
+        setTimeout(() => setAlert(null), 3000);
 
-      e.target.value = "";
-      return;
+        e.target.value = "";
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: file,
+        preview: URL.createObjectURL(file),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: file,
-      preview: URL.createObjectURL(file),
-    }));
-  } else {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-};
+  };
 
   useEffect(() => {
     if (selectedItem) {
@@ -92,9 +92,11 @@ const Home = ({ data, setAlert }) => {
   }, [data]);
 
   const handleSave = async () => {
-    let uploadedImage = [];
-    if (formData.image) {
-      uploadedImage = await uploadImage(formData.image);
+    let uploadedImage = null;
+
+    if (formData.image instanceof File) {
+      const response = await uploadImage(formData.image);
+      uploadedImage = response?.url;
     }
     try {
       let updatedData = {
@@ -112,7 +114,7 @@ const Home = ({ data, setAlert }) => {
               ? {
                   ...item,
                   ...formData,
-                  image: uploadedImage.url || item.image,
+                  image: uploadedImage || item.image,
                 }
               : item,
           );
@@ -122,7 +124,7 @@ const Home = ({ data, setAlert }) => {
             ...updatedData.services,
             {
               ...formData,
-              image: uploadedImage.url,
+              image: uploadedImage,
             },
           ];
         }
@@ -137,7 +139,7 @@ const Home = ({ data, setAlert }) => {
               ? {
                   ...item,
                   ...formData,
-                  image: uploadedImage.url || item.image,
+                  image: uploadedImage || item.image,
                 }
               : item,
           );
@@ -147,7 +149,7 @@ const Home = ({ data, setAlert }) => {
             ...updatedData.testimonials,
             {
               ...formData,
-              image: uploadedImage.url,
+              image: uploadedImage,
             },
           ];
         }
@@ -214,7 +216,7 @@ const Home = ({ data, setAlert }) => {
         onEdit={() => handleEdit("banner", homePageData.banner)}
       />
       <div className="table-filters">
-        <h4>Services</h4>
+        <h4>Your Trusted Partner</h4>
         <div className="page-tools">
           <button className="add-button" onClick={() => handleAdd("service")}>
             <LucidePlus /> Add
@@ -309,6 +311,12 @@ const Home = ({ data, setAlert }) => {
                 value={formData.title || ""}
                 onChange={handleChange}
                 placeholder="Service Title"
+              />
+              <textarea
+                name="description"
+                value={formData.description || ""}
+                onChange={handleChange}
+                placeholder="Service description"
               />
 
               {(formData.preview || formData.image) && (

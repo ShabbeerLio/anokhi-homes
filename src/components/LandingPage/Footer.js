@@ -1,10 +1,17 @@
 import React from "react";
 import "./Footer.css";
-import { FaEnvelope, FaFacebook, FaLinkedin, FaPhoneAlt, FaYoutube } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaFacebook,
+  FaLinkedin,
+  FaPhoneAlt,
+  FaYoutube,
+} from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import { Link, NavLink } from "react-router-dom";
 import { FaLocationDot, FaXTwitter } from "react-icons/fa6";
 import Logo from "../../Assets/Logo/Anokhi Homes.png";
+import { MdChevronRight } from "react-icons/md";
 
 const Footer = ({ data }) => {
   return (
@@ -28,20 +35,20 @@ const Footer = ({ data }) => {
           {/* <h4>Useful Links</h4> */}
           <ul className="footer-navitems">
             <li>
-              <NavLink to="/contact">Contact Us</NavLink>
+              <NavLink to="/contact"><MdChevronRight /> Contact Us</NavLink>
             </li>
             <li>
-              <NavLink to="/">Career</NavLink>
+              <NavLink to="/"><MdChevronRight /> Career</NavLink>
             </li>
             <li>
-              <NavLink to="/privacy-policy">Privacy Policy</NavLink>
+              <NavLink to="/privacy-policy"><MdChevronRight /> Privacy Policy</NavLink>
             </li>
             <li>
-              <NavLink to="/term-condition">Terms & Conditions</NavLink>
+              <NavLink to="/term-condition"><MdChevronRight /> Terms & Conditions</NavLink>
             </li>
             <li>
               <NavLink to="/cancellation-refund">
-                Cancellation and Refund Policy
+                <MdChevronRight /> Cancellation and Refund Policy
               </NavLink>
             </li>
           </ul>
@@ -89,7 +96,7 @@ const Footer = ({ data }) => {
         <p>© 2026 Anokhi Homes Private Limited | All rights reserved.</p>
         <p>
           Developed by :{" "}
-          <Link to={"https://digitaldezire.com/"}>
+          <Link to={"https://digitaldezire.com/"} style={{textDecoration:"none"}}>
             <span>Digital Dezire</span>
           </Link>
         </p>

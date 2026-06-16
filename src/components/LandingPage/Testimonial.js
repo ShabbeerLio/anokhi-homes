@@ -1,6 +1,6 @@
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules";
 import "./Testimonial.css";
 import { FaQuoteLeft, FaQuoteRight } from "react-icons/fa";
 
@@ -10,10 +10,16 @@ const Testimonial = ({ data }) => {
     <div className="landing-pages">
       <h2>Testimonial</h2>
       <Swiper
-        modules={[Navigation]}
+        modules={[Navigation, Autoplay]}
         spaceBetween={24}
         slidesPerView={2}
         navigation
+        autoplay={{
+          delay: 3000, // 3 seconds
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        loop={true}
         breakpoints={{
           0: {
             slidesPerView: 1,

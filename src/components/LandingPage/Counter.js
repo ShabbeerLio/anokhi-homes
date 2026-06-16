@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./Counter.css";
 import { FaAward, FaCalendarCheck, FaSuitcase, FaUsers } from "react-icons/fa";
+import { LuLandPlot } from "react-icons/lu";
+import { GoLaw } from "react-icons/go";
+import { SiTicktick } from "react-icons/si";
 
 const Counter = () => {
   const counters = [
-    { icon: <FaCalendarCheck/>, num: 6, label: "Years Completed" },
-    { icon: <FaSuitcase/>, num: 5, label: "Successful Projects" },
-    { icon: <FaUsers />, num: 50, label: "Team Members" },
-    { icon: <FaAward/>, num: 15, label: "Awards" },
+    { icon: <SiTicktick/>, num: 5, label: "Years Completed" },
+    { icon: <LuLandPlot/>, num: 500, label: "Plot Sold" },
+    { icon: <FaUsers />, num: 100, label: "Team Associates" },
+    { icon: <GoLaw/>, num: 100, label: "Legeal Support" },
   ];
 
   const [counts, setCounts] = useState(counters.map(() => 0));
@@ -44,7 +47,7 @@ const Counter = () => {
             <div className="counter-bx" key={i}>
               <div className="counter-icon">{item.icon}</div>
               <div className="counter-num">
-                <h3 className="count">{counts[i]}</h3>
+                <h3 className="count">{counts[i]}{i === 3 ? "%":"+"}</h3>
                 <span>{item.label}</span>
               </div>
             </div>

@@ -44,3 +44,12 @@ color: #4d4d4d;
     justify-content: flex-start;
 }
 }
+
+@media (max-width: 768px) {
+  .counter-num{
+    text-align: left;
+  }
+  .counter-num h3 {
+font-size: 30px;
+  }
+}
