@@ -80,14 +80,14 @@ const Dashboard = ({ mood, setMood }) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (visibleOffers.length <= 1) return;
+    if (visibleOffers?.length <= 1) return;
 
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % visibleOffers.length);
+      setIndex((prev) => (prev + 1) % visibleOffers?.length);
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [visibleOffers.length]);
+  }, [visibleOffers?.length]);
 
   const getRemainingDays = (endDate) => {
     const today = new Date();
@@ -120,7 +120,7 @@ const Dashboard = ({ mood, setMood }) => {
                 {/* <h4>Configurations of the {mood}</h4> */}
 
                 <div className="offer-carousel">
-                  {visibleOffers.length === 0 ? (
+                  {visibleOffers?.length === 0 ? (
                     <div className="no-offers">
                       <h4>Welcome!</h4>
                       <p>
@@ -129,7 +129,7 @@ const Dashboard = ({ mood, setMood }) => {
                       </p>
                     </div>
                   ) : (
-                    visibleOffers.map((item, i) => (
+                    visibleOffers?.map((item, i) => (
                       <div
                         key={item._id}
                         className={`offer-slide ${i === index ? "active" : ""}`}
