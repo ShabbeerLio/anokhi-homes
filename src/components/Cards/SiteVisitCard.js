@@ -52,30 +52,6 @@ const SiteVisitCard = ({
   const [selectedPlot, setSelectedPlot] = useState(null);
   const [editingNoteId, setEditingNoteId] = useState(null);
   const [editText, setEditText] = useState("");
-  // const plots = [
-  //   {
-  //     id: "P101",
-  //     name: "Plot A-12",
-  //     projectId: "PJ101",
-  //     price: 1200000,
-  //     status: "Vacant",
-  //     priceRange: {
-  //       min: 800000,
-  //       max: 1200000,
-  //     },
-  //   },
-  //   {
-  //     id: "P102",
-  //     name: "Plot B-07",
-  //     projectId: "PJ102",
-  //     price: 2300000,
-  //     status: "Hold",
-  //     priceRange: {
-  //       min: 1800000,
-  //       max: 2300000,
-  //     },
-  //   },
-  // ];
 
   useEffect(() => {
     if (!viewOpen) {
@@ -134,7 +110,6 @@ const SiteVisitCard = ({
   const handleAddNote = async (visitId) => {
     try {
       const token = localStorage.getItem("token");
-console.log(visitId,"visitid")
       const res = await axios.post(
         `${Host}/api/sitevisit/add-note/${visitId}`,
         { note: noteText },
@@ -476,15 +451,57 @@ console.log(visitId,"visitid")
       </DeleteModal>
       <DeleteModal open={rescheduleOpen} onClose={() => setRescheduleOpen(false)}>
         <h4>Reschedule Site Visit</h4>
-
         <div className="field">
+          <label>Date of Visit</label>
+
+          {/* Date */}
+          <input
+            type="date"
+            value={formData.visitDate || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, visitDate: e.target.value })
+            }
+          />
+
+          {/* Hour Dropdown */}
+          <select
+            value={formData.visitHour || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, visitHour: e.target.value })
+            }
+          >
+            <option value="">Select Hour</option>
+            {[...Array(12)].map((_, i) => {
+              const hour = i + 1;
+              return (
+                <option key={hour} value={hour}>
+                  {hour}
+                </option>
+              );
+            })}
+          </select>
+
+          {/* AM / PM */}
+          <select
+            value={formData.visitPeriod}
+            onChange={(e) =>
+              setFormData({ ...formData, visitPeriod: e.target.value })
+            }
+          >
+            <option value="">Select Period (AM / PM)</option>
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
+
+        {/* <div className="field">
           <label>New Visit Date</label>
           <input
             type="datetime-local"
             value={newVisitDate}
             onChange={(e) => setNewVisitDate(e.target.value)}
           />
-        </div>
+        </div> */}
         <div className="field">
           <label>
             Notes
@@ -501,9 +518,13 @@ console.log(visitId,"visitid")
         <div className="modal-actions">
           <button
             onClick={() => {
-              if (!newVisitDate) {
+              if (
+                !formData.visitDate ||
+                !formData.visitHour ||
+                !formData.visitPeriod
+              ) {
                 setAlert({
-                  message: "Please select date",
+                  message: "Please select complete visit date & time",
                   status: "Error",
                 });
                 return;
@@ -518,7 +539,11 @@ console.log(visitId,"visitid")
               }
 
               handleVisitAction(item._id, "reschedule", {
-                visitDate: newVisitDate,
+                visitDate: formData.visitHour +
+                  " " +
+                  formData.visitPeriod +
+                  " " +
+                  formData.visitDate,
                 note: formData.notes,
               });
             }}
