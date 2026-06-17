@@ -13,6 +13,7 @@ import Host from "../../Host/Host";
 import { useDispatch, useSelector } from "react-redux";
 import { getBooking } from "../../Redux/Slices/AppSlices";
 import NiSitevisit from "../../icons/ni-sitevisit";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const BookingCard = ({
   item,
@@ -426,19 +427,19 @@ const BookingCard = ({
             <p>{formatDate(item?.createdAt)}</p>
             <p>{item?.plot?.plotNumber}, {item?.colony?.name}, {item?.location?.name}</p>
             {mood !== "agent" && <p>{item?.agent?.name}</p>}
-            <p>{item?.plotArea}</p>
+            <p>{formatCurrency(item?.plotArea)} sqft</p>
             {!isApproval ? (
               <>
-                <p>₹{item?.requestAmount}/sqft</p>
-                <p>₹{item?.finalAmount}</p>
-                <p>₹{paid.toLocaleString()}</p>
-                <p>₹{remaining.toLocaleString()}</p>
+                <p>₹{formatCurrency(item?.requestAmount)}/sqft</p>
+                <p>₹{formatCurrency(item?.finalAmount)}</p>
+                <p>₹{formatCurrency(paid)}</p>
+                <p>₹{formatCurrency(remaining)}</p>
               </>
             ) : (
               <>
                 <p>₹{item?.pricePerSqft}/sqft</p>
-                <p>₹{item?.requestAmount}/sqft</p>
-                <p>₹{item?.finalAmount}</p>
+                <p>₹{formatCurrency(item?.requestAmount)}/sqft</p>
+                <p>₹{formatCurrency(item?.finalAmount)}</p>
               </>
             )}
           </div>
@@ -618,11 +619,11 @@ const BookingCard = ({
           <div className="user-card-bottom-right">
             <p>{formatDate(item?.createdAt)}</p>
             <p>
-              {item?.plot?.plotId}, {item?.colony?.name}, {item?.location?.name}
+              {item?.plot?.plotNumber}, {item?.colony?.name}, {item?.location?.name}
             </p>
-            <p>₹{item?.finalAmount}</p>
-            <p>₹{paid.toLocaleString()}</p>
-            <p>₹{remaining.toLocaleString()}</p>
+            <p>₹{formatCurrency(item?.finalAmount)}</p>
+            <p>₹{formatCurrency(paid)}</p>
+            <p>₹{formatCurrency(remaining)}</p>
 
             {item.status === "confirmed" ||
               (item.status === "pending" && (
@@ -721,7 +722,7 @@ const BookingCard = ({
                 <label>
                   Amount
                   <small style={{ fontSize: "12px", color: "green" }}>
-                    ₹{formData.restAmount || 0}{" "}
+                    ₹{formatCurrency(formData.restAmount || 0)}{" "}
                   </small>
                 </label>
                 <input

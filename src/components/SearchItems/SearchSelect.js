@@ -10,6 +10,7 @@ const SearchSelect = ({
   displayKey = "name",
   searchKeys = ["name"],
   renderOption,
+  noResultComponent,
 }) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -20,11 +21,8 @@ const SearchSelect = ({
   // 🔍 Filter logic
   const filteredOptions = options?.filter((option) =>
     searchKeys?.some((key) =>
-      option[key]
-        ?.toString()
-        ?.toLowerCase()
-        ?.includes(search?.toLowerCase())
-    )
+      option[key]?.toString()?.toLowerCase()?.includes(search?.toLowerCase()),
+    ),
   );
 
   // console.log(filteredOptions,"filteredOptions")
@@ -32,17 +30,13 @@ const SearchSelect = ({
   // 🖱 Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
         setOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Sync input with selected value
@@ -69,10 +63,26 @@ const SearchSelect = ({
 
       {open && (
         <div className="ss-dropdown">
-          {filteredOptions.length === 0 && (
-            <div className="ss-item no-result">
-              No results found
-            </div>
+          {filteredOptions.length === 0 ? (
+            noResultComponent ? (
+              noResultComponent
+            ) : (
+              <div className="ss-item no-result">No results found</div>
+            )
+          ) : (
+            filteredOptions.map((option) => (
+              <div
+                key={option._id}
+                className="ss-item"
+                onClick={() => {
+                  onChange(option);
+                  setSearch(option[displayKey]);
+                  setOpen(false);
+                }}
+              >
+                {renderOption ? renderOption(option) : option[displayKey]}
+              </div>
+            ))
           )}
 
           {filteredOptions.map((option) => (
@@ -85,9 +95,7 @@ const SearchSelect = ({
                 setOpen(false);
               }}
             >
-              {renderOption
-                ? renderOption(option)
-                : option[displayKey]}
+              {renderOption ? renderOption(option) : option[displayKey]}
             </div>
           ))}
         </div>

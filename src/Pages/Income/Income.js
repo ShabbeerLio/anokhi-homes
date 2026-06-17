@@ -7,6 +7,7 @@ import { getAccountDetails, getIncome } from "../../Redux/Slices/AppSlices";
 import { useDispatch, useSelector } from "react-redux";
 import NiSearch from "../../icons/ni-search";
 import InvoiceCard from "../../components/Cards/InvoiceCard";
+import { formatCurrency } from "../../components/Utils/FormatCurrency";
 
 const Income = ({ mood, setAlert }) => {
   const dispatch = useDispatch();
@@ -86,25 +87,25 @@ const Income = ({ mood, setAlert }) => {
           <div className="dashboard-grid">
             <DashboardCard
               title="Total Income"
-              value={`₹${totalIncome.toLocaleString()}`}
+              value={`₹${formatCurrency(totalIncome)}`}
               icons={<NiPayments />}
             />
 
             <DashboardCard
               title="Credited Income"
-              value={`₹${creditedIncome.toLocaleString()}`}
+              value={`₹${formatCurrency(creditedIncome)}`}
               icons={<NiPayments />}
             />
 
             <DashboardCard
               title="Pending Income"
-              value={`₹${pendingIncome.toLocaleString()}`}
+              value={`₹${formatCurrency(pendingIncome)}`}
               icons={<NiPayments />}
             />
 
             <DashboardCard
               title="Today's Income"
-              value={`₹${todayIncome.toLocaleString()}`}
+              value={`₹${formatCurrency(todayIncome)}`}
               icons={<NiPayments />}
             />
 
@@ -116,7 +117,7 @@ const Income = ({ mood, setAlert }) => {
 
             <DashboardCard
               title="My Wallet"
-              value={`₹${userDetail?.wallet || 0}`}
+              value={`₹${formatCurrency(userDetail?.wallet || 0)}`}
               icons={<NiPayments />}
             />
           </div>

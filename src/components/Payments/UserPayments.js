@@ -1,6 +1,5 @@
 import NiPayments from "../../icons/ni-payments";
 import DashboardCard from "../Cards/DashboardCard";
-import PaymentsData from "./PaymentData";
 import PaymentTable from "./PaymentTable";
 
 const UserPayments = ({payment, mood, staffType, setAlert }) => {

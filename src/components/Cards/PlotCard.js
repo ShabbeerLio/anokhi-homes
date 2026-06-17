@@ -4,6 +4,7 @@ import NiEdit from "../../icons/ni-edit";
 import NiDelete from "../../icons/ni-delete";
 import DeleteModal from "../Modals/DeleteModal";
 import NiDiscount from "../../icons/ni-discount";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const PlotCard = ({
   p,
@@ -34,7 +35,7 @@ const PlotCard = ({
         </div>
         <div className="plot-details">
           <h3>{p.name}</h3>
-          <p className="plot-card-price">₹{p.priceRange} / sqft</p>
+          <p className="plot-card-price">₹{formatCurrency(p.priceRange)} / sqft</p>
           <p>Area: {p.area} sqft</p>
           {/* <p>{p.details}</p> */}
           {cashback && (

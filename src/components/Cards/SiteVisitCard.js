@@ -15,7 +15,7 @@ import formatDate from "../DateFormate/DateFormate";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Host from "../../Host/Host";
-import { getPlots, getSiteVisit } from "../../Redux/Slices/AppSlices";
+import { getAccountDetails, getPlots, getSiteVisit } from "../../Redux/Slices/AppSlices";
 import NoteItem from "../NoteItem/NoteItem";
 
 const SiteVisitCard = ({
@@ -28,11 +28,11 @@ const SiteVisitCard = ({
   setAlert,
 }) => {
   const dispatch = useDispatch();
-  // console.log(item, "item")
-  const { plots } = useSelector((state) => state.app);
+  const { plots, userDetail } = useSelector((state) => state.app);
 
   useEffect(() => {
     dispatch(getPlots(item?.colony?._id));
+    dispatch(getAccountDetails());
   }, [item?.colony?._id]);
 
   // console.log(plots?.plots, "plots")
@@ -408,6 +408,16 @@ const SiteVisitCard = ({
             }}
           >
             Request Booking
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewOpen(true);
+              setPanelMode("report");
+              setShowReport(true);
+            }}
+          >
+            Vist Notes
           </button>
         </div>
       )}

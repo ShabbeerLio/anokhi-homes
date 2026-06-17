@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import EnquireModal from "../Modals/EnquireModal";
 import { X } from "lucide-react";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const PLOT_TYPES = ["FOR_SALE", "SOLD", "PENDING", "ROAD", "NOT_FOR_SALE"];
 
@@ -209,16 +210,18 @@ const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
                     <>
                       <div className="user-field">
                         <label>Price / sq.ft</label>
-                        <div className="value">₹{plot.price || 0}</div>
+                        <div className="value">
+                          ₹{formatCurrency(plot.price || 0)}
+                        </div>
                       </div>
 
                       <div className="user-field">
                         <label>Total Price</label>
                         <div className="value">
                           ₹
-                          {(
-                            Number(plot.area || 0) * Number(plot.price || 0)
-                          ).toLocaleString()}
+                          {formatCurrency(
+                            Number(plot.area || 0) * Number(plot.price || 0),
+                          )}
                         </div>
                       </div>
                     </>

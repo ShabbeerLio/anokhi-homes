@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ProjectData from "../Plot/PlotData";
 import SearchSelect from "../../components/SearchItems/SearchSelect";
+import { formatCurrency } from "../../components/Utils/FormatCurrency";
 
 const RenderFormFields = ({ actionType, formData, setFormData }) => {
   const customers = [
@@ -197,12 +198,13 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
 
           {/* AVATAR */}
           <div className="field">
-            <label>Image (Profile)</label>
+            <label>Password</label>
             <input
-              type="file"
-              accept="image/*"
+              type="password"
+              placeholder="Password"
+              value={formData.password || ""}
               onChange={(e) =>
-                setFormData({ ...formData, avatar: e.target.files[0] })
+                setFormData({ ...formData, password: e.target.files[0] })
               }
             />
           </div>
@@ -517,15 +519,15 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
           {selectedPlot && (
             <div className="report-view-box-right active">
               <p>
-                <strong>Total Amount</strong> ₹{amountInfo.total}
+                <strong>Total Amount</strong> ₹{formatCurrency(amountInfo.total)}
               </p>
 
               <p>
-                <strong>Amount Paid</strong> ₹{amountInfo.paid}
+                <strong>Amount Paid</strong> ₹{formatCurrency(amountInfo.paid)}
               </p>
 
               <p>
-                <strong>Remaining Amount</strong> ₹{amountInfo.remaining}
+                <strong>Remaining Amount</strong> ₹{formatCurrency(amountInfo.remaining)}
               </p>
 
               <p>

@@ -45,3 +45,10 @@
   color: #999;
   cursor: default;
 }
+
+@media (max-width: 768px) {
+
+  .ss-dropdown {
+    width: 50%;
+  }
+}

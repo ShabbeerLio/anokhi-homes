@@ -1,6 +1,6 @@
 import NiPayments from "../../icons/ni-payments";
 import DashboardCard from "../Cards/DashboardCard";
-import PaymentsData from "./PaymentData";
+import { formatCurrency } from "../Utils/FormatCurrency";
 import PaymentTable from "./PaymentTable";
 
 const AgentPayments = ({ payment, mood, setAlert }) => {
@@ -42,19 +42,19 @@ const AgentPayments = ({ payment, mood, setAlert }) => {
       <div className="dashboard-grid">
         <DashboardCard
           title="Total Collection"
-          value={`₹${totalCollection.toLocaleString()}`}
+          value={`₹${formatCurrency(totalCollection)}`}
           icons={<NiPayments />}
         />
 
         <DashboardCard
           title="This Month"
-          value={`₹${thisMonthCollection.toLocaleString()}`}
+          value={`₹${formatCurrency(thisMonthCollection)}`}
           icons={<NiPayments />}
         />
 
         <DashboardCard
           title="Today's Collection"
-          value={`₹${todaysCollection.toLocaleString()}`}
+          value={`₹${formatCurrency(todaysCollection)}`}
           icons={<NiPayments />}
         />
       </div>

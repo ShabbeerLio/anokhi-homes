@@ -41,6 +41,15 @@ export const getUser = createAsyncThunk("app/getUser", async () => {
   });
   return res.json();
 });
+export const getRank = createAsyncThunk("app/ranks", async () => {
+  const res = await fetch(`${Host}/api/auth/ranks`, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": getToken(),
+    },
+  });
+  return res.json();
+});
 
 export const addUser = createAsyncThunk(
   "app/addUser",
@@ -657,6 +666,7 @@ const appSlice = createSlice({
     userDetail: null,
     usersRole: [],
     users: [],
+    rankData: [],
     leads: [],
     siteVisit: [],
     booking: [],
@@ -690,6 +700,9 @@ const appSlice = createSlice({
       // All USER
       .addCase(getUser.fulfilled, (state, action) => {
         state.users = action.payload;
+      })
+      .addCase(getRank.fulfilled, (state, action) => {
+        state.rankData = action.payload;
       })
 
       // LEADS

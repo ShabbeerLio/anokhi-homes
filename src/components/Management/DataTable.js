@@ -4,10 +4,17 @@ import NiSearch from "../../icons/ni-search";
 import AddLocationModal from "../Modals/AddLocationModal";
 import ManagementCard from "../Cards/ManagementCard";
 import SearchSelect from "../SearchItems/SearchSelect";
-import { getLeads, getUser, getUserRole } from "../../Redux/Slices/AppSlices";
+import {
+  addUser,
+  getLeads,
+  getUser,
+  getUserRole,
+} from "../../Redux/Slices/AppSlices";
 import { useDispatch, useSelector } from "react-redux";
 import Host from "../../Host/Host";
 import axios from "axios";
+import NiClosseye from "../../icons/ni-closseye";
+import NiOpenEye from "../../icons/ni-openEye";
 
 const ITEMS_PER_PAGE = 15;
 
@@ -16,6 +23,7 @@ const DataTable = ({ data, mood, setAlert }) => {
   const { users } = useSelector((state) => state.app);
   const [customersList, setCustomersList] = useState([]);
   const [agentsList, setAgentsList] = useState([]);
+  const [showNewCustomer, setShowNewCustomer] = useState(false);
 
   useEffect(() => {
     dispatch(getUser());
@@ -41,6 +49,7 @@ const DataTable = ({ data, mood, setAlert }) => {
   const [dateFilter, setDateFilter] = useState("");
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
 
   // console.log(data,"data")
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -154,6 +163,7 @@ const DataTable = ({ data, mood, setAlert }) => {
         message: "Lead updated successfully",
         status: "Success",
       });
+      setTimeout(() => setAlert(null), 5000);
 
       setOpen(false);
     } catch (err) {
@@ -162,8 +172,75 @@ const DataTable = ({ data, mood, setAlert }) => {
         message: "Failed to update lead",
         status: "Error",
       });
+      setTimeout(() => setAlert(null), 5000);
     }
   };
+
+  const handleAddCustomerAndLead = async () => {
+    try {
+      // Create customer
+      const result = await dispatch(
+        addUser({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          password: formData.password,
+          role: "user",
+        }),
+      ).unwrap();
+
+      // Refresh users
+      await dispatch(getUser());
+
+      // Create lead using created customer id
+      await axios.post(
+        `${Host}/api/lead/add`,
+        {
+          customerId: result.user._id, // adjust according to your API
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+        },
+        {
+          headers: {
+            "auth-token": localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      dispatch(getLeads());
+      await dispatch(getUser());
+
+      setFormData({
+        customerId: "",
+        name: "",
+        phone: "",
+        email: "",
+        password: "",
+      });
+
+      setSelectedCustomer(null);
+      setShowNewCustomer(false);
+      setIsEditMode(false);
+      setSelectedLead(null);
+
+      setOpen(false);
+
+      setAlert({
+        message: "Customer & Lead created successfully",
+        status: "Success",
+      });
+      setTimeout(() => setAlert(null), 5000);
+    } catch (err) {
+      setAlert({
+        message: err?.msg || "Failed",
+        status: "Error",
+      });
+      setTimeout(() => setAlert(null), 5000);
+    }
+  };
+
   return (
     <div>
       <div className="filter-grid page-tools table-filters">
@@ -172,7 +249,18 @@ const DataTable = ({ data, mood, setAlert }) => {
             className="add-button"
             onClick={() => {
               setSelectedLead(null);
+              setSelectedCustomer(null);
+              setShowNewCustomer(false);
               setIsEditMode(false);
+
+              setFormData({
+                customerId: "",
+                name: "",
+                phone: "",
+                email: "",
+                password: "",
+              });
+
               setOpen(true);
             }}
           >
@@ -277,64 +365,159 @@ const DataTable = ({ data, mood, setAlert }) => {
         onClose={() => setOpen(false)}
         title={isEditMode ? "Edit Lead" : "Add Lead"}
       >
-        <div className="field">
-          <SearchSelect
-            label="Customer Name"
-            placeholder="Search name or number"
-            options={customersList}
-            value={selectedCustomer}
-            onChange={(selected) => {
-              setSelectedCustomer(selected);
-              setFormData({
-                ...formData,
-                customerId: selected._id,
-                name: selected.name,
-                phone: selected.phone,
-                email: selected.email,
-              });
-            }}
-            displayKey="name"
-            searchKeys={["name", "phone"]}
-            renderOption={(c) => (
-              <div>
-                <b>{c.name}</b> ({c.phone})
-              </div>
-            )}
-          />
-        </div>
+        {showNewCustomer ? (
+          <>
+            <div className="field">
+              <label>Name</label>
+              <input
+                value={formData.name || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    name: e.target.value,
+                  })
+                }
+              />
+            </div>
 
-        <div className="field">
-          <label>Phone</label>
-          <input
-            value={formData.phone}
-            onChange={(e) =>
-              setFormData({ ...formData, phone: e.target.value })
-            }
-            placeholder="Phone Number"
-          />
-        </div>
-        <div className="field">
-          <label>Email</label>
-          <input
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            placeholder="Email Address"
-          />
-        </div>
+            <div className="field">
+              <label>Phone</label>
+              <input
+                value={formData.phone || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    phone: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="field">
+              <label>Email</label>
+              <input
+                value={formData.email || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    email: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            {/* <div className="field">
+              <label>Password</label>
+              <input
+                type="password"
+                value={formData.password || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    password: e.target.value,
+                  })
+                }
+              />
+            </div> */}
+            <div className="field password-field">
+              <label>Password</label>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <span
+                className="password-eye"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <NiClosseye /> : <NiOpenEye />}
+              </span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="field">
+              <SearchSelect
+                label="Customer Name"
+                placeholder="Search name or number"
+                options={customersList}
+                value={selectedCustomer}
+                onChange={(selected) => {
+                  setShowNewCustomer(false);
+                  setSelectedCustomer(selected);
+                  setFormData({
+                    ...formData,
+                    customerId: selected._id,
+                    name: selected.name,
+                    phone: selected.phone,
+                    email: selected.email,
+                  });
+                }}
+                displayKey="name"
+                searchKeys={["name", "phone"]}
+                renderOption={(c) => (
+                  <div>
+                    <b>{c.name}</b> ({c.phone})
+                  </div>
+                )}
+                noResultComponent={
+                  <div className="ss-item no-result">
+                    <p>No customer found.</p>
+
+                    <button
+                      type="button"
+                      className="add-button"
+                      onClick={() => setShowNewCustomer(true)}
+                    >
+                      + Add New Customer
+                    </button>
+                  </div>
+                }
+              />
+            </div>
+            <div className="field">
+              <label>Phone</label>
+              <input
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                placeholder="Phone Number"
+              />
+            </div>
+            <div className="field">
+              <label>Email</label>
+              <input
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                placeholder="Email Address"
+              />
+            </div>
+          </>
+        )}
+
         <div className="modal-actions">
           <button
             onClick={() => {
-              if (isEditMode) {
+              if (showNewCustomer) {
+                handleAddCustomerAndLead();
+              } else if (isEditMode) {
                 handleEditLead();
               } else {
                 handleAddLead();
               }
-              setOpen(false);
             }}
           >
-            {isEditMode ? "Update Lead" : "Add Lead"}
+            {showNewCustomer
+              ? "Create Customer & Lead"
+              : isEditMode
+                ? "Update Lead"
+                : "Add Lead"}
           </button>
         </div>
       </AddLocationModal>

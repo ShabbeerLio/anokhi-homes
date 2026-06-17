@@ -5,6 +5,7 @@ import ActionModal from "../Modals/ActionModal";
 import DeleteModal from "../Modals/DeleteModal";
 import ViewModal from "../Modals/ViewModal";
 import formatDate from "../DateFormate/DateFormate";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const OffersCard = ({
   item,
@@ -105,8 +106,8 @@ const OffersCard = ({
       <div className="user-card-bottom">
         <div className="user-card-bottom-left">
           <p><strong>Description : </strong>{item.description}</p>
-          {isOffer && <p><strong>Price Benefit : </strong>₹{item.priceValue}</p>}
-          {isDiscount && <p><strong>Discount :</strong> {item.amount} {item.type === "percentage" ? "%" : "₹"}</p>}
+          {isOffer && <p><strong>Price Benefit : </strong>₹{formatCurrency(item.priceValue)}</p>}
+          {isDiscount && <p><strong>Discount :</strong> {formatCurrency(item.amount)} {item.type === "percentage" ? "%" : "₹"}</p>}
           {!isDiscount && <p><strong>User Type:</strong> {item.userType?.join(", ")}</p>}
           <p>
             <strong>Valid Till:</strong> {formatDate(item.endDate)}
@@ -167,11 +168,11 @@ const OffersCard = ({
           <div className="user-card-bottom-right">
             <p>{item.description}</p>
 
-            {isOffer && <p>₹{item.priceValue}</p>}
+            {isOffer && <p>₹{formatCurrency(item.priceValue)}</p>}
 
             {isDiscount && (
               <p>
-                {item.amount} {item.type === "percentage" ? "%" : "₹"}
+                {formatCurrency(item.amount)} {item.type === "percentage" ? "%" : "₹"}
               </p>
             )}
 

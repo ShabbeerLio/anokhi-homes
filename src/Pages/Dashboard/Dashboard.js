@@ -13,6 +13,7 @@ import RenderFormFields from "./RenderFormFields";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountDetails, getOffers } from "../../Redux/Slices/AppSlices";
 import formatDate from "../../components/DateFormate/DateFormate";
+import { formatCurrency } from "../../components/Utils/FormatCurrency";
 
 const Dashboard = ({ mood, setMood }) => {
   const dispatch = useDispatch();
@@ -142,7 +143,7 @@ const Dashboard = ({ mood, setMood }) => {
                         {/* Offer */}
                         {item.priceValue && (
                           <span className="offer-badge">
-                            Offer ₹{item.priceValue}
+                            Offer ₹{formatCurrency(item.priceValue)}
                           </span>
                         )}
 

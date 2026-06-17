@@ -7,6 +7,7 @@ import NiBooking from "../../icons/ni-booking";
 import NiTool from "../../icons/ni-tool";
 import NiPayments from "../../icons/ni-payments";
 import NiManagement from "../../icons/ni-management";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const Report = ({ userData }) => {
   if (!userData) {
@@ -27,49 +28,49 @@ const Report = ({ userData }) => {
 
         <DashboardCard
           title="Self Business"
-          value={`₹${(
+          value={`₹${formatCurrency(
             userData.selfBusiness || 0
-          ).toLocaleString()}`}
+          )}`}
           icons={<NiManagement />}
         />
 
         <DashboardCard
           title="Left Business"
-          value={`₹${(
+          value={`₹${formatCurrency(
             userData.leftBusiness || 0
-          ).toLocaleString()}`}
+          )}`}
           icons={<NiBooking />}
         />
 
         <DashboardCard
           title="Right Business"
-          value={`₹${(
+          value={`₹${formatCurrency(
             userData.rightBusiness || 0
-          ).toLocaleString()}`}
+          )}`}
           icons={<NiTool />}
         />
 
         <DashboardCard
           title="Total Business"
-          value={`₹${(
+          value={`₹${formatCurrency(
             userData.totalBusiness || 0
-          ).toLocaleString()}`}
+          )}`}
           icons={<NiPayments />}
         />
 
         <DashboardCard
           title="Wallet Balance"
-          value={`₹${(
+          value={`₹${formatCurrency(
             userData.wallet || 0
-          ).toLocaleString()}`}
+          )}`}
           icons={<NiManagement />}
         />
 
         <DashboardCard
           title="Total Income"
-          value={`₹${(
+          value={`₹${formatCurrency(
             userData.totalIncome || 0
-          ).toLocaleString()}`}
+          )}`}
           icons={<NiPayments />}
         />
     
@@ -82,36 +83,36 @@ const Report = ({ userData }) => {
           <div>
             <label>Self Business</label>
             <p>
-              ₹{(
+              ₹{formatCurrency(
                 userData.selfBusiness || 0
-              ).toLocaleString()}
+              )}
             </p>
           </div>
 
           <div>
             <label>Left Business</label>
             <p>
-              ₹{(
+              ₹{formatCurrency(
                 userData.leftBusiness || 0
-              ).toLocaleString()}
+              )}
             </p>
           </div>
 
           <div>
             <label>Right Business</label>
             <p>
-              ₹{(
+              ₹{formatCurrency(
                 userData.rightBusiness || 0
-              ).toLocaleString()}
+              )}
             </p>
           </div>
 
           <div>
             <label>Total Business</label>
             <p>
-              ₹{(
+              ₹{formatCurrency(
                 userData.totalBusiness || 0
-              ).toLocaleString()}
+              )}
             </p>
           </div>
         </div>

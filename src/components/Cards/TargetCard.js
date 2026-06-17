@@ -7,6 +7,7 @@ import ViewModal from "../Modals/ViewModal";
 import NiEdit from "../../icons/ni-edit";
 import NiTick from "../../icons/ni-tick";
 import NiCross from "../../icons/ni-cross";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const TargetCard = ({
   item,
@@ -36,7 +37,7 @@ const TargetCard = ({
         <div className="user-card-title">
           <div className="user-card-name">
             <h4>
-              ₹{item.rewardCash} / {item.rewardName}
+              ₹{formatCurrency(item.rewardCash)} / {item.rewardName}
               {userReward?.status === "claimed" && (
                 <span
                   className={`status ${userReward?.status === "claimed" && "active"}`}
@@ -107,7 +108,7 @@ const TargetCard = ({
         <div className="user-card-bottom-right">
           <p>{item.targetBusiness}</p>
           <p>
-            ₹{item.rewardCash} / {item.rewardName}
+            ₹{formatCurrency(item.rewardCash)} / {item.rewardName}
           </p>
           {item.royaltyPercent !== 0 && <p>{item.royaltyPercent} %</p>}
         </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { formatCurrency } from "../../components/Utils/FormatCurrency";
 
 const TeamNode = ({
   member,
@@ -61,7 +62,7 @@ const TeamNode = ({
 
           <span>
             Income: ₹
-            {member.totalIncome || 0}
+            {formatCurrency(member.totalIncome || 0)}
           </span>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const PlotCardUsers = ({ p }) => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const PlotCardUsers = ({ p }) => {
       </div>
       <div className="plot-details">
         <h3>{p.name}</h3>
-        <p className="plot-card-price">{p.priceRange}/sqft</p>
+        <p className="plot-card-price">{formatCurrency(p.priceRange)}/sqft</p>
         <p>Area: {p.area}</p>
       </div>
     </div>

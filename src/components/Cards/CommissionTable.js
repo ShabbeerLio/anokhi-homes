@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import NiOpenEye from "../../icons/ni-openEye";
 import NiExport from "../../icons/ni-export";
 import ViewModal from "../Modals/ViewModal";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const CommissionTable = ({ index, item, exportToExcel }) => {
   const [viewOpen, setViewOpen] = useState(false);
@@ -20,8 +21,8 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
         <span>{item.designation}</span>
         <span>{item.referralId}</span>
         <span>₹{item.selfBusiness}</span>
-        <span>₹{item.wallet}</span>
-        <span>₹{item.totalIncome}</span>
+        <span>₹{formatCurrency(item.wallet)}</span>
+        <span>₹{formatCurrency(item.totalIncome)}</span>
         <div className="dots">
           <span onClick={() => setViewOpen(true)}>
             <NiOpenEye />
@@ -60,7 +61,7 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
             Rewards
           </button>
         </div>
-        
+
         {activeTab === "summary" && (
           <div className="report-view-box-right active">
             <div className="summary-card">
@@ -73,31 +74,31 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
             </div>
             <div className="report-view-box-right active">
               <h5>Business</h5>
-              <p><strong>Total Business :</strong> ₹{item.totalBusiness}</p>
-              <p><strong>Wallet :</strong> ₹{item.wallet}</p>
-              <p><strong>Total Income :</strong> ₹{item.totalIncome}</p>
+              <p><strong>Total Business :</strong> ₹{formatCurrency(item.totalBusiness)}</p>
+              <p><strong>Wallet :</strong> ₹{formatCurrency(item.wallet)}</p>
+              <p><strong>Total Income :</strong> ₹{formatCurrency(item.totalIncome)}</p>
             </div>
             <div className="report-view-box-right active">
               <h5>Income Breakdown</h5>
-              <p><strong>Direct Income :</strong> ₹{item.directIncome}</p>
-              <p><strong>Difference Income :</strong> ₹{item.differenceIncome}</p>
-              <p><strong>Matching Income :</strong> ₹{item.matchingIncome}</p>
-              <p><strong>Referral Income :</strong> ₹{item.referralIncome}</p>
-              <p><strong>Reward :</strong> ₹{item.rewardIncome}</p>
+              <p><strong>Direct Income :</strong> ₹{formatCurrency(item.directIncome)}</p>
+              <p><strong>Difference Income :</strong> ₹{formatCurrency(item.differenceIncome)}</p>
+              <p><strong>Matching Income :</strong> ₹{formatCurrency(item.matchingIncome)}</p>
+              <p><strong>Referral Income :</strong> ₹{formatCurrency(item.referralIncome)}</p>
+              <p><strong>Reward :</strong> ₹{formatCurrency(item.rewardIncome)}</p>
             </div>
             <div className="report-view-box-right active">
               <h5>Business Breakdown</h5>
-              <p><strong>Self Business :</strong> ₹{item.selfBusiness}  </p>
-              <p><strong>Left Business :</strong> ₹{item.leftBusiness} </p>
-              <p><strong>Right Business :</strong>  ₹{item.rightBusiness}  </p>
-              <p><strong>Total Business :</strong>  ₹{item.totalBusiness} </p>
+              <p><strong>Self Business :</strong> ₹{formatCurrency(item.selfBusiness)}  </p>
+              <p><strong>Left Business :</strong> ₹{formatCurrency(item.leftBusiness)} </p>
+              <p><strong>Right Business :</strong>  ₹{formatCurrency(item.rightBusiness)}  </p>
+              <p><strong>Total Business :</strong>  ₹{formatCurrency(item.totalBusiness)} </p>
             </div>
 
             <div className="report-view-box-right active">
               <h5>Commission Summary</h5>
-              <p><strong>Total Commission :</strong>  ₹{item.totalCommission} </p>
-              <p><strong>Credited :</strong>  ₹{item.creditedCommission} </p>
-              <p><strong>Pending :</strong>  ₹{item.pendingCommission} </p>
+              <p><strong>Total Commission :</strong>  ₹{formatCurrency(item.totalCommission)} </p>
+              <p><strong>Credited :</strong>  ₹{formatCurrency(item.creditedCommission)} </p>
+              <p><strong>Pending :</strong>  ₹{formatCurrency(item.pendingCommission)} </p>
             </div>
 
             <div className="report-view-box-right active">
@@ -106,7 +107,7 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
               <p><strong>Designation :</strong>{item.currentDesignation}</p>
               <p><strong>Rate :</strong>{item.currentRate}% </p>
               <p><strong>Next Rank :</strong>{item.nextDesignation}</p>
-              <p><strong>Remaining :</strong>₹{item.remainingForNextRank}</p>
+              <p><strong>Remaining :</strong>₹{formatCurrency(item.remainingForNextRank)}</p>
             </div>
 
           </div>
@@ -128,8 +129,8 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
                       best_performance_income: "Best Performance Income",
                     }[history.type] || history.type}
                   </h5>
-                  <p><strong>Amount :</strong> ₹{history.amount}</p>
-                  <p><strong>Business :</strong> ₹{history.businessAmount || 0}</p>
+                  <p><strong>Amount :</strong> ₹{formatCurrency(history.amount)}</p>
+                  <p><strong>Business :</strong> ₹{formatCurrency(history.businessAmount || 0)}</p>
                   <p><strong>Percentage :</strong>{history.percentage}%</p>
                   <p><strong>Status :</strong>{history.status}</p>
                   <p> <strong>Cycle :</strong>{new Date(history.cycleDate).toLocaleDateString()} </p>
@@ -146,7 +147,7 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
               item.rewards.map((reward) => (
                 <div key={reward._id} className="reward-card">
                   <h5>{reward.name}</h5>
-                  <p><strong>Target :</strong> ₹{reward.targetBusiness}</p>
+                  <p><strong>Target :</strong> ₹{formatCurrency(reward.targetBusiness)}</p>
                   <p><strong>Reward :</strong> {reward.rewardValue}</p>
                   <span
                     className={`status ${reward.achieved ? "active" : "pending"

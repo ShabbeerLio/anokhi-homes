@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAccountDetails, getBooking, getPlots, getSiteVisit, getUser } from "../../Redux/Slices/AppSlices";
 import axios from "axios";
 import Host from "../../Host/Host";
+import { formatCurrency } from "../../components/Utils/FormatCurrency";
 const ITEMS_PER_PAGE = 12;
 
 const Booking = ({ mood, setAlert }) => {
@@ -369,7 +370,7 @@ const Booking = ({ mood, setAlert }) => {
         </div>
 
         <div className="field">
-          <label>Rate <small style={{ fontSize: "12px", color: "green" }}>₹{selectedPlot?.price || 0} / sq.ft </small></label>
+          <label>Rate <small style={{ fontSize: "12px", color: "green" }}>₹{formatCurrency(selectedPlot?.price || 0)} / sq.ft </small></label>
           <input
             placeholder="Rate with sqft"
             value={formData.pricePerSqft ? `₹${formData.pricePerSqft} * ${formData.plotArea} sq.ft` : ""}

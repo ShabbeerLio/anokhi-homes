@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAccountDetails, getTeamTree } from "../../Redux/Slices/AppSlices";
 import NiPayments from "../../icons/ni-payments";
 import TeamNode from "./TeamTree";
+import { formatCurrency } from "../../components/Utils/FormatCurrency";
 
 const Teams = () => {
   const navigate = useNavigate();
@@ -155,19 +156,19 @@ const Teams = () => {
                 </div>
                 <div className="user-card-bottom-right">
                   <p>
-                    <strong>Wallet:</strong> ₹{currentData.wallet || 0}
+                    <strong>Wallet:</strong> ₹{formatCurrency(currentData.wallet || 0)}
                   </p>
                   <p>
-                    <strong>Total Income:</strong> ₹{currentData.totalIncome || 0}
+                    <strong>Total Income:</strong> ₹{formatCurrency(currentData.totalIncome || 0)}
                   </p>
                   <p>
                     <strong>Right Team:</strong> {rightTeam.length || 0}
                   </p>
                   <p>
-                    <strong>Self Business:</strong> ₹{currentData.selfBusiness || 0}
+                    <strong>Self Business:</strong> ₹{formatCurrency(currentData.selfBusiness || 0)}
                   </p>
                   <p>
-                    <strong>Total Withdraw:</strong> ₹{currentData.totalWithdraw || 0}
+                    <strong>Total Withdraw:</strong> ₹{formatCurrency(currentData.totalWithdraw || 0)}
                   </p>
                 </div>
               </div>
@@ -183,7 +184,7 @@ const Teams = () => {
             </div>
             <div className="dashboard-box-item-right">
               <h6>Left Team Business</h6>
-              <p>₹{currentData?.leftBusiness || 0}</p>
+              <p>₹{formatCurrency(currentData?.leftBusiness || 0)}</p>
             </div>
           </div>
           <div
@@ -193,7 +194,7 @@ const Teams = () => {
             </div>
             <div className="dashboard-box-item-right">
               <h6>Right Team Business</h6>
-              <p>₹{currentData?.rightBusiness || 0}</p>
+              <p>₹{formatCurrency(currentData?.rightBusiness || 0)}</p>
             </div>
           </div>
           <div
@@ -203,7 +204,7 @@ const Teams = () => {
             </div>
             <div className="dashboard-box-item-right">
               <h6>Total Business</h6>
-              <p>₹{currentData?.totalBusiness || 0}</p>
+              <p>₹{formatCurrency(currentData?.totalBusiness || 0)}</p>
             </div>
           </div>
         </div>

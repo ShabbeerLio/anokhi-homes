@@ -16,6 +16,7 @@ import Host from "../../Host/Host";
 import axios from "axios";
 import { getPayments } from "../../Redux/Slices/AppSlices";
 import { useDispatch } from "react-redux";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const PaymentCard = ({
   item,
@@ -144,7 +145,7 @@ const PaymentCard = ({
             {item?.booking?.plot?.plotId}, {item?.booking?.colony?.name},{" "}
             {item?.booking?.location?.name}
           </p>
-          <p>₹{item.amount}</p>
+          <p>₹{formatCurrency(item.amount)}</p>
           <p>{item.paymentMode}</p>
           <p>{item.agent?.name}</p>
           {item.paymentMode !== "cash" && <p>{item.transactionId}</p>}
@@ -228,7 +229,7 @@ const PaymentCard = ({
               {item?.booking?.plot?.plotId}, {item?.booking?.colony?.name},{" "}
               {item?.booking?.location?.name}
             </p>
-            <p>₹{item.amount}</p>
+            <p>₹{formatCurrency(item.amount)}</p>
             <p>{item.paymentMode}</p>
             <p>{item.paymentType}</p>
             {/* {item?.paymentMode !== "cash" && (

@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getBooking, getPayments } from "../../Redux/Slices/AppSlices";
 import axios from "axios";
 import Host from "../../Host/Host";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const ITEMS_PER_PAGE = 15;
 
@@ -288,7 +289,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
             <div className="payment-details" style={{border: "1px solid #d4d4d4", borderRadius:"1.75rem", padding:"1rem 1rem 0 1rem", marginBottom:"1rem"}}>
               <span>Booking Details</span>
               <p>Customer :- <small>{formData?.customer?.name} ({formData?.customer?.phone})</small></p>
-              <p>Plot Price / sqft :- <small>{formData?.pricePerSqft}/sqft</small></p>
+              <p>Plot Price / sqft :- <small>{formatCurrency(formData?.pricePerSqft)}/sqft</small></p>
               <p>Request Price / sqft :- <small>{formData?.requestAmount}/sqft</small></p>
               <p>Plot Area :- <small>{formData?.plotArea}</small></p>
               <p>Total Amount :- <small>{formData?.totalAmount}</small></p>
@@ -341,7 +342,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
           <label>
             Amount
             <small style={{ fontSize: "12px", color: "green" }}>
-              ₹{formData.restAmount || 0}{" "}
+              ₹{formatCurrency(formData.restAmount || 0)}{" "}
             </small>
           </label>
           <input

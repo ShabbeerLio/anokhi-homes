@@ -11,7 +11,7 @@ import SearchSelect from "../SearchItems/SearchSelect";
 import formatDate from "../DateFormate/DateFormate";
 import Host from "../../Host/Host";
 import axios from "axios";
-import { getAllColonies, getLeads } from "../../Redux/Slices/AppSlices";
+import { addUser, getAllColonies, getLeads } from "../../Redux/Slices/AppSlices";
 import { useDispatch, useSelector } from "react-redux";
 import NiTick from "../../icons/ni-tick";
 import NiEdit from "../../icons/ni-edit";
@@ -267,7 +267,7 @@ const ManagementCard = ({
         message: "Lead deleted successfully!",
         status: "Success",
       });
-setTimeout(() => setAlert(null), 3000);
+      setTimeout(() => setAlert(null), 3000);
       setDeleteOpen(false);
     } catch (err) {
       console.error(err);

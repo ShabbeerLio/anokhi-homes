@@ -158,8 +158,8 @@
   cursor: pointer;
   border: 1px solid var(--mood-color);
   display: flex;
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-actions {
@@ -257,7 +257,7 @@
 }
 
 @media (max-width: 768px) {
-.plot-draw.fullscreen svg {
-  height: calc(50vh - 40px);
-}
+  .modal {
+    min-width: 90%;
+  }
 }

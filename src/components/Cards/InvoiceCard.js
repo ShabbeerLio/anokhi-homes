@@ -12,6 +12,7 @@ import NiBooking from "../../icons/ni-booking";
 import { useNavigate } from "react-router-dom";
 import NiDownload from "../../icons/ni-download";
 import formatDate from "../DateFormate/DateFormate";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const InvoiceCard = ({
   item,
@@ -99,7 +100,7 @@ const InvoiceCard = ({
         <div className="user-card-bottom-right">
           <p>{formatDate(item?.createdAt)}</p>
           <p style={{ textTransform: "capitalize" }}>{item?.type}</p>
-          <p>₹{item.amount}</p>
+          <p>₹{formatCurrency(item.amount)}</p>
         </div>
       </div>
       <ViewModal
@@ -116,7 +117,7 @@ const InvoiceCard = ({
           <div className="user-card-bottom-right">
             <p>{formatDate(item?.createdAt)}</p>
             <p style={{ textTransform: "capitalize" }}>{item?.type}</p>
-            <p>₹{item.amount}</p>
+            <p>₹{formatCurrency(item.amount)}</p>
           </div>
         </div>
         <div className={`report-view-box-right active`}>
@@ -140,7 +141,7 @@ const InvoiceCard = ({
                   {item?.payment?.customer?.email || "-"}
                 </p>
                 <p>
-                  <strong>Amount:</strong> ₹{item?.payment?.amount || 0}
+                  <strong>Amount:</strong> ₹{formatCurrency(item?.payment?.amount || 0)}
                 </p>
                 <p>
                   <strong>Payment Mode:</strong>{" "}
@@ -173,7 +174,7 @@ const InvoiceCard = ({
                 <hr />
 
                 <p>
-                  <strong>Business Amount:</strong> ₹{item?.businessAmount || 0}
+                  <strong>Business Amount:</strong> ₹{formatCurrency(item?.businessAmount || 0)}
                 </p>
 
                 <p>
@@ -181,7 +182,7 @@ const InvoiceCard = ({
                 </p>
 
                 <p>
-                  <strong>Income Earned:</strong> ₹{item?.amount || 0}
+                  <strong>Income Earned:</strong> ₹{formatCurrency(item?.amount || 0)}
                 </p>
               </>
             )}

@@ -13,6 +13,7 @@ import {
 } from "../../Redux/Slices/AppSlices";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const UserDashboard = ({ mood }) => {
   const navigate = useNavigate();
@@ -96,13 +97,13 @@ const UserDashboard = ({ mood }) => {
       <div className="dashboard-grid">
         <DashboardCard
           title="Total Paid"
-          value={`₹${totalPaid.toLocaleString("en-IN")}`}
+          value={`₹${formatCurrency(totalPaid)}`}
           icons={<NiPayments />}
         />
 
         <DashboardCard
           title="Outstanding Amount"
-          value={`₹${outstandingAmount.toLocaleString("en-IN")}`}
+          value={`₹${formatCurrency(outstandingAmount)}`}
           icons={<NiPayments />}
         />
 

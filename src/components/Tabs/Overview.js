@@ -5,16 +5,26 @@ import NiTick from "../../icons/ni-tick";
 import DeleteModal from "../Modals/DeleteModal";
 import AddLocationModal from "../Modals/AddLocationModal";
 import formatDate from "../DateFormate/DateFormate";
-import { useDispatch } from "react-redux";
-import { updateUserApproval, updateUser } from "../../Redux/Slices/AppSlices";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserApproval, updateUser, getRank } from "../../Redux/Slices/AppSlices";
 import NiEdit from "../../icons/ni-edit";
 import { X } from "lucide-react";
 import { uploadImage } from "../../Pages/LandingSetting/LandingApi";
+import axios from "axios";
+import Host from "../../Host/Host";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const Overview = ({ userData, mood, setAlert }) => {
-  console.log(userData,"userData")
   const dispatch = useDispatch();
+  const { rankData } = useSelector((state) => state.app);
+  useEffect(() => {
+    dispatch(getRank());
+  }, []);
+  const [rankOpen, setRankOpen] = useState(false);
+  const [ranks, setRanks] = useState(rankData);
+  console.log(ranks, "userDranksata")
   const [localUser, setLocalUser] = useState(userData);
+  const [selectedLevel, setSelectedLevel] = useState(localUser?.level || "");
   const [disapproveOpen, setDisapproveOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -23,6 +33,10 @@ const Overview = ({ userData, mood, setAlert }) => {
   const [editBank, setEditBank] = useState(false);
   const [editNominee, setEditNominee] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setSelectedLevel(localUser?.level || "");
+  }, [localUser]);
 
   const [editData, setEditData] = useState({
     panNumber: localUser?.panNumber || "",
@@ -215,18 +229,77 @@ const Overview = ({ userData, mood, setAlert }) => {
     }
   };
 
+  const handleUpdateRank = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.put(
+        `${Host}/api/auth/update-rank/${localUser._id}`,
+        {
+          level: selectedLevel,
+        },
+        {
+          headers: {
+            "auth-token": token,
+          },
+        }
+      );
+
+      setLocalUser(res.data.user);
+
+      setAlert({
+        message: "Designation updated successfully",
+        status: "Success",
+      });
+
+      setRankOpen(false);
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.log(err);
+
+      setAlert({
+        message:
+          err.response?.data?.msg || "Failed to update designation",
+        status: "Error",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    }
+  };
+
   return (
     <div className="card overview-card">
       {localUser.role === "agent" && (
         <div className="agent-mini-stats">
           <div className="overview-grid">
             <div>
+              <label>Email</label>
+              <p>{localUser.email}</p>
+            </div>
+            <div>
+              <label>Phone</label>
+              <p>{localUser.phone}</p>
+            </div>
+            <div>
               <label>Referral ID</label>
               <p>{localUser.referralId}</p>
             </div>
 
             <div>
-              <label>Designation</label>
+              <label>
+                Designation
+
+                {mood === "admin" && localUser.role === "agent" && (
+                  <span
+                    style={{ marginLeft: 8, cursor: "pointer" }}
+                    onClick={() => setRankOpen(true)}
+                  >
+                    <NiEdit />
+                  </span>
+                )}
+              </label>
+
               <p>{localUser.designation}</p>
             </div>
 
@@ -237,17 +310,17 @@ const Overview = ({ userData, mood, setAlert }) => {
 
             <div>
               <label>Wallet</label>
-              <p>₹{localUser.wallet}</p>
+              <p>₹{formatCurrency(localUser.wallet)}</p>
             </div>
 
             <div>
               <label>Total Income</label>
-              <p>₹{localUser.totalIncome}</p>
+              <p>₹{formatCurrency(localUser.totalIncome)}</p>
             </div>
 
             <div>
               <label>Total Withdraw</label>
-              <p>₹{localUser.totalWithdraw}</p>
+              <p>₹{formatCurrency(localUser.totalWithdraw)}</p>
             </div>
 
             <div>
@@ -265,6 +338,10 @@ const Overview = ({ userData, mood, setAlert }) => {
             <div>
               <label>Joined On</label>
               <p>{formatDate(localUser?.createdAt)}</p>
+            </div>
+            <div>
+              <label>Position</label>
+              <p>{localUser.position}</p>
             </div>
           </div>
           {mood === "admin" && localUser.status === "approval" && (
@@ -286,18 +363,6 @@ const Overview = ({ userData, mood, setAlert }) => {
           )}
 
           <h4>Referred By</h4>
-
-          <div className="overview-grid">
-            <div>
-              <label>Referral ID</label>
-              <p>{localUser.referralId}</p>
-            </div>
-
-            <div>
-              <label>Position</label>
-              <p>{localUser.position}</p>
-            </div>
-          </div>
           {localUser.referredBy && (
             <>
               <div className="overview-grid">
@@ -324,6 +389,7 @@ const Overview = ({ userData, mood, setAlert }) => {
                   <label>Designation</label>
                   <p>{localUser.referredBy.designation}</p>
                 </div>
+
               </div>
             </>
           )}
@@ -333,32 +399,32 @@ const Overview = ({ userData, mood, setAlert }) => {
           <div className="overview-grid">
             <div>
               <label>Self Business</label>
-              <p>₹{localUser.selfBusiness}</p>
+              <p>₹{formatCurrency(localUser.selfBusiness)}</p>
             </div>
 
             <div>
               <label>Left Business</label>
-              <p>₹{localUser.leftBusiness}</p>
+              <p>₹{formatCurrency(localUser.leftBusiness)}</p>
             </div>
 
             <div>
               <label>Right Business</label>
-              <p>₹{localUser.rightBusiness}</p>
+              <p>₹{formatCurrency(localUser.rightBusiness)}</p>
             </div>
 
             <div>
               <label>Total Business</label>
-              <p>₹{localUser.totalBusiness}</p>
+              <p>₹{formatCurrency(localUser.totalBusiness)}</p>
             </div>
 
             <div>
               <label>Cycle 1 Business</label>
-              <p>₹{localUser.cycle1Business}</p>
+              <p>₹{formatCurrency(localUser.cycle1Business)}</p>
             </div>
 
             <div>
               <label>Cycle 2 Business</label>
-              <p>₹{localUser.cycle2Business}</p>
+              <p>₹{formatCurrency(localUser.cycle2Business)}</p>
             </div>
           </div>
 
@@ -857,6 +923,36 @@ const Overview = ({ userData, mood, setAlert }) => {
           </button>
         </div>
       </DeleteModal>
+      <AddLocationModal
+        open={rankOpen}
+        onClose={() => setRankOpen(false)}
+        title="Update Designation"
+      >
+        <div className="field">
+          <label>Designation</label>
+
+          <select
+            value={selectedLevel}
+            onChange={(e) => setSelectedLevel(Number(e.target.value))}
+          >
+            <option value="">Select Designation</option>
+
+            {rankData.map((rank) => (
+              <option key={rank.level} value={rank.level}>
+                {rank.designation}
+                {" "}
+                ({rank.directIncome}%)
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="modal-actions">
+          <button onClick={handleUpdateRank}>
+            Update Designation
+          </button>
+        </div>
+      </AddLocationModal>
       <AddLocationModal
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
