@@ -396,7 +396,7 @@ export const addOffer = createAsyncThunk("app/addOffer", async (data) => {
 export const updateOffer = createAsyncThunk(
   "app/updateOffer",
   async ({ id, data }) => {
-    console.log(data,"iddata")
+    console.log(data, "iddata");
     const res = await fetch(`${Host}/api/offer/edit/${id}`, {
       method: "PUT",
       headers: {
@@ -570,6 +570,83 @@ export const toggleCashbackStatus = createAsyncThunk(
   },
 );
 
+// ================= HELP CENTER =================
+
+export const getHelpTickets = createAsyncThunk(
+  "app/getHelpTickets",
+  async () => {
+    const res = await fetch(`${Host}/api/help`, {
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
+
+export const createHelpTicket = createAsyncThunk(
+  "app/createHelpTicket",
+  async (data) => {
+    const res = await fetch(`${Host}/api/help/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+      body: JSON.stringify(data),
+    });
+
+    return await res.json();
+  },
+);
+
+export const replyHelpTicket = createAsyncThunk(
+  "app/replyHelpTicket",
+  async ({ id, data }) => {
+    const res = await fetch(`${Host}/api/help/reply/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+      body: JSON.stringify(data),
+    });
+
+    return await res.json();
+  },
+);
+
+export const closeHelpTicket = createAsyncThunk(
+  "app/closeHelpTicket",
+  async (id) => {
+    const res = await fetch(`${Host}/api/help/close/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
+
+export const deleteHelpTicket = createAsyncThunk(
+  "app/deleteHelpTicket",
+  async (id) => {
+    const res = await fetch(`${Host}/api/help/${id}`, {
+      method: "DELETE",
+      headers: {
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
+
 // ========================
 // 🔥 Slice
 // ========================
@@ -591,6 +668,7 @@ const appSlice = createSlice({
     getLandingPage: [],
     agentByReferralId: [],
     myRewards: [],
+    helpTickets: [],
     loading: false,
     error: null,
   },
@@ -688,6 +766,10 @@ const appSlice = createSlice({
       })
       .addCase(getCashback.fulfilled, (state, action) => {
         state.cashbackData = action.payload;
+      })
+
+      .addCase(getHelpTickets.fulfilled, (state, action) => {
+        state.helpTickets = action.payload.tickets;
       })
 
       // LOADING (optional global)

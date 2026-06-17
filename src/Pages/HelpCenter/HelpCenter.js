@@ -7,115 +7,28 @@ import AddLocationModal from "../../components/Modals/AddLocationModal";
 import "./HelpCenter.css";
 import NiOpenEye from "../../icons/ni-openEye";
 import ViewModal from "../../components/Modals/ViewModal";
+import { useDispatch, useSelector } from "react-redux";
 
-const StaticTickets = [
-  {
-    id: 1,
-    ticket: "#8rj39",
-    postedBy: "Shabbeer",
-    date: "1 Aug, 2025",
-    status: "Replied",
-    title: "this is ticket1",
-    lastUpdate: "1 Aug, 2025 06:45 PM",
-    messages: [
-      {
-        title: "Initial title",
-        message: "initial message",
-        attachments: null,
-        timestamp: "2025-08-01T18:45:00",
-      },
-      {
-        title: "Follow up",
-        message: "Some reply...",
-        attachments: null,
-        timestamp: "2025-08-04T15:49:00",
-      },
-    ],
-    description:
-      "Team Ansar – Community Connectors Inspired by the Ansar of Madinah, this team works on the ground to connect and enroll Islamic institutions like mosques and madrasas into the Sadaqah App. They build trust, spread awareness, and grow our verified network with dedication and care.",
-  },
-  {
-    id: 2,
-    ticket: "#8rj34",
-    postedBy: "System",
-    date: "2 Aug, 2025",
-    status: "Closed",
-    title: "this is ticket2",
-    lastUpdate: "1 Aug, 2025 06:45 PM",
-    messages: [
-      {
-        title: "Initial title",
-        message: "initial message",
-        attachments: null,
-        timestamp: "2025-08-01T18:45:00",
-      },
-      {
-        title: "Follow up",
-        message: "Some reply...",
-        attachments: null,
-        timestamp: "2025-08-04T15:49:00",
-      },
-    ],
-    description:
-      "Team Rahmah – Compassion in Action Rooted in the value of Rahmah (mercy and compassion), this team focuses on guiding users, resolving concerns, and offering heartfelt support. They ensure every interaction on the Sadaqah App feels warm, respectful, and caring.",
-  },
-  {
-    id: 3,
-    ticket: "#8rj37",
-    postedBy: "System",
-    date: "2 Aug, 2025",
-    status: "Closed",
-    title: "this is ticket3",
-    lastUpdate: "1 Aug, 2025 06:45 PM",
-    messages: [
-      {
-        title: "Initial title",
-        message: "initial message",
-        attachments: null,
-        timestamp: "2025-08-01T18:45:00",
-      },
-      {
-        title: "Follow up",
-        message: "Some reply...",
-        attachments: null,
-        timestamp: "2025-08-04T15:49:00",
-      },
-    ],
-    description:
-      "Team Amanah – Trust & Verification Inspired by the Islamic principle of Amanah (trust), this team is responsible for verifying every institution, donor, and transaction. They ensure transparency, safety, and credibility across the Sadaqah App platform.",
-  },
-  {
-    id: 4,
-    ticket: "#8rj38",
-    postedBy: "Nawaz Akhtar",
-    date: "1 Aug, 2025",
-    status: "On Going",
-    title: "this is ticket4",
-    lastUpdate: "1 Aug, 2025 06:45 PM",
-    messages: [
-      {
-        title: "Initial title",
-        message: "initial message",
-        attachments: null,
-        timestamp: "2025-08-01T18:45:00",
-      },
-      {
-        title: "Follow up",
-        message: "Some reply...",
-        attachments: null,
-        timestamp: "2025-08-04T15:49:00",
-      },
-    ],
-    description:
-      "Team Fikr – Thoughtful Planning & Vision Inspired by the word Fikr (deep thought and concern), this team is responsible for strategy, planning, and continuous improvement. They think ahead to ensure the app grows with purpose and impact.",
-  },
-];
+import {
+  getHelpTickets,
+  createHelpTicket,
+  replyHelpTicket,
+  closeHelpTicket,
+} from "../../Redux/Slices/AppSlices";
 
 const HelpCenter = ({ mood, setAlert }) => {
-  const [applications, setApplications] = useState([]);
-  const [ticketReplies, setTicketReplies] = useState({});
+  const dispatch = useDispatch();
+
+  const { helpTickets } = useSelector((state) => state.app);
+  useEffect(() => {
+    dispatch(getHelpTickets());
+  }, []);
+
+  const mergedTickets = helpTickets || [];
+
   const [selectedPosition, setSelectedPosition] = useState(null);
 
+  const selectedTicket = mergedTickets.find((t) => t._id === selectedPosition);
   const [open, setOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
 
@@ -130,82 +43,78 @@ const HelpCenter = ({ mood, setAlert }) => {
     message: "",
   });
 
-  // ✅ Load from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("ticket");
-    if (saved) setApplications(JSON.parse(saved));
-
-    const savedReplies = localStorage.getItem("ticketReplies");
-    if (savedReplies) setTicketReplies(JSON.parse(savedReplies));
-  }, []);
-
-  const mergedTickets = [...StaticTickets, ...applications];
-  const selectedTicket = mergedTickets.find((t) => t.id === selectedPosition);
-
   // ===========================
   // CREATE TICKET
   // ===========================
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newTicket = {
-      id: Date.now(),
-      ticket: `#${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
-      postedBy: "User",
-      date: new Date().toLocaleDateString(),
-      lastUpdate: new Date().toLocaleString(),
-      status: "On Going",
-      title: formData.title,
-      description: formData.message,
-    };
+    await dispatch(
+      createHelpTicket({
+        title: formData.title,
+        message: formData.message,
+      }),
+    );
 
-    const updated = [...applications, newTicket];
-    setApplications(updated);
-    localStorage.setItem("ticket", JSON.stringify(updated));
+    dispatch(getHelpTickets());
 
     setOpen(false);
-    setFormData({ title: "", message: "", attachments: null });
 
-    setAlert({ message: "Ticket Created!", status: "Success" });
+    setFormData({
+      title: "",
+      message: "",
+    });
+
+    setAlert({
+      message: "Ticket Created",
+      status: "Success",
+    });
   };
 
   // ===========================
   // ADD REPLY
   // ===========================
-  const handleReply = () => {
+  const handleReply = async () => {
     if (!replyData.message) return;
 
-    const newReply = {
-      title: replyData.title,
-      message: replyData.message,
-      timestamp: new Date().toISOString(),
-    };
+    await dispatch(
+      replyHelpTicket({
+        id: selectedTicket._id,
+        data: {
+          title: replyData.title,
+          message: replyData.message,
+        },
+      }),
+    );
 
-    const updatedReplies = {
-      ...ticketReplies,
-      [selectedPosition]: [
-        newReply,
-        ...(ticketReplies[selectedPosition] || []),
-      ],
-    };
+    dispatch(getHelpTickets());
 
-    setTicketReplies(updatedReplies);
-    localStorage.setItem("ticketReplies", JSON.stringify(updatedReplies));
+    setReplyData({
+      title: "",
+      message: "",
+    });
+    setSelectedPosition(selectedTicket._id);
 
-    setReplyData({ title: "", message: "" });
-
-    setAlert({ message: "Reply added!", status: "Success" });
+    setAlert({
+      message: "Reply Added",
+      status: "Success",
+    });
   };
 
   // ===========================
   // CLOSE TICKET
   // ===========================
-  const handleCloseTicket = (id) => {
-    const updated = applications.map((t) =>
-      t.id === id ? { ...t, status: "Closed" } : t,
-    );
-    setApplications(updated);
-    localStorage.setItem("ticket", JSON.stringify(updated));
+  const handleCloseTicket = async (id) => {
+    await dispatch(closeHelpTicket(id));
+
+    await dispatch(getHelpTickets());
+
+    setViewOpen(false);
+
+    setAlert({
+      message: "Ticket Closed",
+      status: "Success",
+    });
   };
 
   return (
@@ -233,49 +142,53 @@ const HelpCenter = ({ mood, setAlert }) => {
       <div className="dashboard-container">
         {/* TICKETS GRID */}
         <div className="plot-grid">
-          {mergedTickets.map((pos) => (
-            <div
-              key={pos.id}
-              className="user-card card"
-              onClick={() => {
-                setSelectedPosition(pos.id);
-                setViewOpen(true);
-              }}
-            >
-              <div className="user-card-top">
-                <h4>
-                  {pos.ticket}
-                  <span
-                    className={`status ${
-                      pos.status === "Closed"
-                        ? "active"
-                        : pos.status === "On Going"
-                          ? "pending"
-                          : pos.status === "Replied"
-                            ? "pending2"
-                            : ""
-                    }`}
-                  >
-                    {pos.status}
-                  </span>
-                </h4>
-                <NiOpenEye />
-              </div>
+          {mergedTickets.length === 0 ? (
+            <div className="card">
+              <p>No tickets found.</p>
+            </div>
+          ) : (
+            mergedTickets.map((pos) => (
+              <div
+                key={pos._id}
+                className="user-card card"
+                onClick={() => {
+                  setSelectedPosition(pos._id);
+                  setViewOpen(true);
+                }}
+              >
+                <div className="user-card-top">
+                  <h4>
+                    #{pos.ticketNumber}
+                    <span
+                      className={`status ${
+                        pos.status === "closed"
+                          ? "active"
+                          : pos.status === "open"
+                            ? "pending"
+                            : "pending2"
+                      }`}
+                    >
+                      {pos.status}
+                    </span>
+                  </h4>
+                  <NiOpenEye />
+                </div>
 
-              <div className="user-card-bottom">
-                <div className="user-card-bottom-left">
-                  <p>Title: {pos.title}</p>
-                  <p>Updated: {pos.lastUpdate}</p>
+                <div className="user-card-bottom">
+                  <div className="user-card-bottom-left">
+                    <p>Title: {pos.title}</p>
+                    <p>Updated: {new Date(pos.updatedAt).toLocaleString()}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
       <ViewModal
         open={viewOpen}
         onClose={() => setViewOpen(false)}
-        title={selectedTicket?.ticket}
+        title={`#${selectedTicket?.ticketNumber || ""}`}
       >
         <div className="user-card-bottom view-box">
           <div className="user-card-bottom-left">
@@ -284,18 +197,24 @@ const HelpCenter = ({ mood, setAlert }) => {
                 {/* DETAILS */}
                 <div className="help-detail-box">
                   <h4>{selectedTicket.title}</h4>
-                  <p>{selectedTicket.description}</p>
+                  <p>{selectedTicket.message}</p>
                   <small>
-                    {selectedTicket.postedBy} • {selectedTicket.date}
+                    {selectedTicket.createdBy?.name} •{" "}
+                    {new Date(selectedTicket.createdAt).toLocaleString()}
                   </small>
                 </div>
 
                 {/* REPLIES */}
-                {ticketReplies[selectedPosition]?.map((msg, i) => (
-                  <div key={i} className="help-detail-box post-card">
-                    <h5>{msg.title}</h5>
-                    <p>{msg.message}</p>
-                    <small>{new Date(msg.timestamp).toLocaleString()}</small>
+                {selectedTicket?.replies?.map((reply) => (
+                  <div key={reply._id} className="help-detail-box post-card">
+                    <h5>{reply.title}</h5>
+
+                    <p>{reply.message}</p>
+
+                    <small>
+                      {reply.by?.name} •{" "}
+                      {new Date(reply.createdAt).toLocaleString()}
+                    </small>
                   </div>
                 ))}
 
@@ -334,7 +253,7 @@ const HelpCenter = ({ mood, setAlert }) => {
                       {selectedTicket.status !== "Closed" && (
                         <button
                           className="post-button"
-                          onClick={() => handleCloseTicket(selectedTicket.id)}
+                          onClick={() => handleCloseTicket(selectedTicket._id)}
                         >
                           Close Ticket
                         </button>
