@@ -10,22 +10,22 @@ const StaffDashboard = () => {
       <div className="dashboard-grid">
         <DashboardCard
           title="Todays Payments"
-          value="₹45,000"
+          value="₹0"
           icons={<NiPayments />}
         />
         <DashboardCard
           title="Pending Payment"
-          value="₹30,000"
+          value="₹0"
           icons={<NiPayments />}
         />
         <DashboardCard
           title="Total Outstanding"
-          value="₹1,20,000"
+          value="₹0"
           icons={<NiPayments />}
         />
         <DashboardCard
           title="This Month Collection"
-          value="₹1,40,000"
+          value="₹0"
           icons={<NiPayments />}
         />
       </div>

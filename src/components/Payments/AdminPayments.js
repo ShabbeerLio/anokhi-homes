@@ -1,19 +1,48 @@
 import NiPayments from "../../icons/ni-payments";
 import DashboardCard from "../Cards/DashboardCard";
 import Charts from "../Dashboard/Charts";
-import PaymentsData from "./PaymentData";
 import PaymentTable from "./PaymentTable";
 
-const AdminPayments = ({payment, mood, setAlert }) => {
-  const totalCollection = PaymentsData.reduce(
-    (sum, p) => sum + p.paidAmount,
-    0,
-  );
+const AdminPayments = ({ payment, mood, setAlert }) => {
+  const totalCollection = payment?.reduce((sum, p) => sum + (p.amount || 0), 0);
 
-  const pendingDues = PaymentsData.reduce(
-    (sum, p) => sum + (p.totalAmount - p.paidAmount),
-    0,
-  );
+  const now = new Date();
+
+  // Today's Collection
+  const todaysCollection = payment
+    ?.filter((p) => {
+      const date = new Date(p.paymentDate || p.createdAt);
+
+      return (
+        date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear() &&
+        p.status === "approved"
+      );
+    })
+    .reduce((sum, p) => sum + (p.amount || 0), 0);
+
+  // This Month Collection
+  const thisMonthCollection = payment
+    ?.filter((p) => {
+      const date = new Date(p.paymentDate || p.createdAt);
+
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear() &&
+        p.status === "approved"
+      );
+    })
+    .reduce((sum, p) => sum + (p.amount || 0), 0);
+
+  // Pending Approval
+  const pendingApproval =
+    payment?.filter((p) => p.status === "pending").length || 0;
+
+  // Rejected / Overdue
+  const overdue = payment
+    ?.filter((p) => p.status === "rejected")
+    .reduce((sum, p) => sum + (p.amount || 0), 0);
 
   return (
     <div className="dashboard-wrapper">
@@ -27,24 +56,32 @@ const AdminPayments = ({payment, mood, setAlert }) => {
 
         <DashboardCard
           title="This Month"
-          value="₹3,50,000"
-          icons=<NiPayments />
+          value={`₹${thisMonthCollection.toLocaleString()}`}
+          icons={<NiPayments />}
         />
-        <DashboardCard
+
+        {/* <DashboardCard
           title="Pending Dues"
           value={`₹${pendingDues.toLocaleString()}`}
           icons={<NiPayments />}
-        />
-        <DashboardCard title="Overdue" value="₹45,000" icons=<NiPayments /> />
+        /> */}
+
         <DashboardCard
-          title="Today’s Collection"
-          value="₹50,000"
-          icons=<NiPayments />
+          title="Overdue"
+          value={`₹${overdue.toLocaleString()}`}
+          icons={<NiPayments />}
         />
+
+        <DashboardCard
+          title="Today's Collection"
+          value={`₹${todaysCollection.toLocaleString()}`}
+          icons={<NiPayments />}
+        />
+
         <DashboardCard
           title="Pending Approval"
-          value="4"
-          icons=<NiPayments />
+          value={pendingApproval}
+          icons={<NiPayments />}
         />
       </div>
       <h4>Payments</h4>

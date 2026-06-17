@@ -3,58 +3,61 @@ import DashboardCard from "../Cards/DashboardCard";
 import Charts from "../Dashboard/Charts";
 import VisitTable from "./VisitTable";
 
-const visits = [
-  {
-    id: 1,
-    customer: "Rahul",
-    phone: "9876543210",
-    agent: "Amit",
-    site: "Goa Colony, Mumbai",
-    date: "2026-02-18",
-    status: "Completed",
-    visitDate : "2026-02-20, 08:30 A.M"
-  },
-  {
-    id: 2,
-    customer: "Rahul2",
-    phone: "9876543210",
-    agent: "Amit",
-    site: " Goa Colony, Mumbai",
-    date: "2026-02-18",
-    status: "Approval",
-    visitDate : "2026-02-20, 08:30 A.M"
-  },
-];
+const AdminSiteVisit = ({ siteVisits, mood, setAlert }) => {
+  const totalVisits = siteVisits?.length || 0;
 
-const AdminSiteVisit = ({siteVisits, mood, setAlert }) => {
+  const totalCompleted =
+    siteVisits?.filter((visit) => visit.status === "completed").length || 0;
+
+  const totalRescheduled =
+    siteVisits?.filter((visit) => visit.status === "rescheduled").length || 0;
+
+  const totalCancelled =
+    siteVisits?.filter(
+      (visit) => visit.status === "cancelled" || visit.status === "lost",
+    ).length || 0;
   return (
     <div className="dashboard-wrapper">
       {/* ================= STATS ================= */}
       <div className="dashboard-grid">
-        <DashboardCard title="Total Visits" value={siteVisits?.length} icons = <NiSitevisit /> />
-        {/* <DashboardCard title="Today's Visits" value="12" icons = <NiSitevisit /> /> */}
-        <DashboardCard title="Total Completed" value="80" icons = <NiSitevisit /> />
-        <DashboardCard title="Total Resheduled" value="5" icons = <NiSitevisit /> />
-        <DashboardCard title="Total Cancelled" value="10" icons = <NiSitevisit /> />
-        {/* <DashboardCard title="Conversion %" value="45%" icons = <NiSitevisit /> /> */}
-        {/* <DashboardCard title="Agent-wise Visits" value="8 Agents" icons = <NiSitevisit /> /> */}
+        <DashboardCard
+          title="Total Visits"
+          value={totalVisits}
+          icons={<NiSitevisit />}
+        />
+
+        <DashboardCard
+          title="Total Completed"
+          value={totalCompleted}
+          icons={<NiSitevisit />}
+        />
+
+        <DashboardCard
+          title="Total Rescheduled"
+          value={totalRescheduled}
+          icons={<NiSitevisit />}
+        />
+
+        <DashboardCard
+          title="Total Cancelled/Lost"
+          value={totalCancelled}
+          icons={<NiSitevisit />}
+        />
       </div>
       {/* Filters */}
       <h4>Site Visits</h4>
-      <VisitTable
-        data={siteVisits}
-        
-        mood={mood}
-        setAlert={setAlert}
-      />
+      <VisitTable data={siteVisits} mood={mood} setAlert={setAlert} />
       <h4>Monthly Revenue</h4>
       <div className="card">
         <Charts
           title="Monthly Visit Trend"
           data={[
-            { month: "Jan", visits: 20 },
-            { month: "Feb", visits: 35 },
-            { month: "Mar", visits: 28 },
+            { month: "Jan", visits: 0 },
+            { month: "Feb", visits: 0 },
+            { month: "Mar", visits: 0 },
+            { month: "April", visits: 0 },
+            { month: "May", visits: 0 },
+            { month: "June", visits: 0 },
           ]}
           dataKey="visits"
         />

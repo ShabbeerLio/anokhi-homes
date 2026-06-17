@@ -19,7 +19,7 @@ const Banner = ({data}) => {
                 </p>
 
                 <div className="hero-actions">
-                    <button className="btn primary"><Send />Enquire Now</button>
+                    <button className="btn primary"><Send />Get Your Plot Now</button>
                 </div>
             </div>
 

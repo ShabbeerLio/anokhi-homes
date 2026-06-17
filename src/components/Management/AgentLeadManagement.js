@@ -36,11 +36,11 @@ const AgentLeadManagement = ({leads, mood, setAlert }) => {
         <DashboardCard title="Interested" value={leads?.filter((lead) => lead.status === "interested").length} icons=<NiManagement /> />
         <DashboardCard title="Converted" value={leads?.filter((lead) => lead.status === "converted").length} icons=<NiManagement /> />
         <DashboardCard title="Lost" value={leads?.filter((lead) => lead.status === "lost").length} icons=<NiManagement /> />
-        <DashboardCard
+        {/* <DashboardCard
           title="Today's Follow-ups"
-          value="4"
+          value="0"
           icons=<NiManagement />
-        />
+        /> */}
       </div>
 
       <h4>Leads</h4>

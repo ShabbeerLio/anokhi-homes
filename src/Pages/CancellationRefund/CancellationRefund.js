@@ -3,7 +3,7 @@ import LBreadcrumb from "../../components/LandingPage/LBreadcrumb";
 import PolicyData from "../../components/Data/PolicyData";
 
 const CancellationRefund = ({ data }) => {
-  console.log(data, "policies");
+  // console.log(data, "policies");
   return (
     <>
       <div className="landing-head-box">

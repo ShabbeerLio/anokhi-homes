@@ -6,13 +6,13 @@ const NotificationModal = () => {
         <div className="notif-modal">
             <h3>Notifications</h3>
 
-            <div className="notif-tabs">
+            {/* <div className="notif-tabs">
                 <button className="active">All</button>
                 <button>System</button>
                 <button>User</button>
-            </div>
+            </div> */}
 
-            <div className="notif-modal-box">
+            {/* <div className="notif-modal-box">
                 <div className="notif-item">
                     <img src="https://i.pravatar.cc/40?img=1" />
                     <div>
@@ -86,7 +86,7 @@ const NotificationModal = () => {
                         <p>14 minutes ago</p>
                     </div>
                 </div>
-            </div>
+            </div> */}
             {/* <button className="notif-view">View All</button> */}
         </div>
     );

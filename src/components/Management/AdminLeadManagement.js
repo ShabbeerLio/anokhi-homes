@@ -18,11 +18,11 @@ const AdminLeadManagement = ({ leads, mood, setAlert }) => {
         <DashboardCard title="Converted" value={leads?.filter((lead) => lead.status === "converted").length} icons=<NiManagement /> />
         <DashboardCard title="Lost Leads" value={leads?.filter((lead) => lead.status === "lost").length} icons=<NiManagement /> />
         <DashboardCard title="Unassigned" value={leads?.filter((lead) => lead.status === "unassigned").length} icons=<NiManagement /> />
-        <DashboardCard
+        {/* <DashboardCard
           title="Conversion Rate"
-          value="37%"
+          value="0%"
           icons=<NiManagement />
-        />
+        /> */}
       </div>
 
       {/* Filters */}
@@ -35,10 +35,13 @@ const AdminLeadManagement = ({ leads, mood, setAlert }) => {
         <Charts
           title="Lead Performance"
           data={[
-            { month: "Mon", leads: 10 },
-            { month: "Tue", leads: 15 },
-            { month: "Wed", leads: 8 },
-            { month: "Thu", leads: 20 },
+            { month: "Mon", leads: 0 },
+            { month: "Tue", leads: 0 },
+            { month: "Wed", leads: 0 },
+            { month: "Thu", leads: 0 },
+            { month: "Fri", leads: 0 },
+            { month: "Sat", leads: 0 },
+            { month: "Sun", leads: 0 },
           ]}
           dataKey="leads"
         />

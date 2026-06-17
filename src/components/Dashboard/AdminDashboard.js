@@ -33,20 +33,20 @@ const AdminDashboard = () => {
   }, []);
 
   const revenueData = [
-    { month: "Mon", revenue: 500 },
-    { month: "Tue", revenue: 600 },
-    { month: "Wed", revenue: 500 },
-    { month: "Thu", revenue: 600 },
-    { month: "Fri", revenue: 750 },
-    { month: "Sat", revenue: 500 },
-    { month: "Sun", revenue: 800 },
+    { month: "Mon", revenue: 0 },
+    { month: "Tue", revenue: 0 },
+    { month: "Wed", revenue: 0 },
+    { month: "Thu", revenue: 0 },
+    { month: "Fri", revenue: 0 },
+    { month: "Sat", revenue: 0 },
+    { month: "Sun", revenue: 0 },
   ];
 
   const leadData = [
-    { month: "Jan", conversion: 20 },
-    { month: "Feb", conversion: 35 },
-    { month: "Mar", conversion: 28 },
-    { month: "Apr", conversion: 40 },
+    { month: "Jan", conversion: 0 },
+    { month: "Feb", conversion: 0 },
+    { month: "Mar", conversion: 0 },
+    { month: "Apr", conversion: 0 },
   ];
 
   const handleNavigate = () => {
@@ -60,32 +60,32 @@ const AdminDashboard = () => {
       <div className="dashboard-grid">
         <DashboardCard
           title="Total Revenue"
-          value="₹12,50,000"
+          value="₹0"
           icons={<NiPayments />}
         />
         <DashboardCard
           title="Pending Dues"
-          value="₹50,000"
+          value="₹0"
           icons={<NiPayments />}
         />
         <DashboardCard
           title="Agents Income"
-          value="₹12,00,000"
+          value="₹0"
           icons={<NiTeams />}
         />
         <DashboardCard
           title="Total Bookings"
-          value="89"
+          value="0"
           icons={<NiBooking />}
         />
-        <DashboardCard title="Available Plots" value="320" icons={<NiTool />} />
-        <DashboardCard title="Plots on Hold" value="12" icons={<NiTool />} />
+        <DashboardCard title="Available Plots" value="0" icons={<NiTool />} />
+        <DashboardCard title="Plots on Hold" value="0" icons={<NiTool />} />
         <DashboardCard
           title="Total Leads"
-          value="100"
+          value="0"
           icons={<NiManagement />}
         />
-        <DashboardCard title="Active Agents" value="12" icons={<NiTeams />} />
+        <DashboardCard title="Active Agents" value="0" icons={<NiTeams />} />
       </div>
 
       <div className="dashboard-box">
@@ -123,14 +123,14 @@ const AdminDashboard = () => {
             <ul>
               <li className="alert-items danger card">
                 {" "}
-                <NiCross /> 3 Plots on hold expiring soon
+                <NiCross /> 0 Plots on hold expiring soon
               </li>
               <li className="alert-items warning card">
                 {" "}
-                <NiInfo /> 5 Overdue payments
+                <NiInfo /> 0 Overdue payments
               </li>
               <li className="alert-items success card">
-                <NiTick /> 2 Unassigned leads
+                <NiTick /> 0 Unassigned leads
               </li>
             </ul>
           </div>

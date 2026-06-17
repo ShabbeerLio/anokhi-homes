@@ -1,6 +1,5 @@
 import React from "react";
 import "./Projects.css";
-import PlotData from "../../Pages/Plot/PlotData"
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";

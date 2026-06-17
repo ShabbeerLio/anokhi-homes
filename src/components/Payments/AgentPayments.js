@@ -3,40 +3,60 @@ import DashboardCard from "../Cards/DashboardCard";
 import PaymentsData from "./PaymentData";
 import PaymentTable from "./PaymentTable";
 
-const myPayments = [
-  {
-    id: 1,
-    client: "Rahul",
-    phone: "9876543210",
-    project: "Green City",
-    amount: 50000,
-    mode: "Online",
-    status: "Approved",
-    dueStatus: "Paid",
-    date: "2026-02-18",
-  },
-];
+const AgentPayments = ({ payment, mood, setAlert }) => {
+  const totalCollection = payment?.reduce((sum, p) => sum + (p.amount || 0), 0);
+  const now = new Date();
+  // Today's Collection
 
-const AgentPayments = ({payment, mood, setAlert }) => {
+  const todaysCollection = payment
+
+    ?.filter((p) => {
+      const date = new Date(p.paymentDate || p.createdAt);
+
+      return (
+        date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear() &&
+        p.status === "approved"
+      );
+    })
+
+    .reduce((sum, p) => sum + (p.amount || 0), 0);
+
+  const thisMonthCollection = payment
+
+    ?.filter((p) => {
+      const date = new Date(p.paymentDate || p.createdAt);
+
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear() &&
+        p.status === "approved"
+      );
+    })
+
+    .reduce((sum, p) => sum + (p.amount || 0), 0);
+
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-grid">
         <DashboardCard
-          title="My Clients Paid"
-          value="₹5,00,000"
-          icons=<NiPayments />
+          title="Total Collection"
+          value={`₹${totalCollection.toLocaleString()}`}
+          icons={<NiPayments />}
         />
-        <DashboardCard
-          title="Outstanding"
-          value="₹80,000"
-          icons=<NiPayments />
-        />
+
         <DashboardCard
           title="This Month"
-          value="₹1,20,000"
-          icons=<NiPayments />
+          value={`₹${thisMonthCollection.toLocaleString()}`}
+          icons={<NiPayments />}
         />
-        <DashboardCard title="Overdue Clients" value="3" icons=<NiPayments /> />
+
+        <DashboardCard
+          title="Today's Collection"
+          value={`₹${todaysCollection.toLocaleString()}`}
+          icons={<NiPayments />}
+        />
       </div>
       <h4>Payments</h4>
       <PaymentTable data={payment} mood={mood} setAlert={setAlert} />

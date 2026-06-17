@@ -2,46 +2,45 @@ import NiSitevisit from "../../icons/ni-sitevisit";
 import DashboardCard from "../Cards/DashboardCard";
 import VisitTable from "./VisitTable";
 
-const myVisits = [
-  {
-    id: 1,
-    customer: "Rahul",
-    phone: "9876543210",
-    agent: "Me",
-    date: "2026-02-18",
-    status: "Scheduled",
-    site: "Goa Colony, Mumbai",
-    visitDate : "2026-02-20, 08:30 A.M"
-  },
-  {
-    id: 2,
-    customer: "Rahul2",
-    phone: "9876543210",
-    agent: "Amit",
-    site: " Goa Colony, Mumbai",
-    date: "2026-02-18",
-    status: "Approval",
-    visitDate : "2026-02-22, 08:30 A.M"
-  },
-];
+const AgentSiteVisit = ({ siteVisits, mood, setAlert }) => {
+  const totalVisits = siteVisits?.length || 0;
 
-const AgentSiteVisit = ({siteVisits, mood, setAlert }) => {
-  // console.log(siteVisits, "siteVisits");
+  const totalCompleted =
+    siteVisits?.filter((visit) => visit.status === "completed").length || 0;
+
+  const totalRescheduled =
+    siteVisits?.filter((visit) => visit.status === "rescheduled").length || 0;
+
+  const totalCancelled =
+    siteVisits?.filter(
+      (visit) =>
+        visit.status === "cancelled" ||
+        visit.status === "lost"
+    ).length || 0;
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-grid">
-        <DashboardCard title="My Visits" value={siteVisits?.length} icons={<NiSitevisit />} />
-        <DashboardCard title="Today's Visits" value="4" icons={<NiSitevisit />} />
-        <DashboardCard title="Completed" value="15" icons={<NiSitevisit />} />
-        <DashboardCard title="Cancelled" value="2" icons={<NiSitevisit />} />
         <DashboardCard
-          title="Conversion Rate"
-          value="40%"
+          title="Total Visits"
+          value={totalVisits}
           icons={<NiSitevisit />}
         />
+
         <DashboardCard
-          title="Upcoming Visits"
-          value="3"
+          title="Total Completed"
+          value={totalCompleted}
+          icons={<NiSitevisit />}
+        />
+
+        <DashboardCard
+          title="Total Rescheduled"
+          value={totalRescheduled}
+          icons={<NiSitevisit />}
+        />
+
+        <DashboardCard
+          title="Total Cancelled/Lost"
+          value={totalCancelled}
           icons={<NiSitevisit />}
         />
       </div>

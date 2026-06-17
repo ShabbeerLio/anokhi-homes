@@ -15,7 +15,7 @@ const Testimonial = ({ data }) => {
         slidesPerView={2}
         navigation
         autoplay={{
-          delay: 3000, // 3 seconds
+          delay: 8000, // 3 seconds
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         }}

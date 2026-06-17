@@ -17,6 +17,7 @@ import { FaFacebook, FaLinkedin } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { FaXTwitter } from "react-icons/fa6";
+import NiIncome from "../../icons/ni-income";
 
 function Sidebar({ closeMobile, mood }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -45,7 +46,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/plot", label: "Plots", icon: <NiTool /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/income", label: "Income", icon: <NiPayments /> },
+      { path: "/income", label: "Income", icon: <NiIncome /> },
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/commission", label: "Commission", icon: <NiCommission /> },
@@ -64,7 +65,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/income", label: "Income", icon: <NiPayments /> },
+      { path: "/income", label: "Income", icon: <NiIncome /> },
       { path: "/commission", label: "Commission", icon: <NiCommission /> },
       {
         path: "/offers-discounts",
@@ -79,7 +80,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
-      { path: "/income", label: "Income", icon: <NiPayments /> },
+      { path: "/income", label: "Income", icon: <NiIncome /> },
       { path: "/commission", label: "Commission", icon: <NiCommission /> },
       {
         path: "/offers-discounts",

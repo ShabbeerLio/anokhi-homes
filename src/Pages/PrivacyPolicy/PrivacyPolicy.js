@@ -3,7 +3,7 @@ import LBreadcrumb from "../../components/LandingPage/LBreadcrumb";
 import PolicyData from "../../components/Data/PolicyData";
 
 const PrivacyPolicy = ({ data }) => {
-  console.log(data.policies, "policies");
+  // console.log(data.policies, "policies");
   return (
     <>
       <div className="landing-head-box">

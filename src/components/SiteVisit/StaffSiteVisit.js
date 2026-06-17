@@ -2,44 +2,46 @@ import NiSitevisit from "../../icons/ni-sitevisit";
 import DashboardCard from "../Cards/DashboardCard";
 import VisitTable from "./VisitTable";
 
-const visits = [
-  {
-    id: 1,
-    customer: "Rahul",
-    phone: "9876543210",
-    agent: "Amit",
-    date: "2026-02-18",
-    status: "Scheduled",
-    site: "Goa Colony, Mumbai",
-    visitDate: "2026-02-20, 08:30 A.M",
-  },
-];
+const StaffSiteVisit = ({ siteVisits, mood, staffType, setAlert }) => {
+  const totalVisits = siteVisits?.length || 0;
 
-const StaffSiteVisit = ({siteVisits, mood, staffType, setAlert }) => {
+  const totalCompleted =
+    siteVisits?.filter((visit) => visit.status === "completed").length || 0;
+
+  const totalRescheduled =
+    siteVisits?.filter((visit) => visit.status === "rescheduled").length || 0;
+
+  const totalCancelled =
+    siteVisits?.filter(
+      (visit) => visit.status === "cancelled" || visit.status === "lost",
+    ).length || 0;
   return (
     <div className="dashboard-wrapper">
       {staffType === "operations" && (
         <>
           <div className="dashboard-grid">
             <DashboardCard
-              title="Today's Visits"
-              value="12"
-              icons=<NiSitevisit />
+              title="Total Visits"
+              value={totalVisits}
+              icons={<NiSitevisit />}
             />
+
             <DashboardCard
-              title="Pending Updates"
-              value="5"
-              icons=<NiSitevisit />
+              title="Total Completed"
+              value={totalCompleted}
+              icons={<NiSitevisit />}
             />
+
             <DashboardCard
-              title="Completed Today"
-              value="8"
-              icons=<NiSitevisit />
+              title="Total Rescheduled"
+              value={totalRescheduled}
+              icons={<NiSitevisit />}
             />
+
             <DashboardCard
-              title="Cancelled Today"
-              value="2"
-              icons=<NiSitevisit />
+              title="Total Cancelled/Lost"
+              value={totalCancelled}
+              icons={<NiSitevisit />}
             />
           </div>
           <h4>Site Visits</h4>

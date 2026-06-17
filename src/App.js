@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, BrowserRouter, Outlet } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  BrowserRouter,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
 import Home from "./Pages/Home/Home";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Topbar from "./components/Topbar/Topbar";
@@ -46,10 +52,28 @@ const LandingLayout = ({ mood, data }) => {
     <div className="landing-page">
       <Navbar mood={mood} />
       <Outlet />
-      <Footer data={data}/>
+      <Footer data={data} />
     </div>
   );
 };
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      const page = document.querySelector(".page-wrap");
+
+      if (page) {
+        page.scrollTop = 0;
+      }
+
+      window.scrollTo(0, 0);
+    });
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
   const dispatch = useDispatch();
@@ -67,11 +91,15 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className={`app ${dark ? "dark" : ""} mood-${mood}`}>
         <Alert item={alert} />
         <Routes>
-          <Route element={<LandingLayout mood={mood} data={landingPage}/>}>
-            <Route path="/" element={<Home data={landingPage} allColonies={allColonies}/>} />
+          <Route element={<LandingLayout mood={mood} data={landingPage} />}>
+            <Route
+              path="/"
+              element={<Home data={landingPage} allColonies={allColonies} />}
+            />
             <Route path="/about" element={<About data={landingPage} />} />
             <Route
               path="/projects"
@@ -81,7 +109,9 @@ function App() {
             />
             <Route
               path="/projects/:projectId"
-              element={<LandingProjectDetail setAlert={setAlert} data={allColonies}/>}
+              element={
+                <LandingProjectDetail setAlert={setAlert} data={allColonies} />
+              }
             />
             <Route path="/gallery" element={<Gallery data={landingPage} />} />
             <Route

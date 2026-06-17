@@ -16,10 +16,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 
 const salesData = [
-  { month: "Jan", sales: 2 },
-  { month: "Feb", sales: 5 },
-  { month: "Mar", sales: 3 },
-  { month: "Apr", sales: 6 },
+  { month: "Jan", sales: 0 },
+  { month: "Feb", sales: 0 },
+  { month: "Mar", sales: 0 },
+  { month: "Apr", sales: 0 },
 ];
 
 const AgentDashboard = () => {
@@ -40,22 +40,22 @@ const AgentDashboard = () => {
       <h4>Stats</h4>
       {/* Top Cards */}
       <div className="dashboard-grid">
-        <DashboardCard title="My Leads" value="8" icons={<NiManagement />} />
-        <DashboardCard title="My Bookings" value="15" icons={<NiBooking />} />
-        <DashboardCard title="Total Sales" value="15" icons={<NiPayments />} />
+        <DashboardCard title="My Leads" value="0" icons={<NiManagement />} />
+        <DashboardCard title="My Bookings" value="0" icons={<NiBooking />} />
+        <DashboardCard title="Total Sales" value="0" icons={<NiPayments />} />
         <DashboardCard
           title="Commission Earned"
-          value="₹2,40,000"
+          value="₹0"
           icons={<NiPayments />}
         />
         <DashboardCard
           title="Pending Commission"
-          value="₹40,000"
+          value="₹0"
           icons={<NiPayments />}
         />
         <DashboardCard
           title="Today's Follow-ups"
-          value="4"
+          value="0"
           icons={<NiSitevisit />}
         />
       </div>
@@ -124,10 +124,7 @@ const AgentDashboard = () => {
           <div className="dashboard-alerts ">
             <ul>
               <li className="alert-items card">
-                <NiSitevisit /> Rahul - Plot A12 - 4 PM
-              </li>
-              <li className="alert-items card">
-                <NiSitevisit /> Imran - Plot B5 - 6 PM
+                <NiSitevisit /> -
               </li>
             </ul>
           </div>

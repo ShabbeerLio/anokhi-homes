@@ -105,7 +105,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
           }}
         >
           <NiBell />
-          <span>2</span>
+          <span>0</span>
           {openNotif && <NotificationModal />}
         </div>
 

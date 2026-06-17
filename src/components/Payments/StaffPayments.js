@@ -3,30 +3,86 @@ import DashboardCard from "../Cards/DashboardCard";
 import PaymentsData from "./PaymentData";
 import PaymentTable from "./PaymentTable";
 
-const payments = [
-  {
-    id: 1,
-    client: "Rahul",
-    phone: "9876543210",
-    project: "Green City",
-    amount: 50000,
-    mode: "Cash",
-    status: "Pending",
-    dueStatus: "Partial",
-    date: "2026-02-18",
-  },
-];
+const StaffPayments = ({ payment, mood, staffType, setAlert }) => {
+  const totalCollection = payment?.reduce((sum, p) => sum + (p.amount || 0), 0);
 
-const StaffPayments = ({payment, mood, staffType, setAlert }) => {
+  const now = new Date();
+
+  // Today's Collection
+  const todaysCollection = payment
+    ?.filter((p) => {
+      const date = new Date(p.paymentDate || p.createdAt);
+
+      return (
+        date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear() &&
+        p.status === "approved"
+      );
+    })
+    .reduce((sum, p) => sum + (p.amount || 0), 0);
+
+  // This Month Collection
+  const thisMonthCollection = payment
+    ?.filter((p) => {
+      const date = new Date(p.paymentDate || p.createdAt);
+
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear() &&
+        p.status === "approved"
+      );
+    })
+    .reduce((sum, p) => sum + (p.amount || 0), 0);
+
+  // Pending Approval
+  const pendingApproval =
+    payment?.filter((p) => p.status === "pending").length || 0;
+
+  // Rejected / Overdue
+  const overdue = payment
+    ?.filter((p) => p.status === "rejected")
+    .reduce((sum, p) => sum + (p.amount || 0), 0);
   return (
     <div className="dashboard-wrapper">
       {staffType === "accounts" && (
         <>
           <div className="dashboard-grid">
-            <DashboardCard title="Today’s Collection" value="₹50,000" icons = <NiPayments />/>
-            <DashboardCard title="Pending Approval" value="4" icons = <NiPayments />/>
-            <DashboardCard title="Outstanding" value="₹1,20,000" icons = <NiPayments />/>
-            <DashboardCard title="This Month" value="₹3,50,000" icons = <NiPayments />/>
+            <DashboardCard
+              title="Total Collection"
+              value={`₹${totalCollection.toLocaleString()}`}
+              icons={<NiPayments />}
+            />
+
+            <DashboardCard
+              title="This Month"
+              value={`₹${thisMonthCollection.toLocaleString()}`}
+              icons={<NiPayments />}
+            />
+
+            {/* <DashboardCard
+                    title="Pending Dues"
+                    value={`₹${pendingDues.toLocaleString()}`}
+                    icons={<NiPayments />}
+                  /> */}
+
+            <DashboardCard
+              title="Overdue"
+              value={`₹${overdue.toLocaleString()}`}
+              icons={<NiPayments />}
+            />
+
+            <DashboardCard
+              title="Today's Collection"
+              value={`₹${todaysCollection.toLocaleString()}`}
+              icons={<NiPayments />}
+            />
+
+            <DashboardCard
+              title="Pending Approval"
+              value={pendingApproval}
+              icons={<NiPayments />}
+            />
           </div>
           <h4>Payments</h4>
           <PaymentTable
@@ -38,7 +94,7 @@ const StaffPayments = ({payment, mood, staffType, setAlert }) => {
 
       {(staffType === "marketing" || staffType === "operations") && (
         <>
-          <PaymentTable data={payment} mood={mood}  setAlert={setAlert}/>
+          <PaymentTable data={payment} mood={mood} setAlert={setAlert} />
         </>
       )}
     </div>
