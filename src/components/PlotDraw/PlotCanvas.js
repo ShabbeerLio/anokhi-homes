@@ -315,13 +315,16 @@ export default function PlotCanvas({
     <div
       ref={containerRef}
       className={`plot-draw card ${isFullscreen ? "fullscreen" : ""}`}
+      style={{
+        height: mood === "admin" ? "500px" : "100dvh",
+      }}
     >
       <Compass />
 
       <svg
         ref={svgRef}
         width="100%"
-       height={mood === "admin" ? "500" : "100vh"}
+        height={mood === "admin" ? 500 : "100%"}
         onWheel={mood === "admin" ? handleWheel : undefined}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}

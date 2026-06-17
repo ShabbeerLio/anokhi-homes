@@ -103,6 +103,27 @@ const Signup = ({ mood, setAlert, setMood }) => {
   //   return;
   // }
 
+  const handleFileUpload = (field, file) => {
+    if (!file) return;
+
+    const MAX_SIZE = 1024 * 1024; // 1 MB
+
+    if (file.size > MAX_SIZE) {
+      setAlert({
+        message: "Image size should not exceed 1 MB",
+        status: "Error",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [field]: file,
+    }));
+  };
+
   /* ================= VALIDATIONS ================= */
   const canGoStep2 =
     formData.name &&
@@ -537,8 +558,9 @@ const Signup = ({ mood, setAlert, setMood }) => {
 
                 <input
                   type="file"
+                  accept="image/*"
                   onChange={(e) =>
-                    setFormData({ ...formData, panPhoto: e.target.files[0] })
+                    handleFileUpload("panPhoto", e.target.files[0])
                   }
                 />
 
@@ -552,8 +574,9 @@ const Signup = ({ mood, setAlert, setMood }) => {
 
                 <input
                   type="file"
+                  accept="image/*"
                   onChange={(e) =>
-                    setFormData({ ...formData, aadharPhoto: e.target.files[0] })
+                    handleFileUpload("aadharPhoto", e.target.files[0])
                   }
                 />
 
@@ -675,11 +698,9 @@ const Signup = ({ mood, setAlert, setMood }) => {
 
                 <input
                   type="file"
+                  accept="image/*"
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      nomineeAadharPhoto: e.target.files[0],
-                    })
+                    handleFileUpload("aadharPhoto", e.target.files[0])
                   }
                 />
 

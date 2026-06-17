@@ -286,3 +286,9 @@
   max-height: 85vh;
   overflow: auto;
 }
+
+@media (max-width: 768px) {
+.notif-modal {
+  width: auto;
+}
+}
