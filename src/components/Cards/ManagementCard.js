@@ -459,12 +459,12 @@ setTimeout(() => setAlert(null), 3000);
             className="site-visit-approval status failed"
             onClick={() => setDisapproveOpen(true)}
           >
-            <NiCross /> Disapprove
+            <NiCross /> Reject
           </button>
         </div>
       )}
       <DeleteModal open={disapproveOpen} onClose={() => setDisapproveOpen(false)}>
-        <h4>Disapprove Lead</h4>
+        <h4>Reject Lead</h4>
         <div className="field">
           <label>
             Notes
@@ -486,7 +486,7 @@ setTimeout(() => setAlert(null), 3000);
               setFormData({});
             }}
           >
-            Disapprove
+            Reject
           </button>
         </div>
       </DeleteModal>

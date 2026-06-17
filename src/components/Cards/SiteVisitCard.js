@@ -134,7 +134,7 @@ const SiteVisitCard = ({
   const handleAddNote = async (visitId) => {
     try {
       const token = localStorage.getItem("token");
-
+console.log(visitId,"visitid")
       const res = await axios.post(
         `${Host}/api/sitevisit/add-note/${visitId}`,
         { note: noteText },
@@ -816,7 +816,7 @@ const SiteVisitCard = ({
                 </div>
               ))} */}
               {/* ONLY AGENT CAN ADD NOTE */}
-              {(item.status === "scheduled" || item.status === "approval" || item.status === "completed") && (
+              {(item.status === "scheduled" || item.status === "approval" || item.status === "completed" || item.status === "rescheduled") && (
                 <>
                   <NoteItem
                     item={item}

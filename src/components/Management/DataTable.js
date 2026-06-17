@@ -101,8 +101,8 @@ const DataTable = ({ data, mood, setAlert }) => {
 
   const handleAddLead = async () => {
     const token = localStorage.getItem("token");
-    console.log(token, "token");
-    console.log("Adding lead:", formData);
+    // console.log(token, "token");
+    // console.log("Adding lead:", formData);
     try {
       const payload = {
         customerId: formData.customerId,
@@ -167,7 +167,7 @@ const DataTable = ({ data, mood, setAlert }) => {
   return (
     <div>
       <div className="filter-grid page-tools table-filters">
-        {mood !== "user" && mood !== "agent" && (
+        {mood !== "user" && (
           <button
             className="add-button"
             onClick={() => {

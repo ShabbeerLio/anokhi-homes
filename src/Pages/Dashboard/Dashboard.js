@@ -12,6 +12,7 @@ import AddLocationModal from "../../components/Modals/AddLocationModal";
 import RenderFormFields from "./RenderFormFields";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountDetails, getOffers } from "../../Redux/Slices/AppSlices";
+import formatDate from "../../components/DateFormate/DateFormate";
 
 const Dashboard = ({ mood, setMood }) => {
   const dispatch = useDispatch();
@@ -156,8 +157,8 @@ const Dashboard = ({ mood, setMood }) => {
                         {/* Dates */}
                         <div className="offer-dates">
                           <p>
-                            <strong>From:</strong> {item.startDate} to{" "}
-                            {item.endDate} (
+                            <strong>From:</strong> {formatDate(item.startDate)} to{" "}
+                            {formatDate(item.endDate)} (
                             <span className="countdown">
                               {getRemainingDays(item.endDate)}
                             </span>
