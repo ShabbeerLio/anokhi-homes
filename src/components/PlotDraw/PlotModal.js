@@ -56,7 +56,14 @@ const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
           <>
             <div className="field">
               <label>Plot ID</label>
-              <input value={plot.plotId || ""} />
+              <input
+                value={plot.plotId || ""}
+                onChange={(e) =>
+                  updatePlot(plot._id, {
+                    plotId: e.target.value,
+                  })
+                }
+              />
             </div>
 
             <div className="field">
@@ -167,65 +174,55 @@ const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
               </>
             )}
 
-            <p className="hint">
-              * Area auto-calculated from polygon points.
-            </p>
+            <p className="hint">* Area auto-calculated from polygon points.</p>
           </>
         ) : (
           <>
             {/* ================= USER / AGENT VIEW ================= */}
 
+            {/* USER / AGENT VIEW */}
+
             <div className="user-field">
               <label>Plot ID</label>
-
               <div className="value">{plot.plotId || "-"}</div>
             </div>
 
             <div className="user-field">
               <label>Plot Number</label>
-
               <div className="value">{plot.plotNumber || "-"}</div>
             </div>
 
             <div className="user-field">
               <label>Plot Type</label>
-
-              <div className="value">
-                {plot.plotType?.replaceAll("_", " ")}
-              </div>
+              <div className="value">{plot.plotType?.replaceAll("_", " ")}</div>
             </div>
 
             {plot.plotType !== "ROAD" && (
               <>
                 <div className="user-field">
                   <label>Area</label>
-
-                  <div className="value">
-                    {plot.area || 0} sq.ft
-                  </div>
+                  <div className="value">{plot.area || 0} sq.ft</div>
                 </div>
 
-                <div className="user-field">
-                  <label>Price / sq.ft</label>
+                {plot.plotType !== "SOLD" &&
+                  plot.plotType !== "NOT_FOR_SALE" && (
+                    <>
+                      <div className="user-field">
+                        <label>Price / sq.ft</label>
+                        <div className="value">₹{plot.price || 0}</div>
+                      </div>
 
-                  <div className="value">
-                    ₹{plot.price || 0}
-                  </div>
-                </div>
-
-                <div className="user-field">
-                  <label>Total Price</label>
-
-                  <div className="value">
-                    ₹
-                    {(
-                      Number(plot.area || 0) *
-                      Number(plot.price || 0)
-                    ).toLocaleString()}
-                  </div>
-                </div>
-
-                
+                      <div className="user-field">
+                        <label>Total Price</label>
+                        <div className="value">
+                          ₹
+                          {(
+                            Number(plot.area || 0) * Number(plot.price || 0)
+                          ).toLocaleString()}
+                        </div>
+                      </div>
+                    </>
+                  )}
               </>
             )}
           </>
@@ -242,18 +239,14 @@ const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
               <>
                 {plot.plotType === "FOR_SALE" ? (
                   <button
-                    className={
-                      PLOT_ACTION_CONFIG[plot.plotType]?.className
-                    }
+                    className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
                     onClick={handleActionClick}
                   >
                     {PLOT_ACTION_CONFIG[plot.plotType]?.label}
                   </button>
                 ) : (
                   <button
-                    className={
-                      PLOT_ACTION_CONFIG[plot.plotType]?.className
-                    }
+                    className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
                     disabled
                   >
                     {PLOT_ACTION_CONFIG[plot.plotType]?.label}

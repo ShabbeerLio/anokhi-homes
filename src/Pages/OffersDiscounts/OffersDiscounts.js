@@ -55,7 +55,6 @@ const OffersDiscounts = ({ mood, setAlert }) => {
   useEffect(() => {
     dispatch(getAccountDetails());
   }, []);
-  console.log(myRewards, "myRewards");
   const [tab, setTab] = useState("offers");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -104,7 +103,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
     }
   }, [selectedOffers]);
 
-  console.log(cashbackData, "cashbackData");
+  // console.log(cashbackData, "cashbackData");
 
   /* ---------- TAB DATA ---------- */
   useEffect(() => {
@@ -190,13 +189,23 @@ const OffersDiscounts = ({ mood, setAlert }) => {
 
       if (tab === "offers") {
         response = isEditMode
-          ? await dispatch(updateOffer(formData))
+          ? await dispatch(
+              updateOffer({
+                id: formData._id,
+                data: formData,
+              }),
+            )
           : await dispatch(addOffer(formData));
       }
 
       if (tab === "discounts") {
         response = isEditMode
-          ? await dispatch(updateDiscount(formData))
+          ? await dispatch(
+              updateDiscount({
+                id: formData._id,
+                data: formData,
+              }),
+            )
           : await dispatch(addDiscount(formData));
       }
 
@@ -320,7 +329,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
     }
   };
   // console.log(selectedProjects, "selectedProjects");
-  console.log(rewards, "rewards");
+  console.log(formData, "rewards");
 
   return (
     <div className="plot-container">

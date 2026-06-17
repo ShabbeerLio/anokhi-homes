@@ -65,14 +65,14 @@ export default function PlotPolygon({
 
     // 🚫 Must not overlap other plots
     for (const p of plots) {
-      if (p.id === plot.id) continue;
+      if (p._id === plot._id) continue;
       if (polygonsOverlap(nextPoints, p.points)) {
         return;
       }
     }
 
     /* validations already in your code */
-    updatePlot(plot.id, () => nextPoints);
+    updatePlot(plot._id, () => nextPoints);
 
     dragStart.current = { x: e.clientX, y: e.clientY };
   };

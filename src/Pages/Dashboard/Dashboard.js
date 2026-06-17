@@ -10,15 +10,15 @@ import NiDashboardgph from "../../icons/NiDashboardgph";
 import { useNavigate } from "react-router-dom";
 import AddLocationModal from "../../components/Modals/AddLocationModal";
 import RenderFormFields from "./RenderFormFields";
-import OffersDiscoountData from "../OffersDiscounts/OffersDiscountData";
 import { useDispatch, useSelector } from "react-redux";
-import { getAccountDetails } from "../../Redux/Slices/AppSlices";
+import { getAccountDetails, getOffers } from "../../Redux/Slices/AppSlices";
 
 const Dashboard = ({ mood, setMood }) => {
   const dispatch = useDispatch();
-  const { userDetail } = useSelector((state) => state.app);
+  const { userDetail, offersData } = useSelector((state) => state.app);
   useEffect(() => {
     dispatch(getAccountDetails());
+    dispatch(getOffers());
   }, []);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -66,7 +66,7 @@ const Dashboard = ({ mood, setMood }) => {
     user: [{ label: "Download Receipt" }],
   };
 
-  const visibleOffers = OffersDiscoountData?.filter((item) => {
+  const visibleOffers = offersData?.filter((item) => {
     const today = new Date();
     const end = new Date(item.endDate);
 
@@ -131,7 +131,7 @@ const Dashboard = ({ mood, setMood }) => {
                   ) : (
                     visibleOffers.map((item, i) => (
                       <div
-                        key={item.id}
+                        key={item._id}
                         className={`offer-slide ${i === index ? "active" : ""}`}
                       >
                         <h4>{item.title}</h4>

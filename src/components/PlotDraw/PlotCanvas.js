@@ -240,7 +240,7 @@ export default function PlotCanvas({
   };
 
   const erasePlot = (id) => {
-    setPlots((p) => p.filter((x) => x.id !== id));
+    setPlots((p) => p.filter((x) => x._id !== id));
   };
 
   const handleWheel = (e) => {
@@ -321,8 +321,8 @@ export default function PlotCanvas({
       <svg
         ref={svgRef}
         width="100%"
-        height="500"
-        onWheel={handleWheel}
+       height={mood === "admin" ? "500" : "100vh"}
+        onWheel={mood === "admin" ? handleWheel : undefined}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -380,7 +380,7 @@ export default function PlotCanvas({
 
           {plots?.map((p) => (
             <PlotPolygon
-              key={p.id}
+              key={p._id}
               plot={p}
               mood={mood}
               scale={scale}

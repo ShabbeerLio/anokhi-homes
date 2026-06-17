@@ -396,6 +396,7 @@ export const addOffer = createAsyncThunk("app/addOffer", async (data) => {
 export const updateOffer = createAsyncThunk(
   "app/updateOffer",
   async ({ id, data }) => {
+    console.log(data,"iddata")
     const res = await fetch(`${Host}/api/offer/edit/${id}`, {
       method: "PUT",
       headers: {

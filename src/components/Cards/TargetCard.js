@@ -78,8 +78,10 @@ const TargetCard = ({
             <>
               <div className="action-modal">
                 <span
-                  onClick={(data) => {
-                    setSelectedOffers(data);
+                  onClick={(e) => {
+                    e.stopPropagation();
+
+                    setSelectedOffers(item);
                     setIsEditMode(true);
                     setOpen(true);
                     setActiveRow(null);
