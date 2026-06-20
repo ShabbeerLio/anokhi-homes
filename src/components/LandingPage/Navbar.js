@@ -14,6 +14,7 @@ import StaffLogo from "../../Assets/Logo/logo-anokhi-home-green.png";
 import AgentLogo from "../../Assets/Logo/logo-anokhi-home-blue.png";
 import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
 import NiDocuments from "../../icons/ni-documents";
+import Floating from "./Floating";
 
 const Navbar = ({ mood }) => {
   const navigate = useNavigate();
@@ -116,6 +117,7 @@ const Navbar = ({ mood }) => {
           onClick={() => handleToggleNav()}
         />
       </div>
+      <Floating />
     </nav>
   );
 };

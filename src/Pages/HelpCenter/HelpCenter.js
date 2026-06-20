@@ -15,6 +15,7 @@ import {
   replyHelpTicket,
   closeHelpTicket,
 } from "../../Redux/Slices/AppSlices";
+import { uploadImage } from "../LandingSetting/LandingApi";
 
 const HelpCenter = ({ mood, setAlert }) => {
   const dispatch = useDispatch();
@@ -31,16 +32,22 @@ const HelpCenter = ({ mood, setAlert }) => {
   const selectedTicket = mergedTickets.find((t) => t._id === selectedPosition);
   const [open, setOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
+  const [imageModal, setImageModal] = useState({
+    open: false,
+    src: "",
+  });
 
   const [formData, setFormData] = useState({
+    type: "",
     title: "",
     message: "",
-    attachments: null,
+    attachment: null,
   });
 
   const [replyData, setReplyData] = useState({
     title: "",
     message: "",
+    attachment: null,
   });
 
   // ===========================
@@ -49,26 +56,36 @@ const HelpCenter = ({ mood, setAlert }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    let attachments = [];
+    if (formData.attachment) {
+      const upload = await uploadImage(formData.attachment);
+      attachments.push(upload.url);
+    }
+
     await dispatch(
       createHelpTicket({
+        type: formData.type,
         title: formData.title,
         message: formData.message,
+        attachments,
       }),
     );
-
     dispatch(getHelpTickets());
-
     setOpen(false);
-
     setFormData({
+      type: "",
       title: "",
       message: "",
+      attachment: null,
     });
 
     setAlert({
       message: "Ticket Created",
       status: "Success",
     });
+    setTimeout(() => {
+      setAlert(null);
+    }, 3000);
   };
 
   // ===========================
@@ -99,6 +116,9 @@ const HelpCenter = ({ mood, setAlert }) => {
       message: "Reply Added",
       status: "Success",
     });
+    setTimeout(() => {
+      setAlert(null);
+    }, 3000);
   };
 
   // ===========================
@@ -115,6 +135,9 @@ const HelpCenter = ({ mood, setAlert }) => {
       message: "Ticket Closed",
       status: "Success",
     });
+    setTimeout(() => {
+      setAlert(null);
+    }, 3000);
   };
 
   return (
@@ -127,7 +150,7 @@ const HelpCenter = ({ mood, setAlert }) => {
           <Breadcrumb />
         </div>
         <div className="page-tools">
-          {mood === "user" && (
+          {mood !== "admin" && (
             <button
               className="add-button"
               onClick={() => {
@@ -158,12 +181,12 @@ const HelpCenter = ({ mood, setAlert }) => {
               >
                 <div className="user-card-top">
                   <h4>
-                    #{pos.ticketNumber}
+                    {pos.ticketId}({pos.type})
                     <span
                       className={`status ${
-                        pos.status === "closed"
+                        pos.status === "Closed"
                           ? "active"
-                          : pos.status === "open"
+                          : pos.status === "Open"
                             ? "pending"
                             : "pending2"
                       }`}
@@ -188,83 +211,139 @@ const HelpCenter = ({ mood, setAlert }) => {
       <ViewModal
         open={viewOpen}
         onClose={() => setViewOpen(false)}
-        title={`#${selectedTicket?.ticketNumber || ""}`}
+        title={`${selectedTicket?.ticketId || ""}`}
       >
-        <div className="user-card-bottom view-box">
+        {/* <div className="user-card-bottom view-box">
           <div className="user-card-bottom-left">
-            {selectedTicket && (
-              <>
-                {/* DETAILS */}
-                <div className="help-detail-box">
-                  <h4>{selectedTicket.title}</h4>
-                  <p>{selectedTicket.message}</p>
-                  <small>
-                    {selectedTicket.createdBy?.name} •{" "}
-                    {new Date(selectedTicket.createdAt).toLocaleString()}
-                  </small>
+          </div>
+        </div> */}
+        {selectedTicket && (
+          <>
+            {/* DETAILS */}
+            <div className="help-detail-box">
+              <h4>{selectedTicket.title}</h4>
+              <p>{selectedTicket.message}</p>
+              {selectedTicket.attachments?.length > 0 && (
+                <div className="help-images">
+                  {selectedTicket.attachments.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt=""
+                      className="note-preview"
+                      onClick={() =>
+                        setImageModal({
+                          open: true,
+                          src: img,
+                        })
+                      }
+                    />
+                  ))}
                 </div>
+              )}
+              <small>
+                {selectedTicket.createdBy?.name} •{" "}
+                {new Date(selectedTicket.createdAt).toLocaleString()}
+              </small>
+            </div>
 
-                {/* REPLIES */}
-                {selectedTicket?.replies?.map((reply) => (
-                  <div key={reply._id} className="help-detail-box post-card">
-                    <h5>{reply.title}</h5>
-
-                    <p>{reply.message}</p>
-
-                    <small>
-                      {reply.by?.name} •{" "}
-                      {new Date(reply.createdAt).toLocaleString()}
-                    </small>
-                  </div>
-                ))}
-
-                {/* ADD REPLY */}
-                {selectedTicket.status !== "Closed" && (
-                  <div className="post-card">
-                    <h4>Add Reply</h4>
-                    <div className="field">
-                      <input
-                        placeholder="Reply title"
-                        value={replyData.title}
-                        onChange={(e) =>
-                          setReplyData({
-                            ...replyData,
-                            title: e.target.value,
+            {/* REPLIES */}
+            {selectedTicket?.replies?.map((reply) => (
+              <div key={reply._id} className="help-detail-box post-card">
+                <h5>{reply.title}</h5>
+                <p>{reply.message}</p>
+                {reply.attachments?.length > 0 && (
+                  <div className="help-images">
+                    {reply.attachments.map((img, i) => (
+                      <img
+                        key={i}
+                        src={img}
+                        className="ticket-image"
+                        alt=""
+                        onClick={() =>
+                          setImageModal({
+                            open: true,
+                            src: img,
                           })
                         }
                       />
-                    </div>
-                    <div className="field">
-                      <textarea
-                        placeholder="Write reply..."
-                        value={replyData.message}
-                        onChange={(e) =>
-                          setReplyData({
-                            ...replyData,
-                            message: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div className="modal-actions">
-                      <button onClick={handleReply}>Send Reply</button>
-                      {/* CLOSE */}
-                      {selectedTicket.status !== "Closed" && (
-                        <button
-                          className="post-button"
-                          onClick={() => handleCloseTicket(selectedTicket._id)}
-                        >
-                          Close Ticket
-                        </button>
-                      )}
-                    </div>
+                    ))}
                   </div>
                 )}
-              </>
+                <small>
+                  {reply.by?.name} •{" "}
+                  {new Date(reply.createdAt).toLocaleString()}
+                </small>
+              </div>
+            ))}
+
+            {/* ADD REPLY */}
+            {selectedTicket.status !== "Closed" && (
+              <div className="post-card">
+                <h4>Add Reply</h4>
+                <div className="field">
+                  <input
+                    placeholder="Reply title"
+                    value={replyData.title}
+                    onChange={(e) =>
+                      setReplyData({
+                        ...replyData,
+                        title: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="field">
+                  <textarea
+                    placeholder="Write reply..."
+                    value={replyData.message}
+                    onChange={(e) =>
+                      setReplyData({
+                        ...replyData,
+                        message: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="field">
+                  <label>Attachment</label>
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setReplyData({
+                        ...replyData,
+                        attachment: e.target.files[0],
+                      })
+                    }
+                  />
+                </div>
+
+                {replyData.attachment && (
+                  <img
+                    src={URL.createObjectURL(replyData.attachment)}
+                    width={120}
+                    alt=""
+                  />
+                )}
+
+                <div className="modal-actions">
+                  <button onClick={handleReply}>Send Reply</button>
+                  {/* CLOSE */}
+                  {selectedTicket.status !== "Closed" && (
+                    <button
+                      className="post-button"
+                      onClick={() => handleCloseTicket(selectedTicket._id)}
+                    >
+                      Close Ticket
+                    </button>
+                  )}
+                </div>
+              </div>
             )}
-          </div>
-        </div>
+          </>
+        )}
       </ViewModal>
       <AddLocationModal
         open={open}
@@ -272,6 +351,28 @@ const HelpCenter = ({ mood, setAlert }) => {
         title={"Add New ticket"}
       >
         <form onSubmit={handleSubmit} className="post-card">
+          <div className="field">
+            <label>Ticket Type</label>
+
+            <select
+              value={formData.type}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  type: e.target.value,
+                })
+              }
+            >
+              <option value="">Select Type</option>
+              <option value="Finance">Finance</option>
+              <option value="Profile Update">Profile Update</option>
+              {mood === "agent" && (
+                <option value="Emergency Payout">Emergency Payout</option>
+              )}
+
+              <option value="Other">Other</option>
+            </select>
+          </div>
           <div className="field">
             <label>Title</label>
             <input
@@ -292,6 +393,31 @@ const HelpCenter = ({ mood, setAlert }) => {
               }
             />
           </div>
+          <div className="field">
+            <label>Attachment</label>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  attachment: e.target.files[0],
+                })
+              }
+            />
+          </div>
+          {formData.attachment && (
+            <img
+              src={URL.createObjectURL(formData.attachment)}
+              alt=""
+              style={{
+                width: 120,
+                marginTop: 10,
+                borderRadius: 8,
+              }}
+            />
+          )}
 
           {/* <div className="field">
             <label>Attachments</label>
@@ -308,6 +434,25 @@ const HelpCenter = ({ mood, setAlert }) => {
             <button type="submit">Submit Ticket</button>
           </div>
         </form>
+      </AddLocationModal>
+      <AddLocationModal
+        open={imageModal.open}
+        onClose={() =>
+          setImageModal({
+            open: false,
+            src: "",
+          })
+        }
+        title="Image Preview"
+      >
+        <div className="image-preview-modal">
+          <img
+            src={imageModal.src}
+            alt="Preview"
+            className="image-preview-full"
+            style={{width: "100%", objectFit:"cover"}}
+          />
+        </div>
       </AddLocationModal>
     </div>
   );

@@ -15,8 +15,9 @@ import formatDate from "../DateFormate/DateFormate";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Host from "../../Host/Host";
-import { getAccountDetails, getPlots, getSiteVisit } from "../../Redux/Slices/AppSlices";
+import { getAccountDetails, getPaymentTerms, getPlots, getSiteVisit } from "../../Redux/Slices/AppSlices";
 import NoteItem from "../NoteItem/NoteItem";
+import { uploadImage } from "../../Pages/LandingSetting/LandingApi";
 
 const SiteVisitCard = ({
   item,
@@ -28,11 +29,12 @@ const SiteVisitCard = ({
   setAlert,
 }) => {
   const dispatch = useDispatch();
-  const { plots, userDetail } = useSelector((state) => state.app);
+  const { plots, userDetail, paymentTerms } = useSelector((state) => state.app);
 
   useEffect(() => {
     dispatch(getPlots(item?.colony?._id));
     dispatch(getAccountDetails());
+    dispatch(getPaymentTerms());
   }, [item?.colony?._id]);
 
   // console.log(plots?.plots, "plots")
@@ -52,6 +54,7 @@ const SiteVisitCard = ({
   const [selectedPlot, setSelectedPlot] = useState(null);
   const [editingNoteId, setEditingNoteId] = useState(null);
   const [editText, setEditText] = useState("");
+  const [noteImage, setNoteImage] = useState(null);
 
   useEffect(() => {
     if (!viewOpen) {
@@ -110,9 +113,18 @@ const SiteVisitCard = ({
   const handleAddNote = async (visitId) => {
     try {
       const token = localStorage.getItem("token");
+      let image = "";
+      if (noteImage) {
+        const upload = await uploadImage(noteImage);
+        image = upload.url;
+
+      }
       const res = await axios.post(
         `${Host}/api/sitevisit/add-note/${visitId}`,
-        { note: noteText },
+        {
+          note: noteText,
+          image,
+        },
         {
           headers: {
             "auth-token": token,
@@ -124,6 +136,7 @@ const SiteVisitCard = ({
       // ✅ update UI from backend response
       setNotes(res.data.visit.notes);
       setNoteText("");
+      setNoteImage(null);
 
       setAlert({
         message: "Note added successfully",
@@ -146,10 +159,17 @@ const SiteVisitCard = ({
   const handleEditNote = async (visitId, noteId) => {
     try {
       const token = localStorage.getItem("token");
-
+      let image = noteImage;
+      if (noteImage instanceof File) {
+        const upload = await uploadImage(noteImage);
+        image = upload.url;
+      }
       const res = await axios.put(
         `${Host}/api/sitevisit/edit-note/${visitId}/${noteId}`,
-        { note: editText },
+        {
+          note: editText,
+          image
+        },
         {
           headers: {
             "auth-token": token,
@@ -160,6 +180,7 @@ const SiteVisitCard = ({
       setNotes(res.data.visit.notes);
       setEditingNoteId(null);
       setEditText("");
+      setNoteImage(null);
       dispatch(getSiteVisit());
 
       setAlert({ message: "Note updated", status: "Success" });
@@ -229,9 +250,9 @@ const SiteVisitCard = ({
 
           requestAmount: formData.requestAmount,
 
-          bookingDate: formData.bookingDate,
-          agreementDate: formData.agreementDate,
-          fullDate: formData.fullDate,
+          bookingDays: formData.bookingDays,
+          agreementDays: formData.agreementDays,
+          fullPaymentDays: formData.fullPaymentDays,
 
           termsAccepted: formData.termsAccepted,
         },
@@ -724,36 +745,69 @@ const SiteVisitCard = ({
                 )}
 
               <div className="field">
-                <label>Booking Payment Date</label>
-                <input
-                  type="date"
-                  value={formData.bookingDate || ""}
+                <label>Booking Payment Days</label>
+
+                <select
+                  value={formData.bookingDays || ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, bookingDate: e.target.value })
+                    setFormData({
+                      ...formData,
+                      bookingDays: Number(e.target.value),
+                    })
                   }
-                />
+                >
+                  <option value="">Select Days</option>
+
+                  {paymentTerms?.bookingDays?.map((day) => (
+                    <option key={day} value={day}>
+                      {day} Days
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="field">
-                <label>Agreement Payment Date</label>
-                <input
-                  type="date"
-                  value={formData.agreementDate || ""}
+                <label>Agreement Payment Days</label>
+
+                <select
+                  value={formData.agreementDays || ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, agreementDate: e.target.value })
+                    setFormData({
+                      ...formData,
+                      agreementDays: Number(e.target.value),
+                    })
                   }
-                />
+                >
+                  <option value="">Select Days</option>
+
+                  {paymentTerms?.agreementDays?.map((day) => (
+                    <option key={day} value={day}>
+                      {day} Days
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="field">
-                <label>Full Payment Date</label>
-                <input
-                  type="date"
-                  value={formData.fullDate || ""}
+                <label>Full Payment Days</label>
+
+                <select
+                  value={formData.fullPaymentDays || ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, fullDate: e.target.value })
+                    setFormData({
+                      ...formData,
+                      fullPaymentDays: Number(e.target.value),
+                    })
                   }
-                />
+                >
+                  <option value="">Select Days</option>
+
+                  {paymentTerms?.fullPaymentDays?.map((day) => (
+                    <option key={day} value={day}>
+                      {day} Days
+                    </option>
+                  ))}
+                </select>
               </div>
               <p style={{ color: "#ff6969", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "5px", padding: "10px 0" }}>
                 <input style={{ width: "5%" }} type="checkbox"
@@ -859,6 +913,8 @@ const SiteVisitCard = ({
                     editingNoteId={editingNoteId}
                     editText={editText}
                     noteText={noteText}
+                    noteImage={noteImage}
+                    setNoteImage={setNoteImage}
                     setEditingNoteId={setEditingNoteId}
                     setEditText={setEditText}
                     setNoteText={setNoteText}

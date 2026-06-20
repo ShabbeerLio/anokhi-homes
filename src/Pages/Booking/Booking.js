@@ -10,7 +10,7 @@ import BookingData from "../../components/Data/BookingData";
 import SearchSelect from "../../components/SearchItems/SearchSelect";
 import CancellationPolicy from "../../components/Policies/CancellationPolicy";
 import { useDispatch, useSelector } from "react-redux";
-import { getAccountDetails, getBooking, getPlots, getSiteVisit, getUser } from "../../Redux/Slices/AppSlices";
+import { getAccountDetails, getBooking, getPaymentTerms, getPlots, getSiteVisit, getUser } from "../../Redux/Slices/AppSlices";
 import axios from "axios";
 import Host from "../../Host/Host";
 import { formatCurrency } from "../../components/Utils/FormatCurrency";
@@ -18,7 +18,7 @@ const ITEMS_PER_PAGE = 12;
 
 const Booking = ({ mood, setAlert }) => {
   const dispatch = useDispatch();
-  const { userDetail, booking, users, siteVisit, plots } = useSelector((state) => state.app);
+  const { userDetail, booking, users, siteVisit, plots, paymentTerms } = useSelector((state) => state.app);
   const [customersList, setCustomersList] = useState([]);
   const [agentsList, setAgentsList] = useState([]);
 
@@ -27,6 +27,7 @@ const Booking = ({ mood, setAlert }) => {
     dispatch(getBooking());
     dispatch(getUser());
     dispatch(getSiteVisit());
+    dispatch(getPaymentTerms());
   }, []);
 
   useEffect(() => {
@@ -78,7 +79,7 @@ const Booking = ({ mood, setAlert }) => {
     }
   }, [formData?.colony?._id]);
 
-  console.log(booking, "booking")
+  // console.log(booking, "booking")
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   // console.log(filter, "filter");
@@ -142,7 +143,7 @@ const Booking = ({ mood, setAlert }) => {
       const res = await axios.post(
         `${Host}/api/booking/add`,
         {
-          sitevisitId: formData._id, // 🔥 IMPORTANT
+          sitevisitId: formData.sitevisitId, // 🔥 IMPORTANT
           customer: formData.customer._id,
           location: formData.location?._id,
           colony: formData.colony?._id,
@@ -150,9 +151,9 @@ const Booking = ({ mood, setAlert }) => {
 
           requestAmount: formData.requestAmount,
 
-          bookingDate: formData.bookingDate,
-          agreementDate: formData.agreementDate,
-          fullDate: formData.fullDate,
+          bookingDays: formData.bookingDays,
+          agreementDays: formData.agreementDays,
+          fullPaymentDays: formData.fullPaymentDays,
 
           termsAccepted: formData.termsAccepted,
         },
@@ -197,9 +198,14 @@ const Booking = ({ mood, setAlert }) => {
   const [selectedPlot, setSelectedPlot] = useState(null);
   const totalAmount = Number(selectedPlot?.price || 0);
   const paidAmount = Number(formData.amountPaid || 0);
+  const siteVisitOptions = siteVisit.map((item) => ({
+    ...item,
+    name: item.customer?.name,
+  }));
 
   // console.log(siteVisit, "siteVisit")
-  console.log(selectedCustomer, "selectedCustomer")
+  // console.log(selectedCustomer, "selectedCustomer")
+  // console.log(selectedPlot, "selectedPlot")
   return (
     <div className="plot-container">
       {/* Filters */}
@@ -297,7 +303,7 @@ const Booking = ({ mood, setAlert }) => {
           <SearchSelect
             label="Site Visit"
             placeholder="Search name or number"
-            options={siteVisit}
+            options={siteVisitOptions}
             value={selectedCustomer}
             onChange={(selected) => {
               setSelectedCustomer(selected);
@@ -310,8 +316,8 @@ const Booking = ({ mood, setAlert }) => {
                 colony: selected?.colony
               });
             }}
-            displayKey="visitDate"
-            searchKeys={["customer", "colony", "location"]}
+            displayKey="name"
+            searchKeys={["name", "customer.phone"]}
             renderOption={(c) => (
               <div>
                 <b>{c?.customer?.name}</b> ({c?.customer?.phone})
@@ -357,12 +363,12 @@ const Booking = ({ mood, setAlert }) => {
               });
             }}
             displayKey="plotNumber"
-            searchKeys={["plotNumber", "status"]}
+            searchKeys={["plotNumber", "plotType"]}
             renderOption={(p) => (
               <div>
                 <b>{p.plotNumber}</b>
                 <small style={{ display: "block", color: "#666" }}>
-                  {p.status}
+                  {p.plotType}
                 </small>
               </div>
             )}
@@ -413,36 +419,69 @@ const Booking = ({ mood, setAlert }) => {
           )}
 
         <div className="field">
-          <label>Booking Payment Date</label>
-          <input
-            type="date"
-            value={formData.bookingDate || ""}
+          <label>Booking Payment Days</label>
+
+          <select
+            value={formData.bookingDays || ""}
             onChange={(e) =>
-              setFormData({ ...formData, bookingDate: e.target.value })
+              setFormData({
+                ...formData,
+                bookingDays: Number(e.target.value),
+              })
             }
-          />
+          >
+            <option value="">Select Days</option>
+
+            {paymentTerms?.bookingDays?.map((day) => (
+              <option key={day} value={day}>
+                {day} Days
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="field">
-          <label>Agreement Payment Date</label>
-          <input
-            type="date"
-            value={formData.agreementDate || ""}
+          <label>Agreement Payment Days</label>
+
+          <select
+            value={formData.agreementDays || ""}
             onChange={(e) =>
-              setFormData({ ...formData, agreementDate: e.target.value })
+              setFormData({
+                ...formData,
+                agreementDays: Number(e.target.value),
+              })
             }
-          />
+          >
+            <option value="">Select Days</option>
+
+            {paymentTerms?.agreementDays?.map((day) => (
+              <option key={day} value={day}>
+                {day} Days
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="field">
-          <label>Full Payment Date</label>
-          <input
-            type="date"
-            value={formData.fullDate || ""}
+          <label>Full Payment Days</label>
+
+          <select
+            value={formData.fullPaymentDays || ""}
             onChange={(e) =>
-              setFormData({ ...formData, fullDate: e.target.value })
+              setFormData({
+                ...formData,
+                fullPaymentDays: Number(e.target.value),
+              })
             }
-          />
+          >
+            <option value="">Select Days</option>
+
+            {paymentTerms?.fullPaymentDays?.map((day) => (
+              <option key={day} value={day}>
+                {day} Days
+              </option>
+            ))}
+          </select>
         </div>
         <p style={{ color: "#ff6969", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "5px", padding: "10px 0" }}>
           <input style={{ width: "5%" }} type="checkbox"

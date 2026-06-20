@@ -12,10 +12,12 @@ import AdminLogo from "../../Assets/Logo/logo-anokhi-home-parpul.png";
 import StaffLogo from "../../Assets/Logo/logo-anokhi-home-green.png";
 import AgentLogo from "../../Assets/Logo/logo-anokhi-home-blue.png";
 import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
+import mainLoag from "../../Assets/Logo/Final_pah-logo-green-hq.png"
 import NiUser from "../../icons/ni-user";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountDetails } from "../../Redux/Slices/AppSlices";
 import NiDrawr from "../../icons/ni-drawr";
+import Floating from "../LandingPage/Floating";
 
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   const dispatch = useDispatch();
@@ -70,7 +72,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
         </button>
         <span className="logo">
           {/* <MainLogo /> */}
-          {mood === "admin" ? (
+          {/* {mood === "admin" ? (
             <img className="topbar-nav-logo" src={AdminLogo} alt="" />
           ) : mood === "staff" ? (
             <img className="topbar-nav-logo" src={StaffLogo} alt="" />
@@ -78,7 +80,8 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
             <img className="topbar-nav-logo" src={AgentLogo} alt="" />
           ) : (
             <img className="topbar-nav-logo" src={UserLogo} alt="" />
-          )}
+          )} */}
+          <img className="topbar-nav-logo" src={mainLoag} alt="" />
         </span>
       </div>
 
@@ -127,7 +130,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
 
           {currentUser?.avatar ? (
             <img
-              src={"userData.avatar"}
+              src={currentUser.avatar}
               alt={currentUser.name}
               className="profile-avatar"
             />
@@ -140,7 +143,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
               <div className="pm-header">
                 {currentUser?.avatar ? (
                   <img
-                    src={"currentUser.avatar"}
+                    src={currentUser.avatar}
                     alt={currentUser.name}
                     className="profile-avatar"
                   />
@@ -184,6 +187,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
             </div>
           )}
         </div>
+        {mood !== "admin" && <Floating />}
       </div>
     </div>
   );

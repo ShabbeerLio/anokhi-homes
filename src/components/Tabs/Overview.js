@@ -33,6 +33,13 @@ const Overview = ({ userData, mood, setAlert }) => {
   const [editBank, setEditBank] = useState(false);
   const [editNominee, setEditNominee] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [confirmPasswordModal, setConfirmPasswordModal] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
   useEffect(() => {
     setSelectedLevel(localUser?.level || "");
@@ -145,6 +152,12 @@ const Overview = ({ userData, mood, setAlert }) => {
     }
   };
 
+  const isPasswordFormValid =
+    passwordData.currentPassword.trim() &&
+    passwordData.newPassword.trim() &&
+    passwordData.confirmPassword.trim() &&
+    passwordData.newPassword.length >= 6 &&
+    passwordData.newPassword === passwordData.confirmPassword;
 
   const handleSave = async () => {
     try {
@@ -267,6 +280,75 @@ const Overview = ({ userData, mood, setAlert }) => {
       setTimeout(() => setAlert(null), 3000);
     }
   };
+
+  const handleChangePassword = async () => {
+    if (!passwordData.currentPassword) {
+      return setAlert({
+        message: "Current password is required",
+        status: "Error",
+      });
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      return setAlert({
+        message: "Password must be at least 6 characters",
+        status: "Error",
+      });
+    }
+
+    if (
+      passwordData.newPassword !==
+      passwordData.confirmPassword
+    ) {
+      return setAlert({
+        message: "Passwords do not match",
+        status: "Error",
+      });
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `${Host}/api/auth/change-password`,
+        passwordData,
+        {
+          headers: {
+            "auth-token": token,
+          },
+        }
+      );
+
+      setAlert({
+        message: "Password changed successfully",
+        status: "Success",
+      });
+
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      setAlert({
+        message:
+          err.response?.data?.message || "Failed to change password",
+        status: "Error",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    }
+  };
+
+  const parentRank = rankData.find(
+    (r) => r.designation === localUser.referredBy?.designation
+  );
+
+  const allowedRanks = rankData.filter(
+    (rank) => !parentRank || rank.level <= parentRank.level
+  );
 
   return (
     <div className="card overview-card">
@@ -429,7 +511,14 @@ const Overview = ({ userData, mood, setAlert }) => {
           </div>
 
           <div className="section-header">
-            <h4>KYC Details <span onClick={() => setEditKyc(!editKyc)}>{editKyc ? <X /> : <NiEdit />}</span></h4>
+            <h4>
+              KYC Details
+              {mood === "admin" && (
+                <span onClick={() => setEditKyc(!editKyc)}>
+                  {editKyc ? <X /> : <NiEdit />}
+                </span>
+              )}
+            </h4>
 
             {/* {(mood === "admin" || mood === "staff") && (
               <button onClick={() => setEditKyc(!editKyc)}>
@@ -559,7 +648,8 @@ const Overview = ({ userData, mood, setAlert }) => {
           </div>
 
           <div className="section-header">
-            <h4>Bank Details <span onClick={() => setEditBank(!editBank)}> {editBank ? <X /> : <NiEdit />}</span></h4>
+            <h4>Bank Details
+              {mood === "admin" && (<span onClick={() => setEditBank(!editBank)}> {editBank ? <X /> : <NiEdit />}</span>)}</h4>
 
             {/* {(mood === "admin" || mood === "staff") && (
               <button onClick={() => setEditBank(!editBank)}>
@@ -634,7 +724,7 @@ const Overview = ({ userData, mood, setAlert }) => {
           </div>
 
           <div className="section-header">
-            <h4>Nominee Details <span onClick={() => setEditNominee(!editNominee)}>{editNominee ? <X /> : <NiEdit />}</span></h4>
+            <h4>Nominee Details {mood === "admin" && (<span onClick={() => setEditNominee(!editNominee)}>{editNominee ? <X /> : <NiEdit />}</span>)}</h4>
 
             {/* {(mood === "admin" || mood === "staff") && (
               <button onClick={() => setEditNominee(!editNominee)}>
@@ -898,6 +988,13 @@ const Overview = ({ userData, mood, setAlert }) => {
           </div>
         </div>
       )}
+      {mood !== "admin" && (
+        <div className="modal-actions">
+          <button onClick={() => setPasswordModalOpen(true)}>
+            Change Password
+          </button>
+        </div>
+      )}
       <DeleteModal
         open={disapproveOpen}
         onClose={() => setDisapproveOpen(false)}
@@ -936,12 +1033,9 @@ const Overview = ({ userData, mood, setAlert }) => {
             onChange={(e) => setSelectedLevel(Number(e.target.value))}
           >
             <option value="">Select Designation</option>
-
-            {rankData.map((rank) => (
+            {allowedRanks.map((rank) => (
               <option key={rank.level} value={rank.level}>
-                {rank.designation}
-                {" "}
-                ({rank.directIncome}%)
+                {rank.designation} ({rank.directIncome}%)
               </option>
             ))}
           </select>
@@ -968,6 +1062,84 @@ const Overview = ({ userData, mood, setAlert }) => {
               borderRadius: "8px",
             }}
           />
+        </div>
+      </AddLocationModal>
+      <AddLocationModal
+        open={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+        title="Change Password"
+      >
+        <div className="field">
+          <label>Current Password</label>
+          <input
+            type="password"
+            value={passwordData.currentPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                currentPassword: e.target.value,
+              })
+            }
+          />
+        </div>
+
+        <div className="field">
+          <label>New Password</label>
+          <input
+            type="password"
+            value={passwordData.newPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                newPassword: e.target.value,
+              })
+            }
+          />
+        </div>
+
+        <div className="field">
+          <label>Confirm Password</label>
+          <input
+            type="password"
+            value={passwordData.confirmPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                confirmPassword: e.target.value,
+              })
+            }
+          />
+        </div>
+
+        <div className="modal-actions">
+          <button
+            disabled={!isPasswordFormValid}
+            style={{
+              opacity: !isPasswordFormValid ? 0.5 : 1,
+              cursor: !isPasswordFormValid ? "not-allowed" : "pointer",
+            }}
+            onClick={() => {
+              if (passwordData.newPassword.length < 6) {
+                return setAlert({
+                  message: "Password must be at least 6 characters",
+                  status: "Error",
+                });
+              }
+
+              if (
+                passwordData.newPassword !== passwordData.confirmPassword
+              ) {
+                return setAlert({
+                  message: "Passwords do not match",
+                  status: "Error",
+                });
+              }
+
+              setConfirmPasswordModal(true);
+            }}
+          >
+            Continue
+          </button>
         </div>
       </AddLocationModal>
     </div>

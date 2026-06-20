@@ -12,6 +12,20 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
 }
 
+.note-preview {
+  margin-top: 10px;
+  width: 120px;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.note-preview:hover {
+  transform: scale(1.05);
+}

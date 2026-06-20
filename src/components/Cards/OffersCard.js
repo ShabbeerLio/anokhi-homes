@@ -109,6 +109,10 @@ const OffersCard = ({
           {isOffer && <p><strong>Price Benefit : </strong>₹{formatCurrency(item.priceValue)}</p>}
           {isDiscount && <p><strong>Discount :</strong> {formatCurrency(item.amount)} {item.type === "percentage" ? "%" : "₹"}</p>}
           {!isDiscount && <p><strong>User Type:</strong> {item.userType?.join(", ")}</p>}
+          <p><strong>Offer Type: </strong>{item?.offerType}</p>
+          <p><strong>Offer Value: </strong>{item?.offerValue}</p>
+          <p><strong>Colony: </strong>{item?.colonyId?.name}</p>
+          <p><strong>Start from: </strong>{formatDate(item.startDate)}</p>
           <p>
             <strong>Valid Till:</strong> {formatDate(item.endDate)}
           </p>
@@ -156,10 +160,12 @@ const OffersCard = ({
         <div className="user-card-bottom view-box">
           <div className="user-card-bottom-left">
             <p>Description</p>
-            {isOffer && <p>Price Value</p>}
             {isDiscount && <p>Discount</p>}
             {isDiscount && <p>Terms</p>}
             {!isDiscount && <p>User Type</p>}
+            <p>Offer Type</p>
+            <p>Offer Value</p>
+            <p>Colony</p>
             <p>Starts</p>
             <p>Ends</p>
             <p>Remaining</p>
@@ -179,6 +185,9 @@ const OffersCard = ({
             {isDiscount && <p>{item.terms}</p>}
 
             <p>{item.userType?.join(", ")}</p>
+            <p>{item?.offerType}</p>
+            <p>{item?.offerValue}</p>
+            <p>{item?.colonyId?.name}</p>
             <p>{formatDate(item.startDate)}</p>
             <p>{formatDate(item.endDate)}</p>
             <p className="countdown">{getRemainingDays(item.endDate)}</p>

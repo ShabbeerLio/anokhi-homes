@@ -43,7 +43,7 @@ const CashbackCard = ({
         <div className="user-card-title">
           <div className="user-card-name">
             <h4>
-              {item?.colonyId?.name || "Cashback"}
+              {`Cashback ${item.cashbackPercent}%`}
 
               <span className={`status ${item.active ? "active" : "inactive"}`}>
                 {item.active ? "Active" : "Disabled"}
@@ -108,6 +108,10 @@ const CashbackCard = ({
           </p>
           <p>
             <strong>Complete Within :</strong> {item.completeWithinDays} Days
+          </p>
+          <p>
+            <strong>Colony: </strong>
+            {item?.colonyId?.name}
           </p>
           <p>
             <strong>Start Date :</strong> {formatDate(item.startDate)}

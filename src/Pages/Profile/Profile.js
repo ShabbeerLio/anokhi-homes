@@ -5,13 +5,16 @@ import Permissions from "../../components/Tabs/Permissions";
 import Overview from "../../components/Tabs/Overview";
 import Report from "../../components/Tabs/Report";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import NiShare from "../../icons/ni-share";
 import NiCode from "../../icons/ni-code";
 import NiLink from "../../icons/ni-link";
 import NiUser from "../../icons/ni-user";
 import { useDispatch, useSelector } from "react-redux";
-import { getAccountDetails } from "../../Redux/Slices/AppSlices";
+import { getAccountDetails, updateUser } from "../../Redux/Slices/AppSlices";
+import { uploadImage } from "../LandingSetting/LandingApi";
+import NiEdit from "../../icons/ni-edit";
+import NiDelete from "../../icons/ni-delete";
 
 const Profile = ({ mood, currentUser, setAlert }) => {
   const location = useLocation();
@@ -23,6 +26,8 @@ const Profile = ({ mood, currentUser, setAlert }) => {
   useEffect(() => {
     dispatch(getAccountDetails());
   }, []);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [formData, setFormData] = useState()
 
   /* ================= SAFETY ================= */
 
@@ -34,6 +39,74 @@ const Profile = ({ mood, currentUser, setAlert }) => {
 
   const isOwnProfile = userDetail?._id === userData?._id;
   console.log(isOwnProfile, "isOwnProfile")
+
+  const handleAvatarChange = async (file) => {
+    if (!file) return;
+
+    try {
+      setAvatarUploading(true);
+
+      const upload = await uploadImage(file);
+
+      const result = await dispatch(
+        updateUser({
+          id: userDetail._id,
+          data: {
+            avatar: upload.url,
+          },
+        })
+      ).unwrap();
+
+      dispatch(getAccountDetails());
+
+      userData.avatar = result.avatar;
+
+      setAlert({
+        message: "Profile photo updated",
+        status: "Success",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.log(err);
+
+      setAlert({
+        message: "Failed to update profile photo",
+        status: "Error",
+      });
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    try {
+      const result = await dispatch(
+        updateUser({
+          id: userDetail._id,
+          data: {
+            avatar: "",
+          },
+        })
+      ).unwrap();
+      dispatch(getAccountDetails());
+      userData.avatar = "";
+
+      setAlert({
+        message: "Profile photo removed",
+        status: "Success",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.log(err);
+
+      setAlert({
+        message: "Failed to remove profile photo",
+        status: "Error",
+      });
+    }
+  };
 
   /* ================= TAB VISIBILITY LOGIC ================= */
 
@@ -175,17 +248,41 @@ const Profile = ({ mood, currentUser, setAlert }) => {
         <div className="profile-sidebar">
           <div className="profile-card card">
             <div className="profile-top">
-              {userData?.avatar ? (
-                <img
-                  src={userData.avatar}
-                  alt={userData.name}
-                  className="profile-avatar"
-                />
-              ) : (
-                <div className="profile-avatar-placeholder">
-                  <NiUser />
-                </div>
-              )}
+              <div className="profile-top-avatar">
+
+                {userData?.avatar ? (
+                  <img
+                    src={userData.avatar}
+                    alt={userData.name}
+                    className="profile-avatar"
+                  />
+                ) : (
+                  <div className="profile-avatar-placeholder">
+                    <NiUser />
+                  </div>
+                )}
+                {(isOwnProfile) && (
+                  <div className="avatar-actions">
+                    <label className="avatar-upload-btn">
+                      {avatarUploading ? "Uploading..." : <NiEdit />}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => handleAvatarChange(e.target.files[0])}
+                      />
+                    </label>
+                    {userData.avatar && (
+                      <span
+                        className="avatar-remove-btn"
+                        onClick={handleRemoveAvatar}
+                      >
+                        <NiDelete />
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
               <h3>{userData.name}</h3>
               <p className="role">
                 {userData.role === "staff"

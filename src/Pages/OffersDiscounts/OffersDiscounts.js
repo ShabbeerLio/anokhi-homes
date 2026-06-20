@@ -190,22 +190,22 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       if (tab === "offers") {
         response = isEditMode
           ? await dispatch(
-              updateOffer({
-                id: formData._id,
-                data: formData,
-              }),
-            )
+            updateOffer({
+              id: formData._id,
+              data: formData,
+            }),
+          )
           : await dispatch(addOffer(formData));
       }
 
       if (tab === "discounts") {
         response = isEditMode
           ? await dispatch(
-              updateDiscount({
-                id: formData._id,
-                data: formData,
-              }),
-            )
+            updateDiscount({
+              id: formData._id,
+              data: formData,
+            }),
+          )
           : await dispatch(addDiscount(formData));
       }
 
@@ -216,11 +216,11 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       if (tab === "cashback") {
         response = isEditMode
           ? await dispatch(
-              updateCashback({
-                id: formData._id,
-                data: formData,
-              }),
-            )
+            updateCashback({
+              id: formData._id,
+              data: formData,
+            }),
+          )
           : await dispatch(addCashback(formData));
       }
 
@@ -228,7 +228,9 @@ const OffersDiscounts = ({ mood, setAlert }) => {
         message: isEditMode ? "Updated Successfully" : "Added Successfully",
         status: "Success",
       });
-
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
       dispatch(getOffers());
       dispatch(getDiscount());
       dispatch(getRewards());
@@ -240,6 +242,9 @@ const OffersDiscounts = ({ mood, setAlert }) => {
         message: "Something went wrong",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     }
   };
 
@@ -264,11 +269,17 @@ const OffersDiscounts = ({ mood, setAlert }) => {
         message: "Deleted Successfully",
         status: "Success",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     } catch (error) {
       setAlert({
         message: "Delete Failed",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     }
   };
 
@@ -303,11 +314,17 @@ const OffersDiscounts = ({ mood, setAlert }) => {
         message: "Reward claimed successfully",
         status: "Success",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     } catch (error) {
       setAlert({
         message: error?.msg || "Failed",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     }
   };
 
@@ -321,15 +338,21 @@ const OffersDiscounts = ({ mood, setAlert }) => {
         message: "Reward claimed successfully",
         status: "Success",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     } catch (error) {
       setAlert({
         message: error?.msg || "Failed",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     }
   };
   // console.log(selectedProjects, "selectedProjects");
-  console.log(formData, "rewards");
+  console.log(offersData, "offersData");
 
   return (
     <div className="plot-container">
@@ -384,15 +407,15 @@ const OffersDiscounts = ({ mood, setAlert }) => {
               className={tab === "offers" ? "active" : ""}
               onClick={() => setTab("offers")}
             >
-              Festival Offers
+              Festival Offers &Bonanza
             </button>
 
-            <button
+            {/* <button
               className={tab === "discounts" ? "active" : ""}
               onClick={() => setTab("discounts")}
             >
               Bonanza
-            </button>
+            </button> */}
 
             <button
               className={tab === "targets" ? "active" : ""}
@@ -505,13 +528,12 @@ const OffersDiscounts = ({ mood, setAlert }) => {
         title={
           tab === "targets"
             ? "Edit Reward"
-            : `${isEditMode ? "Edit" : "Add"} ${
-                tab === "offers"
-                  ? "Offer"
-                  : tab === "discounts"
-                    ? "Discount"
-                    : "Cashback"
-              }`
+            : `${isEditMode ? "Edit" : "Add"} ${tab === "offers"
+              ? "Offer"
+              : tab === "discounts"
+                ? "Discount"
+                : "Cashback"
+            }`
         }
       >
         {tab === "cashback" && (
@@ -538,42 +560,26 @@ const OffersDiscounts = ({ mood, setAlert }) => {
                 )}
               />
             </div>
-            {/* <div className="field">
-              <label>Colony</label>
-
-              <select
-                value={formData.colonyId || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    colonyId: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Colony</option>
-
-                {projects?.map((item) => (
-                  <option key={item._id} value={item._id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div> */}
 
             <div className="field">
               <label>Cashback %</label>
 
-              <input
-                type="number"
-                max="5"
+              <select
                 value={formData.cashbackPercent || ""}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    cashbackPercent: e.target.value,
+                    cashbackPercent: Number(e.target.value),
                   })
                 }
-              />
+              >
+                <option value="">Select Cashback %</option>
+                <option value={1}>1%</option>
+                <option value={2}>2%</option>
+                <option value={3}>3%</option>
+                <option value={4}>4%</option>
+                <option value={5}>5%</option>
+              </select>
             </div>
 
             <div className="field">
@@ -663,6 +669,53 @@ const OffersDiscounts = ({ mood, setAlert }) => {
               />
             </div>
             <div className="field">
+              <SearchSelect
+                label="Site"
+                placeholder="Search Project or location"
+                options={allColonies}
+                value={selectedProjects}
+                onChange={(selected) => {
+                  setSelectedProjects(selected);
+                  setFormData({ ...formData, colonyId: selected._id });
+                }}
+                displayKey="name"
+                searchKeys={["name", "location"]}
+                renderOption={(p) => (
+                  <div>
+                    <b>{p.name}</b>
+                    <small style={{ display: "block", color: "#666" }}>
+                      {p?.locationId?.name}
+                    </small>
+                  </div>
+                )}
+              />
+            </div>
+            {/* <div className="field">
+              <label>Applicable Colonies</label>
+
+              <select
+                multiple
+                value={formData.colonies || []}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    colonies: Array.from(
+                      e.target.selectedOptions,
+                      (option) => option.value
+                    ),
+                  })
+                }
+              >
+                {allColonies?.map((colony) => (
+                  <option key={colony._id} value={colony._id}>
+                    {colony.name}
+                  </option>
+                ))}
+              </select>
+
+              <small>Hold Ctrl (Windows) / Cmd (Mac) to select multiple colonies.</small>
+            </div> */}
+            <div className="field">
               <label>Start Date</label>
               <input
                 type="date"
@@ -683,6 +736,76 @@ const OffersDiscounts = ({ mood, setAlert }) => {
                 }
               />
             </div>
+            <div className="field">
+              <label>Offer Type</label>
+
+              <select
+                value={formData.offerType || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    offerType: e.target.value,
+                  })
+                }
+              >
+                <option value="">Select Type</option>
+                <option value="item">Free Item</option>
+                <option value="amount">Flat Amount</option>
+                <option value="percent">Percentage</option>
+              </select>
+            </div>
+            {formData.offerType === "item" && (
+              <div className="field">
+                <label>Item Name</label>
+
+                <input
+                  placeholder="Ex. Modular Kitchen"
+                  value={formData.offerValue || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      offerValue: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            )}
+            {formData.offerType === "amount" && (
+              <div className="field">
+                <label>Discount Amount</label>
+
+                <input
+                  type="number"
+                  placeholder="₹50000"
+                  value={formData.offerValue || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      offerValue: Number(e.target.value),
+                    })
+                  }
+                />
+              </div>
+            )}
+            {formData.offerType === "percent" && (
+              <div className="field">
+                <label>Discount Percentage</label>
+
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  placeholder="10"
+                  value={formData.offerValue || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      offerValue: Number(e.target.value),
+                    })
+                  }
+                />
+              </div>
+            )}
             <div className="field">
               <label>Status</label>
               <select
@@ -797,7 +920,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
 
         {/* OFFER */}
 
-        {tab === "offers" && (
+        {/* {tab === "offers" && (
           <div className="field">
             <label>Price Value</label>
             <input
@@ -808,11 +931,11 @@ const OffersDiscounts = ({ mood, setAlert }) => {
               }
             />
           </div>
-        )}
+        )} */}
 
         {/* DISCOUNT */}
 
-        {tab === "discounts" && (
+        {/* {tab === "discounts" && (
           <>
             <div className="field">
               <label>Discount</label>
@@ -849,7 +972,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
               />
             </div>
           </>
-        )}
+        )} */}
 
         <div className="modal-actions">
           <button onClick={handleSubmit}>

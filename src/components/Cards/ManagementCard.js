@@ -541,17 +541,19 @@ const ManagementCard = ({
               <p>Report</p>
             ) : item?.status === "lost" ? (
               <p>Report</p>
-            ) : item?.status === "assigned" && mood === "admin" ? (
-              <div className="table-filters">
-                <button
-                  className="view-report-btn"
-                  onClick={() => setPanelMode("reassign")}
-                >
-                  <NiUser />
-                  Reassign
-                </button>
-              </div>
-            ) : ""}
+            ) :
+              // item?.status === "new" && mood === "admin" ? (
+              //   <div className="table-filters">
+              //     <button
+              //       className="view-report-btn"
+              //       onClick={() => setPanelMode("reassign")}
+              //     >
+              //       <NiUser />
+              //       Reassign
+              //     </button>
+              //   </div>
+              // ) :
+              ""}
           </div>
           <div className="user-card-bottom-right">
             <p>

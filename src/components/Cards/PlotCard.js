@@ -19,7 +19,6 @@ const PlotCard = ({
 }) => {
   const navigate = useNavigate();
   const [deleteOpen, setDeleteOpen] = useState(false);
-  // console.log(cashback, "cashback");
   return (
     <>
       <div
@@ -35,7 +34,7 @@ const PlotCard = ({
         </div>
         <div className="plot-details">
           <h3>{p.name}</h3>
-          <p className="plot-card-price">₹{formatCurrency(p.priceRange)} / sqft</p>
+          <p className="plot-card-price">₹{p.priceRange} / sqft</p>
           <p>Area: {p.area} sqft</p>
           {/* <p>{p.details}</p> */}
           {cashback && (

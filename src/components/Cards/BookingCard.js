@@ -153,7 +153,7 @@ const BookingCard = ({
     return "completed";
   })();
 
-  console.log(item, "item")
+  // console.log(item, "item")
 
   const bookingProgress =
     currentStage === "booking"
@@ -176,7 +176,7 @@ const BookingCard = ({
         ? 100
         : 0;
 
-  console.log(bookingProgress, "bookingProgress")
+  // console.log(bookingProgress, "bookingProgress")
   const handleBookingAction = async (bookingId, action, note = "") => {
     try {
       const token = localStorage.getItem("token");

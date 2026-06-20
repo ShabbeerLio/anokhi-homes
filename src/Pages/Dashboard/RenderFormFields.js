@@ -1,9 +1,173 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProjectData from "../Plot/PlotData";
 import SearchSelect from "../../components/SearchItems/SearchSelect";
 import { formatCurrency } from "../../components/Utils/FormatCurrency";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addUser,
+  getAgentByReferralId,
+  getUser,
+} from "../../Redux/Slices/AppSlices";
+import axios from "axios";
+import Host from "../../Host/Host";
+import NiClosseye from "../../icons/ni-closseye";
+import NiOpenEye from "../../icons/ni-openEye";
 
-const RenderFormFields = ({ actionType, formData, setFormData }) => {
+const RenderFormFields = ({ actionType, formData, setFormData, setAlert }) => {
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.app);
+  const [customersList, setCustomersList] = useState([]);
+  const [agentsList, setAgentsList] = useState([]);
+  const [showNewCustomer, setShowNewCustomer] = useState(false);
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const handleAddLead = async () => {
+    const token = localStorage.getItem("token");
+    // console.log(token, "token");
+    // console.log("Adding lead:", formData);
+    try {
+      const payload = {
+        customerId: formData.customerId,
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+      };
+      const res = await axios.post(`${Host}/api/lead/add`, payload, {
+        headers: {
+          "auth-token": token,
+          "Content-Type": "application/json",
+        },
+      });
+      // console.log(res.data);
+      setAlert({ message: "Lead added successfully!", status: "Success" });
+      // setOpen(false);
+      setFormData({
+        customerId: "",
+        name: "",
+        phone: "",
+        email: "",
+      });
+      // dispatch(getLeads());
+    } catch (err) {
+      console.error(err);
+      setAlert({ message: "Failed to add lead", status: "Error" });
+    } finally {
+      setTimeout(() => setAlert(null), 5000);
+    }
+  };
+
+  const handleAddCustomerAndLead = async () => {
+    try {
+      // Create customer
+      const result = await dispatch(
+        addUser({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          password: formData.password,
+          role: "user",
+        }),
+      ).unwrap();
+
+      // Refresh users
+      await dispatch(getUser());
+
+      // Create lead using created customer id
+      await axios.post(
+        `${Host}/api/lead/add`,
+        {
+          customerId: result.user._id, // adjust according to your API
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+        },
+        {
+          headers: {
+            "auth-token": localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      // dispatch(getLeads());
+      // await dispatch(getUser());
+
+      setFormData({
+        customerId: "",
+        name: "",
+        phone: "",
+        email: "",
+        password: "",
+      });
+
+      setSelectedCustomer(null);
+      setShowNewCustomer(false);
+      // setIsEditMode(false);
+      // setSelectedLead(null);
+
+      // setOpen(false);
+
+      setAlert({
+        message: "Customer & Lead created successfully",
+        status: "Success",
+      });
+      setTimeout(() => setAlert(null), 5000);
+    } catch (err) {
+      setAlert({
+        message: err?.msg || "Failed",
+        status: "Error",
+      });
+      setTimeout(() => setAlert(null), 5000);
+    }
+  };
+
+  const [referalMsg, setReferralMsg] = useState(null);
+
+  const handleReferralCheck = async (code) => {
+    setFormData((prev) => ({
+      ...prev,
+      referralId: code,
+    }));
+    if (code.length < 9) return;
+    try {
+      const res = await dispatch(getAgentByReferralId(code));
+
+      setReferralMsg(res);
+    } catch (error) {
+      setReferralMsg(null);
+    }
+  };
+
+  const handleAddUser = async () => {
+    try {
+      const result = await dispatch(addUser(formData)).unwrap();
+
+      setAlert({
+        message: result.msg || "User created successfully",
+        status: "Success",
+      });
+
+      dispatch(getUser());
+
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
+      // setOpen(false);
+    } catch (error) {
+      setAlert({
+        message: error.msg || "Failed to create user",
+        status: "Error",
+      });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
+    }
+  };
+
   const customers = [
     { id: "C001", name: "Rahul Sharma", phone: "9876543210" },
     { id: "C002", name: "Imran Khan", phone: "9123456789" },
@@ -92,121 +256,137 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
     case "Add Associate / Staff / Customer":
       return (
         <>
-          {/* USER TYPE */}
           <div className="field">
             <label>User Type</label>
             <select
-              value={formData.userType || ""}
+              value={formData.role}
               onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  userType: e.target.value,
-                  position: "",
-                })
+                setFormData({ ...formData, role: e.target.value })
               }
             >
               <option value="">Select Type</option>
-              <option value="User">Customer</option>
-              <option value="Staff">Staff</option>
-              <option value="Agent">Associate</option>
+              <option value="user">Customer</option>
+              <option value="agent">Associate</option>
+              <option value="staff">Staff</option>
             </select>
           </div>
 
-          {/* NAME */}
-          <div className="field">
-            <label>Name</label>
-            <input
-              placeholder="Full Name"
-              value={formData.name || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-          </div>
-
-          {/* EMAIL */}
-          <div className="field">
-            <label>Email</label>
-            <input
-              type="email"
-              placeholder="Email"
-              value={formData.email || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-            />
-          </div>
-
-          {/* PHONE */}
-          <div className="field">
-            <label>Phone Number</label>
-            <input
-              placeholder="Phone Number"
-              value={formData.phone || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-            />
-          </div>
-
-          {/* ADDRESS */}
-          <div className="field">
-            <label>Address</label>
-            <input
-              placeholder="Address"
-              value={formData.address || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, address: e.target.value })
-              }
-            />
-          </div>
-
-          {/* STAFF POSITION */}
-          {formData.userType === "Staff" && (
+          {/* Common Fields */}
+          {/* {formData.user && ( */}
+          <>
             <div className="field">
-              <label>Staff Position</label>
-              <select
-                value={formData.position || ""}
+              <input
+                placeholder="Name (as per Aadhaar) "
+                value={formData.name || ""}
                 onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
+                  setFormData({ ...formData, name: e.target.value })
                 }
-              >
-                <option value="">Select Position</option>
-                {staffPositions.map((pos) => (
-                  <option key={pos} value={pos}>
-                    {pos}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
+
+            <div className="field">
+              <input
+                type="email"
+                placeholder="Email"
+                value={formData.email || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="field">
+              <input
+                placeholder="Phone"
+                value={formData.phone || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="field password-field">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={formData.password || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <span
+                className="password-eye"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <NiClosseye /> : <NiOpenEye />}
+              </span>
+            </div>
+          </>
+          {/* )} */}
+
+          {/* Agent Only */}
+          {formData.role === "agent" && (
+            <>
+              <div className="field password-field">
+                <input
+                  placeholder="Referral Code"
+                  value={formData.referralId}
+                  onChange={(e) => handleReferralCheck(e.target.value)}
+                />
+              </div>
+              {referalMsg !== null &&
+                (referalMsg?.payload?.msg ? (
+                  <>
+                    <p style={{ color: "red" }}>{referalMsg?.payload?.msg}</p>
+                  </>
+                ) : (
+                  <>
+                    <p style={{ color: "green" }}>
+                      Referred by: {referalMsg?.payload?.name}
+                    </p>
+                  </>
+                ))}
+              <div className="plot-modal field">
+                <select
+                  value={formData.position}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      position: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Position</option>
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                </select>
+              </div>
+            </>
           )}
 
-          {/* AGENT COMMISSION */}
-          {formData.userType === "Agent" && (
+          {/* Staff Only */}
+          {formData.role === "staff" && (
             <div className="field">
-              <label>Commission %</label>
               <input
-                type="number"
-                placeholder="Commission Percentage"
-                value={formData.commission || ""}
+                placeholder="Department / Role"
+                value={formData.role || ""}
                 onChange={(e) =>
-                  setFormData({ ...formData, commission: e.target.value })
+                  setFormData({ ...formData, role: e.target.value })
                 }
               />
             </div>
           )}
 
-          {/* AVATAR */}
-          <div className="field">
-            <label>Password</label>
-            <input
-              type="password"
-              placeholder="Password"
-              value={formData.password || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.files[0] })
-              }
-            />
+          {/* Actions */}
+          <div className="modal-actions">
+            <button
+              onClick={() => {
+                handleAddUser();
+                // setOpen(false);
+              }}
+            >
+              Add User
+            </button>
           </div>
         </>
       );
@@ -519,7 +699,8 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
           {selectedPlot && (
             <div className="report-view-box-right active">
               <p>
-                <strong>Total Amount</strong> ₹{formatCurrency(amountInfo.total)}
+                <strong>Total Amount</strong> ₹
+                {formatCurrency(amountInfo.total)}
               </p>
 
               <p>
@@ -527,7 +708,8 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
               </p>
 
               <p>
-                <strong>Remaining Amount</strong> ₹{formatCurrency(amountInfo.remaining)}
+                <strong>Remaining Amount</strong> ₹
+                {formatCurrency(amountInfo.remaining)}
               </p>
 
               <p>
@@ -582,76 +764,144 @@ const RenderFormFields = ({ actionType, formData, setFormData }) => {
     case "Add Lead":
       return (
         <>
-          <div className="field">
-            <label>Customer Name</label>
-            <input
-              placeholder="Customer Name"
-              value={selectedCustomer?.name || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-          </div>
+          {showNewCustomer ? (
+            <>
+              <div className="field">
+                <label>Name</label>
+                <input
+                  value={formData.name || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      name: e.target.value,
+                    })
+                  }
+                />
+              </div>
 
-          <div className="field">
-            <label>Phone</label>
-            <input
-              placeholder="Phone"
-              value={selectedCustomer?.phone || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-            />
-          </div>
-          <div className="field">
-            <label>Email</label>
-            <input
-              placeholder="Email"
-              value={selectedCustomer?.email || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-            />
-          </div>
-          <div className="field">
-            <label>Location</label>
-            <input
-              placeholder="Location"
-              value={selectedCustomer?.location || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
-              }
-            />
-          </div>
+              <div className="field">
+                <label>Phone</label>
+                <input
+                  value={formData.phone || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      phone: e.target.value,
+                    })
+                  }
+                />
+              </div>
 
-          {/* <div className="field">
-                        <label>Status</label>
-                        <select
-                            value={formData.status || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, status: e.target.value })
-                            }
+              <div className="field">
+                <label>Email</label>
+                <input
+                  value={formData.email || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      email: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="field password-field">
+                <label>Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+                <span
+                  className="password-eye"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <NiClosseye /> : <NiOpenEye />}
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="field">
+                <SearchSelect
+                  label="Customer Name"
+                  placeholder="Search name or number"
+                  options={customersList}
+                  value={selectedCustomer}
+                  onChange={(selected) => {
+                    setShowNewCustomer(false);
+                    setSelectedCustomer(selected);
+                    setFormData({
+                      ...formData,
+                      customerId: selected._id,
+                      name: selected.name,
+                      phone: selected.phone,
+                      email: selected.email,
+                    });
+                  }}
+                  displayKey="name"
+                  searchKeys={["name", "phone"]}
+                  renderOption={(c) => (
+                    <div>
+                      <b>{c.name}</b> ({c.phone})
+                    </div>
+                  )}
+                  noResultComponent={
+                    <div className="ss-item no-result">
+                      <p>No customer found.</p>
+
+                      <div className="modal-actions">
+                        <button
+                          type="button"
+                          className="add-button"
+                          onClick={() => setShowNewCustomer(true)}
                         >
-                            <option value="">Select Status</option>
-                            <option value="New">New</option>
-                            <option value="Converted">Converted</option>
-                            <option value="Lost">Lost</option>
-                        </select>
-                    </div> */}
-          {/* <div className="field">
-                        <label>Agent</label>
-                        <select
-                            value={formData.agent || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, agent: e.target.value })
-                            }
-                        >
-                            <option value="">Select Agent</option>
-                            <option value="Amit">Amit</option>
-                            <option value="Rahul">Rahul</option>
-                            <option value="Sana">Sana</option>
-                        </select>
-                    </div> */}
+                          + Add New Customer
+                        </button>
+                      </div>
+                    </div>
+                  }
+                />
+              </div>
+              <div className="field">
+                <label>Phone</label>
+                <input
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                  placeholder="Phone Number"
+                />
+              </div>
+              <div className="field">
+                <label>Email</label>
+                <input
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="Email Address"
+                />
+              </div>
+            </>
+          )}
+
+          <div className="modal-actions">
+            <button
+              onClick={() => {
+                if (showNewCustomer) {
+                  handleAddCustomerAndLead();
+                } else {
+                  handleAddLead();
+                }
+              }}
+            >
+              {showNewCustomer ? "Create Customer & Lead" : "Add Lead"}
+            </button>
+          </div>
         </>
       );
     case "Schedule Site Visit":

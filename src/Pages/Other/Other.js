@@ -212,7 +212,7 @@ const Other = ({ mood, setAlert }) => {
   console.log(currentData, "currentData")
 
   return (
-    <div className="plot-container">
+    <div className="plot-container user-table-box">
       {/* Filters */}
       <div className="table-filters">
         <div className="page-head-title">
@@ -295,17 +295,20 @@ const Other = ({ mood, setAlert }) => {
         <div className="card table-box">
           <div className="table ">
             <div className="table-head">
+              <span>S.No</span>
               <span>Image</span>
               <span>Role</span>
               <span>Name</span>
-              <span>Designation</span>
               <span>Referral Id</span>
+              <span>Designation</span>
+              <span>Referral By</span>
               <span>Status</span>
               <span>Actions</span>
             </div>
 
-            {currentData?.map((item) => (
+            {currentData?.map((item, index) => (
               <div key={item.id} className="table-row">
+                <span>{index + 1}</span>
                 {item?.avatar ? (
                   <img
                     src={item.avatar}
@@ -325,11 +328,12 @@ const Other = ({ mood, setAlert }) => {
                         ? "Admin"
                         : "Customer"}
                 </span>
-                <span className="title">
+                <span className="title" style={{ textTransform: "capitalize" }}>
                   {item.name} {item.position && `(${item.position})`}
                 </span>
-                <span className="title">{item.role !== "user" ? <>{item.designation}({item.directIncomePercent}) </> : "-"}</span>
-                <span className="title">{item.referralId || "-"}</span>
+                <span>{item?.referralId}</span>
+                <span className="title">{item.role !== "user" ? <>{item.designation}({item.directIncomePercent}%) </> : "-"}</span>
+                <span className="title">{item?.referredBy?.name || "-"} {item?.referredBy?.referralId && `(${item?.referredBy?.referralId})`}</span>
 
                 {((item.status !== "approval" && mood === "admin" || item.status !== "approval" && mood === "staff") && (
                   <label className="switch">

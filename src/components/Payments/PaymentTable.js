@@ -290,9 +290,9 @@ const PaymentTable = ({ data, mood, setAlert }) => {
               <span>Booking Details</span>
               <p>Customer :- <small>{formData?.customer?.name} ({formData?.customer?.phone})</small></p>
               <p>Plot Price / sqft :- <small>{formatCurrency(formData?.pricePerSqft)}/sqft</small></p>
-              <p>Request Price / sqft :- <small>{formData?.requestAmount}/sqft</small></p>
-              <p>Plot Area :- <small>{formData?.plotArea}</small></p>
-              <p>Total Amount :- <small>{formData?.totalAmount}</small></p>
+              <p>Request Price / sqft :- <small>{formatCurrency(formData?.requestAmount)}/sqft</small></p>
+              <p>Plot Area :- <small>{formatCurrency(formData?.plotArea)}</small></p>
+              <p>Total Amount :- <small>{formatCurrency(formData?.totalAmount)}</small></p>
             </div>
           </>
         )}

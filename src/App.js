@@ -137,7 +137,7 @@ function App() {
           <Route
             path="/signup"
             element={
-              <Signup mood={mood} setAlert={setAlert} setMood={setMood} />
+              <Signup mood={mood} setAlert={setAlert} setMood={setMood} data={landingPage}/>
             }
           />
           <Route

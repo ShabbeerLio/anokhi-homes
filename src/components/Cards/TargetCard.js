@@ -116,17 +116,19 @@ const TargetCard = ({
 
       {/* TARGET PROGRESS */}
 
-      <div className="target-progress">
-        <div className="target-road">
-          <div className="target-icon" style={{ left: `${progress}%` }}>
-            {item.icon}
+      {mood !== "admin" && (
+        <div className="target-progress">
+          <div className="target-road">
+            <div className="target-icon" style={{ left: `${progress}%` }}>
+              {item.icon}
+            </div>
+
+            <div className="progress-fill" style={{ width: `${progress}%` }} />
           </div>
 
-          <div className="progress-fill" style={{ width: `${progress}%` }} />
+          <p>{Math.floor(progress)}% Completed</p>
         </div>
-
-        <p>{Math.floor(progress)}% Completed</p>
-      </div>
+      )}
       {canClaim && mood === "agent" && (
         <div className="modal-actions">
           <button

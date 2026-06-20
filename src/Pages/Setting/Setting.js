@@ -9,6 +9,7 @@ import ActivityLogs from "../../components/Permissions/ActivityLogs";
 import CommissionSetting from "../../components/Permissions/CommissionSetting";
 import { getAccountDetails } from "../../Redux/Slices/AppSlices";
 import { useDispatch, useSelector } from "react-redux";
+import PaymentTerms from "../../components/Permissions/PaymentTerms";
 
 /* Dummy Components */
 const ProfileSettings = ({ setAlert, userDetail, navigate }) => (
@@ -49,7 +50,7 @@ const Setting = ({ mood, setAlert }) => {
   const TABS = useMemo(() => {
     switch (mood) {
       case "admin":
-        return ["Profile", "Staff Permissions", "Logs", "Commission Settings"];
+        return ["Profile", "Staff Permissions", "Logs", "Commission Settings", "Payment Terms",];
 
       case "staff":
         return ["Profile"];
@@ -90,6 +91,13 @@ const Setting = ({ mood, setAlert }) => {
 
       case "Logs":
         return mood === "admin" ? <ActivityLogs setAlert={setAlert} /> : null;
+
+      case "Payment Terms":
+        return mood === "admin" ? (
+          <PaymentTerms
+            setAlert={setAlert}
+          />
+        ) : null;
 
       default:
         return <ProfileSettings setAlert={setAlert} />;

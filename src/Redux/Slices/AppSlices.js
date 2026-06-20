@@ -656,6 +656,66 @@ export const deleteHelpTicket = createAsyncThunk(
   },
 );
 
+export const getPaymentTerms = createAsyncThunk(
+  "app/getPaymentTerms",
+  async () => {
+    const res = await fetch(`${Host}/api/payment-terms`, {
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
+
+export const updatePaymentTerms = createAsyncThunk(
+  "app/updatePaymentTerms",
+  async ({ id, data }) => {
+    const res = await fetch(`${Host}/api/payment-terms/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+      body: JSON.stringify(data),
+    });
+
+    return await res.json();
+  },
+);
+
+export const createPaymentTerms = createAsyncThunk(
+  "app/createPaymentTerms",
+  async (data) => {
+    const res = await fetch(`${Host}/api/payment-terms`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+      body: JSON.stringify(data),
+    });
+
+    return await res.json();
+  },
+);
+
+export const deletePaymentTerms = createAsyncThunk(
+  "app/deletePaymentTerms",
+  async (id) => {
+    const res = await fetch(`${Host}/api/payment-terms/${id}`, {
+      method: "DELETE",
+      headers: {
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
+
 // ========================
 // 🔥 Slice
 // ========================
@@ -679,6 +739,7 @@ const appSlice = createSlice({
     agentByReferralId: [],
     myRewards: [],
     helpTickets: [],
+    paymentTerms: null,
     loading: false,
     error: null,
   },
@@ -783,6 +844,21 @@ const appSlice = createSlice({
 
       .addCase(getHelpTickets.fulfilled, (state, action) => {
         state.helpTickets = action.payload.tickets;
+      })
+      .addCase(getPaymentTerms.fulfilled, (state, action) => {
+        state.paymentTerms = action.payload;
+      })
+
+      .addCase(updatePaymentTerms.fulfilled, (state, action) => {
+        state.paymentTerms = action.payload.terms;
+      })
+
+      .addCase(createPaymentTerms.fulfilled, (state, action) => {
+        state.paymentTerms = action.payload.terms;
+      })
+
+      .addCase(deletePaymentTerms.fulfilled, (state) => {
+        state.paymentTerms = null;
       })
 
       // LOADING (optional global)

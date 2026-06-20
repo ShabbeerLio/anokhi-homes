@@ -289,11 +289,11 @@ const DataTable = ({ data, mood, setAlert }) => {
             }}
           >
             <option value="">All Status</option>
-            <option value="New">New</option>
-            <option value="Assigned">Assigned</option>
-            <option value="Unassigned">Unassigned</option>
-            <option value="Converted">Converted</option>
-            <option value="Lost">Lost</option>
+            <option value="new">New</option>
+            <option value="assigned">Assigned</option>
+            <option value="unassigned">Unassigned</option>
+            <option value="converted">Converted</option>
+            <option value="lost">Lost</option>
           </select>
         </div>
 

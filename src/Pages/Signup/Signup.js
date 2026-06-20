@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import NiClosseye from "../../icons/ni-closseye";
 import NiOpenEye from "../../icons/ni-openEye";
@@ -9,13 +9,16 @@ import { useDispatch } from "react-redux";
 import { getAgentByReferralId } from "../../Redux/Slices/AppSlices";
 import Host from "../../Host/Host";
 
-const Signup = ({ mood, setAlert, setMood }) => {
+const Signup = ({ mood, setAlert, setMood, data }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [referalMsg, setReferralMsg] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+  const termsRef = useRef(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -181,11 +184,8 @@ const Signup = ({ mood, setAlert, setMood }) => {
       }
       if (formData.nomineeAadharPhoto) {
         const nomineeUpload =
-          await uploadImage(
-            formData.nomineeAadharPhoto
-          );
-        nomineeAadharPhotoUrl =
-          nomineeUpload.url;
+          await uploadImage(formData.nomineeAadharPhoto);
+        nomineeAadharPhotoUrl = nomineeUpload.url;
       }
 
       const payload = {
@@ -251,18 +251,24 @@ const Signup = ({ mood, setAlert, setMood }) => {
         return;
       }
 
-      localStorage.setItem("token", data.token);
-      setAlert({
-        message: "Registration Successful!",
-        status: "Success",
-      });
-      setTimeout(() => {
-        setAlert(null);
-        setFormData(null)
-      }, 5000);
-      setMood(mood)
-      navigate("/dashboard");
-      setFormData({})
+      if (mood === "user") {
+        localStorage.setItem("token", data.token);
+
+        setAlert({
+          message: "Registration Successful!",
+          status: "Success",
+        });
+
+        setTimeout(() => {
+          setAlert(null);
+          navigate("/dashboard");
+        }, 1500);
+      } else {
+        // Agent / Staff
+        setStep(5);
+      }
+
+      setFormData({});
     } catch (error) {
       console.log(error);
       setAlert({
@@ -368,73 +374,77 @@ const Signup = ({ mood, setAlert, setMood }) => {
           </form>
         )}
         {mood === "staff" && (
-          <form onSubmit={handleFinish}>
-            <input
-              placeholder="Name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
+          <>
+            {step === 1 && (
+              <form onSubmit={handleFinish}>
+                <input
+                  placeholder="Name"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                />
 
-            <input
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
-              required
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  email: e.target.value,
-                })
-              }
-            />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                  required
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      email: e.target.value,
+                    })
+                  }
+                />
 
-            <input
-              type="number"
-              placeholder="Phone"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-            />
+                <input
+                  type="number"
+                  placeholder="Phone"
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                />
 
-            <div className="password-field">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
-              <span
-                className="password-eye"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <NiClosseye /> : <NiOpenEye />}
-              </span>
-            </div>
+                <div className="password-field">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                  />
+                  <span
+                    className="password-eye"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <NiClosseye /> : <NiOpenEye />}
+                  </span>
+                </div>
 
-            {/* Optional staff role */}
-            {/* <input
+                {/* Optional staff role */}
+                {/* <input
               placeholder="Department / Role"
               onChange={(e) =>
                 setFormData({ ...formData, role: e.target.value })
               }
             /> */}
-            <button className={`role-${mood}`} type="submit">
-              Sign Up
-            </button>
-            <p className="auth-footer">
-              Already have account? <Link to="/login">Sign in</Link>
-            </p>
-          </form>
+                <button className={`role-${mood}`} type="submit">
+                  Sign Up
+                </button>
+                <p className="auth-footer">
+                  Already have account? <Link to="/login">Sign in</Link>
+                </p>
+              </form>
+            )}
+          </>
         )}
         {mood === "agent" && (
           <>
-            <p>Step {step} of 3</p>
+            <p>Step {step} of 5</p>
             {/* ================= STEP 1 ================= */}
             {step === 1 && (
               <form onSubmit={(e) => {
@@ -491,7 +501,7 @@ const Signup = ({ mood, setAlert, setMood }) => {
                 <input
                   placeholder="Referral Code"
                   value={formData.referralId}
-                  onChange={(e) => handleReferralCheck(e.target.value)}
+                  onChange={(e) => handleReferralCheck(e.target.value.toUpperCase())}
                 />
 
                 {referalMsg !== null && (
@@ -545,7 +555,7 @@ const Signup = ({ mood, setAlert, setMood }) => {
                   }
                 />
 
-                <input
+                {/* <input
                   placeholder="PAN Number"
                   value={formData.panNumber}
                   onChange={(e) =>
@@ -554,6 +564,21 @@ const Signup = ({ mood, setAlert, setMood }) => {
                       panNumber: e.target.value.toUpperCase(),
                     })
                   }
+                /> */}
+                <input
+                  placeholder="PAN Number"
+                  value={formData.panNumber}
+                  maxLength={10}
+                  onChange={(e) => {
+                    const value = e.target.value
+                      .toUpperCase()
+                      .replace(/[^A-Z0-9]/g, "");
+
+                    setFormData({
+                      ...formData,
+                      panNumber: value,
+                    });
+                  }}
                 />
 
                 <input
@@ -567,8 +592,12 @@ const Signup = ({ mood, setAlert, setMood }) => {
                 <input
                   placeholder="Aadhaar Number"
                   value={formData.aadharNumber}
-                  onChange={(e) =>
-                    setFormData({ ...formData, aadharNumber: e.target.value })
+                  maxLength={12}
+                  inputMode="numeric"
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    setFormData({ ...formData, aadharNumber: value })
+                  }
                   }
                 />
 
@@ -655,7 +684,12 @@ const Signup = ({ mood, setAlert, setMood }) => {
 
             {/* ================= STEP 3 ================= */}
             {step === 3 && (
-              <form onSubmit={handleFinish}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setStep(4);
+                }}
+              >
                 <input
                   placeholder="Nominee Name"
                   value={formData.nomineeName}
@@ -684,32 +718,112 @@ const Signup = ({ mood, setAlert, setMood }) => {
                     <option value="sister">Sister</option>
                   </select>
                 </div>
-
                 <input
                   placeholder="Nominee Aadhaar Number"
                   value={formData.nomineeAadharNumber}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      nomineeAadharNumber: e.target.value,
-                    })
+                  maxLength={12}
+                  inputMode="numeric"
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    setFormData({ ...formData, nomineeAadharNumber: value })
+                  }
                   }
                 />
-
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) =>
-                    handleFileUpload("aadharPhoto", e.target.files[0])
+                    handleFileUpload("nomineeAadharPhoto", e.target.files[0])
                   }
                 />
 
-                <button type="submit" className={canFinish ? `role-${mood}` : ""} disabled={!canFinish} disabled={saving}>
-                  {saving ? "Finishing..." : " Finish"}
+                <button type="submit" className={canFinish ? `role-${mood}` : ""} disabled={!canFinish}>
+                  Next
                 </button>
               </form>
             )}
+            {step === 4 && (
+              <form onSubmit={handleFinish}>
+                <div
+                  ref={termsRef}
+                  className="terms-box"
+                  onScroll={(e) => {
+                    const target = e.target;
+
+                    if (
+                      target.scrollTop + target.clientHeight >=
+                      target.scrollHeight - 5
+                    ) {
+                      setHasScrolledToBottom(true);
+                    }
+                  }}
+                >
+                  {data?.policies?.termcondition?.sections?.map((section) => (
+                    <div key={section._id} className="terms-section">
+                      {section.heading && <h2>{section.heading}</h2>}
+                      {section.content && <p>{section.content}</p>}
+                    </div>
+                  ))}
+                </div>
+
+                <label className="terms-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={acceptedTerms}
+                    disabled={!hasScrolledToBottom}
+                    onChange={(e) =>
+                      setAcceptedTerms(e.target.checked)
+                    }
+                  />
+
+                  I have read and agree to the Terms & Conditions
+                </label>
+
+                {!hasScrolledToBottom && (
+                  <p className="scroll-msg">
+                    Please scroll to the bottom to continue.
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={!acceptedTerms || saving}
+                  className={
+                    acceptedTerms && !saving ? `role-${mood}` : ""
+                  }
+                >
+                  {saving ? "Finishing..." : "Finish Registration"}
+                </button>
+              </form>
+            )}
+
           </>
+        )}
+        {step === 5 && (
+          <div className="approval-success">
+            <div className="approval-icon">
+              <NiTick />
+            </div>
+
+            <h2>Account Created Successfully</h2>
+
+            <p>
+              Your account has been created successfully.
+            </p>
+
+            <p>
+              Your account is currently <strong>under approval</strong>.
+              Once it has been reviewed and approved by the administrator,
+              you will receive a confirmation email.
+            </p>
+
+            <button
+              className={`role-${mood}`}
+              onClick={() => navigate("/")}
+            >
+              Go to Home
+            </button>
+          </div>
         )}
       </div>
     </div >

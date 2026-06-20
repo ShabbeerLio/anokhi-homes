@@ -25,7 +25,7 @@ const SearchSelect = ({
     ),
   );
 
-  // console.log(filteredOptions,"filteredOptions")
+  console.log(filteredOptions,"filteredOptions")
 
   // 🖱 Close dropdown on outside click
   useEffect(() => {
@@ -84,20 +84,6 @@ const SearchSelect = ({
               </div>
             ))
           )}
-
-          {filteredOptions.map((option) => (
-            <div
-              key={option._id}
-              className="ss-item"
-              onClick={() => {
-                onChange(option);
-                setSearch(option[displayKey]);
-                setOpen(false);
-              }}
-            >
-              {renderOption ? renderOption(option) : option[displayKey]}
-            </div>
-          ))}
         </div>
       )}
     </div>

@@ -214,10 +214,9 @@ const Dashboard = ({ mood, setMood }) => {
           Simple modal to create or modify item information.
         </p> */}
 
-        <div className="modal-actions">
-          {/* <button onClick={() => setOpen(false)}>Cancel</button> */}
+        {/* <div className="modal-actions">
           <button onClick={() => setOpen(false)}>Submit</button>
-        </div>
+        </div> */}
       </AddLocationModal>
     </div>
   );
