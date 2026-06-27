@@ -213,6 +213,13 @@ const Other = ({ mood, setAlert }) => {
     }
   };
 
+  const createSlug = (name) =>
+    name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+
   // console.log(currentData, "currentData")
 
   return (
@@ -358,7 +365,11 @@ const Other = ({ mood, setAlert }) => {
 
                 <div className="dots">
                   <span
-                    onClick={() => navigate(`/user/${item._id}`, { state: item })}
+                    onClick={() =>
+                      navigate(`/user/${createSlug(item.name)}`, {
+                        state: item._id,
+                      })
+                    }
                   >
                     <NiOpenEye />
                   </span>
@@ -407,7 +418,9 @@ const Other = ({ mood, setAlert }) => {
                 <div className="dots">
                   <span
                     onClick={() =>
-                      navigate(`/user/${item._id}`, { state: item })
+                      navigate(`/user/${createSlug(item.name)}`, {
+                        state: item._id,
+                      })
                     }
                   >
                     <NiOpenEye />

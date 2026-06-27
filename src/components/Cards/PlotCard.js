@@ -9,23 +9,35 @@ import { formatCurrency } from "../Utils/FormatCurrency";
 const PlotCard = ({
   p,
   cashback,
-  plotId,
   mood,
   setSelectedProject,
   setIsEditMode,
   setOpen,
   setAlert,
   onDelete,
+  plotData,
 }) => {
   const navigate = useNavigate();
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const createSlug = (name) =>
+    name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+  console.log(p, "p");
+
   return (
     <>
       <div
         key={p._id}
         className="plot-card card"
         onClick={() =>
-          navigate(`/plot/${plotId}/${p._id}`, { state: { project: p.name } })
+          navigate(`/plot/${createSlug(plotData.name)}/${createSlug(p.name)}`, {
+            state: {
+              project: p,
+            },
+          })
         }
       >
         <div className="plot-img">
@@ -44,7 +56,9 @@ const PlotCard = ({
               </div>
               <div className="cashback-badge-right">
                 {cashback.cashbackPercent}% Cashback
-                <span>Collect full payment within {cashback.completeWithinDays} days</span>
+                <span>
+                  Collect full payment within {cashback.completeWithinDays} days
+                </span>
               </div>
             </div>
           )}

@@ -25,7 +25,7 @@ const Overview = ({ userData, mood, setAlert }) => {
   const [rankOpen, setRankOpen] = useState(false);
   const [staffRoleOpen, setStaffRoleOpen] = useState(false);
   const [ranks, setRanks] = useState(rankData);
-  console.log(staffRoles, "staffRoles")
+  // console.log(userData, "userData2")
   const [localUser, setLocalUser] = useState(userData);
   const [selectedLevel, setSelectedLevel] = useState(localUser?.level || "");
   const [disapproveOpen, setDisapproveOpen] = useState(false);
@@ -81,8 +81,10 @@ const Overview = ({ userData, mood, setAlert }) => {
   ];
 
   useEffect(() => {
+    setLocalUser("")
     setSelectedLevel(localUser?.level || "");
-  }, [localUser]);
+    setLocalUser(userData)
+  }, [userData]);
 
   useEffect(() => {
     if (localUser?.staffRole) {
@@ -176,6 +178,9 @@ const Overview = ({ userData, mood, setAlert }) => {
         message: "Approval failed",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     }
   };
 
@@ -210,6 +215,9 @@ const Overview = ({ userData, mood, setAlert }) => {
         message: "Disapproval failed",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     }
   };
 
@@ -348,6 +356,9 @@ const Overview = ({ userData, mood, setAlert }) => {
         message: "Current password is required",
         status: "Error",
       });
+      setTimeout(() => {
+          setAlert(null);
+        }, 3000);
     }
 
     if (passwordData.newPassword.length < 6) {
@@ -355,6 +366,9 @@ const Overview = ({ userData, mood, setAlert }) => {
         message: "Password must be at least 6 characters",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     }
 
     if (
@@ -365,6 +379,9 @@ const Overview = ({ userData, mood, setAlert }) => {
         message: "Passwords do not match",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
     }
 
     try {
@@ -584,23 +601,23 @@ const Overview = ({ userData, mood, setAlert }) => {
           <div className="overview-grid">
             <div>
               <label>Overall Rating </label>
-              <p><Stars rating={localUser.overallRating} /></p>
+              <Stars rating={localUser.overallRating} />
             </div>
             <div>
               <label>Lead Rating </label>
-              <p><Stars rating={localUser.leadRating} /></p>
+              <Stars rating={localUser.leadRating} />
             </div>
             <div>
               <label>Site Visit Rating</label>
-              <p><Stars rating={localUser.siteVisitRating} /></p>
+              <Stars rating={localUser.siteVisitRating} />
             </div>
             <div>
               <label>Booking Rating</label>
-              <p><Stars rating={localUser.bookingRating} /></p>
+              <Stars rating={localUser.bookingRating} />
             </div>
             <div>
               <label>Customer Rating</label>
-              <p><Stars rating={localUser.customerRating} /></p>
+              <Stars rating={localUser.customerRating} />
             </div>
             <div>
               <label>Total Rating</label>

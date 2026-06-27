@@ -14,20 +14,26 @@ const ProjectCards = ({
   setOpen,
   mood,
   setAlert,
-  onDelete
+  onDelete,
 }) => {
   const navigate = useNavigate();
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const createSlug = (name) =>
+    name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+      console.log(p,"p")
+
   return (
     <>
       <div
         key={p._id}
         className="plot-card card"
         onClick={() =>
-          navigate(`/plot/${p._id}`, {
-            state: {
-              location: p.name,
-            },
+          navigate(`/plot/${createSlug(p.name)}`, {
+            state: p,
           })
         }
       >
@@ -69,7 +75,7 @@ const ProjectCards = ({
             onClick={(e) => {
               e.stopPropagation();
               setDeleteOpen(false);
-              onDelete(p._id)
+              onDelete(p._id);
             }}
           >
             Yes

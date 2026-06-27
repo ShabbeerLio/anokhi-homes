@@ -1031,8 +1031,8 @@ const SiteVisitCard = ({
                 <label>Hold Type</label>
 
                 <select value={type} onChange={(e) => setType(e.target.value)}>
-                  <option value="FREE">Free Hold</option>
-                  <option value="PAID">Paid Hold</option>
+                  <option value="FREE">Shadow Hold (Free)</option>
+                  <option value="PAID">Token Hold (Paid)</option>
                 </select>
               </div>
               <div className="installment-box">

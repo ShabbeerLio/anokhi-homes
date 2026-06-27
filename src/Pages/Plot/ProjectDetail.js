@@ -14,11 +14,12 @@ import { getPlots } from "../../Redux/Slices/AppSlices";
 
 const ProjectDetail = ({ mood, setAlert }) => {
   const location = useLocation();
-  // console.log(location.state); 
-  const projectName = location.state?.project || "";
+  // console.log(location.state);
+  const projectData = location;
+  const projectName = projectData?.state?.project?.name;
   const navigate = useNavigate();
-  const { projectId } = useParams();
-
+  const  projectId  = projectData?.state?.project?._id;
+// console.log(projectData,"projectData")
   const dispatch = useDispatch();
   const { plots } = useSelector((state) => state.app);
 
@@ -42,7 +43,7 @@ const ProjectDetail = ({ mood, setAlert }) => {
           <Breadcrumb />
         </div>
       </div>
-      <PlotDrawCard data={plots} mood={mood} setAlert={setAlert}/>
+      <PlotDrawCard data={plots} mood={mood} setAlert={setAlert} />
     </div>
   );
 };

@@ -15,8 +15,8 @@ import axios from "axios";
 
 const Projects = ({ mood, setAlert }) => {
   const location = useLocation();
-  const locatioName = location.state?.location || "";
-  const { plotId } = useParams();
+  const plotData = location.state;
+  let plotId  = plotData?._id;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { projects, cashbackData } = useSelector((state) => state.app);
@@ -176,7 +176,7 @@ const Projects = ({ mood, setAlert }) => {
         <div className="page-head-title">
           <div className="page-tools">
             <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
-            <h2>{locatioName} Projects</h2>
+            <h2>{plotData?.name} Projects</h2>
           </div>
           <Breadcrumb />
         </div>
@@ -221,13 +221,13 @@ const Projects = ({ mood, setAlert }) => {
                   key={p._id}
                   p={p}
                   cashback={cashback}
-                  plotId={plotId}
                   mood={mood}
                   setSelectedProject={setSelectedProject}
                   setIsEditMode={setIsEditMode}
                   setOpen={setOpen}
                   setAlert={setAlert}
                   onDelete={handleDeleteProject}
+                  plotData={plotData}
                 />
               );
             })

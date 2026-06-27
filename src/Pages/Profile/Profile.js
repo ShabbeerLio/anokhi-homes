@@ -11,7 +11,7 @@ import NiCode from "../../icons/ni-code";
 import NiLink from "../../icons/ni-link";
 import NiUser from "../../icons/ni-user";
 import { useDispatch, useSelector } from "react-redux";
-import { getAccountDetails, updateUser } from "../../Redux/Slices/AppSlices";
+import { getAccountDetails, getUserById, updateUser } from "../../Redux/Slices/AppSlices";
 import { uploadImage } from "../LandingSetting/LandingApi";
 import NiEdit from "../../icons/ni-edit";
 import NiDelete from "../../icons/ni-delete";
@@ -19,35 +19,47 @@ import NiDelete from "../../icons/ni-delete";
 const Profile = ({ mood, currentUser, setAlert }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const userData = location.state;
-  // console.log(userData, "userData")
+  const userId = location.state;
   const dispatch = useDispatch();
-  const { userDetail } = useSelector((state) => state.app);
+  const { userDetail, userById } = useSelector((state) => state.app);
   useEffect(() => {
     dispatch(getAccountDetails());
+    dispatch(getUserById(userId));
   }, []);
+  
+  let userData = userById;
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [formData, setFormData] = useState()
-
+  // console.log(userId, "userId")
+  
   /* ================= SAFETY ================= */
-
+  
   useEffect(() => {
     if (!userData) navigate("/dashboard");
   }, [userData, navigate]);
 
   //   if (!userData) return null;
 
-  const isOwnProfile = userDetail?._id === userData?._id;
+  const isOwnProfile = userDetail?._id === userData;
   // console.log(isOwnProfile, "isOwnProfile")
+
+  const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
 
   const handleAvatarChange = async (file) => {
     if (!file) return;
+    // Validate file size
+    if (file.size > MAX_IMAGE_SIZE) {
+      setAlert({
+        message: "Image size should not exceed 10 MB",
+        status: "Error",
+      });
+      setTimeout(() => setAlert(null), 3000);
+      return;
+    }
 
     try {
       setAvatarUploading(true);
-
       const upload = await uploadImage(file);
-
       const result = await dispatch(
         updateUser({
           id: userDetail._id,
@@ -56,11 +68,9 @@ const Profile = ({ mood, currentUser, setAlert }) => {
           },
         })
       ).unwrap();
-
       dispatch(getAccountDetails());
-
-      userData.avatar = result.avatar;
-
+      dispatch(getUserById(userData));
+      // userData.avatar = result.avatar;
       setAlert({
         message: "Profile photo updated",
         status: "Success",
@@ -74,6 +84,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
         message: "Failed to update profile photo",
         status: "Error",
       });
+      setTimeout(() => setAlert(null), 3000);
     } finally {
       setAvatarUploading(false);
     }
@@ -90,7 +101,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
         })
       ).unwrap();
       dispatch(getAccountDetails());
-      userData.avatar = "";
+      dispatch(getUserById(userData));
 
       setAlert({
         message: "Profile photo removed",
@@ -105,6 +116,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
         message: "Failed to remove profile photo",
         status: "Error",
       });
+      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -157,6 +169,14 @@ const Profile = ({ mood, currentUser, setAlert }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (!userData || !userData._id) {
+    return (
+      <div className="plot-container">
+        <h3>Loading...</h3>
+      </div>
+    );
+  }
 
   /* ================= TAB CONTENT ================= */
 

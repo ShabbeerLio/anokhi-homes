@@ -109,11 +109,11 @@ const Signup = ({ mood, setAlert, setMood, data }) => {
   const handleFileUpload = (field, file) => {
     if (!file) return;
 
-    const MAX_SIZE = 1024 * 1024; // 1 MB
+    const MAX_SIZE = 10 * 1024 * 1024;
 
     if (file.size > MAX_SIZE) {
       setAlert({
-        message: "Image size should not exceed 1 MB",
+        message: "Image size should not exceed 10 MB",
         status: "Error",
       });
 

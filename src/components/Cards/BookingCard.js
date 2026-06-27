@@ -678,8 +678,24 @@ const BookingCard = ({
             <p>Paid</p>
             <p>Remaining</p>
 
-            {item.status === "confirmed" ||
-              (item.status === "pending" && <p>Report</p>)}
+            {/* {item.status === "confirmed" ||
+              (item.status === "pending" && (
+                <>
+                  <div className="table-filters">
+                    <button
+                      className={`view-report-btn ${showReport ? "active" : ""}`}
+                      onClick={() => {
+                        setPanelMode("report");
+                        setShowReport(true);
+                        setShowTimeline(false);
+
+                      }}
+                    >
+                      <NiReport /> Report
+                    </button>
+                  </div>
+                </>
+              ))} */}
           </div>
 
           <div className="user-card-bottom-right">
@@ -691,39 +707,59 @@ const BookingCard = ({
             <p>₹{formatCurrency(paid)}</p>
             <p>₹{formatCurrency(remaining)}</p>
 
-            {item.status === "confirmed" ||
+            {/* {item.status === "confirmed" ||
               (item.status === "pending" && (
-                <div className="table-filters">
-                  <button
-                    className={`view-report-btn ${showReport ? "active" : ""}`}
-                    onClick={() => {
-                      setPanelMode("report");
-                      setShowReport(true);
-                      setShowTimeline(false);
+                <>
 
-                    }}
-                  >
-                    <NiReport /> {showReport ? "Hide" : "View"}
-                  </button>
-                  <button
-                    className={`view-report-btn ${showTimeline ? "active" : ""}`}
-                    onClick={() => {
-                      setPanelMode("timeline");
-                      setShowReport(false);
-                      setShowTimeline(true);
-                    }}
-                  >
-                    <NiSitevisit /> Timeline
-                  </button>
-                </div>
-              ))}
+                  <div className="table-filters">
+                    <button
+                      className={`view-report-btn ${showTimeline ? "active" : ""}`}
+                      onClick={() => {
+                        setPanelMode("timeline");
+                        setShowReport(false);
+                        setShowTimeline(true);
+                      }}
+                    >
+                      <NiSitevisit /> Timeline
+                    </button>
+                  </div>
+                </>
+              ))} */}
           </div>
         </div>
+        {item.status === "confirmed" ||
+          (item.status === "pending" && (
+            <>
+              <div class="modal-actions">
+                <button
+                  className={`view-report-btn ${showReport ? "active" : ""}`}
+                  onClick={() => {
+                    setPanelMode("report");
+                    setShowReport(true);
+                    setShowTimeline(false);
+
+                  }}
+                >
+                  <NiReport />Report
+                </button>
+                <button
+                  className={`view-report-btn ${showTimeline ? "active" : ""}`}
+                  onClick={() => {
+                    setPanelMode("timeline");
+                    setShowReport(false);
+                    setShowTimeline(true);
+                  }}
+                >
+                  <NiSitevisit /> Timeline
+                </button>
+              </div>
+            </>))}
         {item.status === "pending" &&
           mood !== "user" &&
           panelMode !== "payment" && (
             <div class="modal-actions">
               <button
+                className="view-report-btn"
                 onClick={() => {
                   setPanelMode("payment");
                   setShowReport(false);
@@ -731,8 +767,39 @@ const BookingCard = ({
               >
                 Book Now
               </button>
+
             </div>
           )}
+        {/* {item.status === "confirmed" ||
+          (item.status === "pending" && (
+            <>
+              <div className="table-filters">
+                <button
+                  className={`view-report-btn ${showReport ? "active" : ""}`}
+                  onClick={() => {
+                    setPanelMode("report");
+                    setShowReport(true);
+                    setShowTimeline(false);
+
+                  }}
+                >
+                  <NiReport /> {showReport ? "Hide" : "View"}
+                </button>
+              </div>
+              <div className="table-filters">
+                <button
+                  className={`view-report-btn ${showTimeline ? "active" : ""}`}
+                  onClick={() => {
+                    setPanelMode("timeline");
+                    setShowReport(false);
+                    setShowTimeline(true);
+                  }}
+                >
+                  <NiSitevisit /> Timeline
+                </button>
+              </div>
+            </>
+          ))} */}
 
         {/* ================= REPORT ================= */}
         <div className={`report-view-box-right ${panelMode ? "active" : ""}`}>

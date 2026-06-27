@@ -16,7 +16,7 @@ import { getIncome, getIncomeSummary } from "../../Redux/Slices/AppSlices";
 
 const ITEMS_PER_PAGE = 15;
 
-const Commission = ({ mood }) => {
+const Commission = ({ mood, setAlert }) => {
     const dispatch = useDispatch();
     const { incomeSummary } = useSelector((state) => state.app);
     const [search, setSearch] = useState("");
@@ -181,57 +181,6 @@ const Commission = ({ mood }) => {
                             }
                         />
                     </div>
-
-                    {/* <div className="searchItem">
-                        <select
-                            value={cycleFilter}
-                            onChange={(e) =>
-                                setCycleFilter(
-                                    e.target.value
-                                )
-                            }
-                        >
-                            <option value="">
-                                All Cycles
-                            </option>
-
-                            {[
-                                ...new Set(
-                                    commissionData
-                                        .map((item) => item.cycleDate)
-                                        .filter(Boolean)
-                                ),
-                            ].map((date) => (
-                                <option key={date} value={date}>
-                                    {formatCycleDate(date)}
-                                </option>
-                            ))}
-                        </select>
-                    </div> */}
-
-                    {/* <div className="searchItem">
-                        <select
-                            value={statusFilter}
-                            onChange={(e) =>
-                                setStatusFilter(
-                                    e.target.value
-                                )
-                            }
-                        >
-                            <option value="">
-                                All Status
-                            </option>
-
-                            <option value="pending">
-                                Pending
-                            </option>
-
-                            <option value="credited">
-                                Credited
-                            </option>
-                        </select>
-                    </div> */}
-
                     <button
                         className="add-button"
                         onClick={() =>
@@ -273,6 +222,8 @@ const Commission = ({ mood }) => {
                                     exportToExcel={
                                         exportToExcel
                                     }
+                                    mood={mood}
+                                    setAler={setAlert}
                                 />
                             )
                         ))}

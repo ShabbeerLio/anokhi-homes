@@ -41,6 +41,15 @@ export const getUser = createAsyncThunk("app/getUser", async () => {
   });
   return res.json();
 });
+export const getUserById = createAsyncThunk("app/getUserById", async (id) => {
+  const res = await fetch(`${Host}/api/auth/user/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": getToken(),
+    },
+  });
+  return res.json();
+});
 export const getRank = createAsyncThunk("app/ranks", async () => {
   const res = await fetch(`${Host}/api/auth/ranks`, {
     headers: {
@@ -837,6 +846,23 @@ export const updateStaffRole = createAsyncThunk(
   },
 );
 
+export const addPayoutPayment = createAsyncThunk(
+  "app/addPayoutPayment",
+  async ({ payoutId, formData }) => {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`${Host}/api/payout/pay/${payoutId}`, formData, {
+      method: "PUT",
+      headers: {
+        token,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return res.data;
+  },
+);
+
 // ========================
 // 🔥 Slice
 // ========================
@@ -847,6 +873,7 @@ const appSlice = createSlice({
     userDetail: null,
     usersRole: [],
     users: [],
+    userById: [],
     rankData: [],
     leads: [],
     siteVisit: [],
@@ -886,6 +913,9 @@ const appSlice = createSlice({
       // All USER by role
       .addCase(getUserRole.fulfilled, (state, action) => {
         state.usersRole = action.payload;
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.userById = action.payload;
       })
 
       // All USER
