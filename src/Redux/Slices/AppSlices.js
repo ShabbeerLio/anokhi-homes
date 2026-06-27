@@ -716,6 +716,127 @@ export const deletePaymentTerms = createAsyncThunk(
   },
 );
 
+export const getPlotHold = createAsyncThunk("app/getPlotHold", async () => {
+  const res = await fetch(`${Host}/api/plothold`, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": getToken(),
+    },
+  });
+
+  return await res.json();
+});
+
+export const getPlotsetting = createAsyncThunk(
+  "app/getPlotsetting",
+  async () => {
+    const res = await fetch(`${Host}/api/plothold/settings`, {
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
+
+export const getPayoutSettings = createAsyncThunk(
+  "app/getPayoutSettings",
+  async () => {
+    const res = await fetch(`${Host}/api/payout-settings`, {
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
+
+export const updatePayoutSettings = createAsyncThunk(
+  "app/updatePayoutSettings",
+  async (data) => {
+    const res = await fetch(`${Host}/api/payout-settings`, data, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+    });
+
+    return res.data.setting;
+  },
+);
+
+export const getRating = createAsyncThunk("app/getRating", async () => {
+  const res = await fetch(`${Host}/api/rating`, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": getToken(),
+    },
+  });
+
+  return await res.json();
+});
+
+export const getNotifications = createAsyncThunk(
+  "app/getNotifications",
+  async () => {
+    const res = await fetch(`${Host}/api/notification`, {
+      headers: {
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
+
+export const readNotification = createAsyncThunk(
+  "app/readNotification",
+  async (id) => {
+    await fetch(`${Host}/api/notification/read/${id}`, {
+      method: "PUT",
+      headers: {
+        "auth-token": getToken(),
+      },
+    });
+
+    return id;
+  },
+);
+
+export const getStaffRoles = createAsyncThunk("app/getStaffRoles", async () => {
+  const res = await fetch(`${Host}/api/staff-role`, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": getToken(),
+    },
+  });
+
+  return await res.json();
+});
+
+export const updateStaffRole = createAsyncThunk(
+  "app/updateStaffRole",
+  async ({ id, permissions }) => {
+    const res = await fetch(`${Host}/api/staff-role/edit/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+      body: JSON.stringify({
+        permissions,
+      }),
+    });
+
+    return await res.json();
+  },
+);
+
 // ========================
 // 🔥 Slice
 // ========================
@@ -739,9 +860,18 @@ const appSlice = createSlice({
     agentByReferralId: [],
     myRewards: [],
     helpTickets: [],
+    plotSetting: null,
+    plotHold: [],
+    ratingData: [],
+    notifications: [],
+    staffRoles: [],
     paymentTerms: null,
     loading: false,
     error: null,
+    payoutSettings: {
+      tdsPercent: 2,
+      adminChargePercent: 5,
+    },
   },
   reducers: {},
 
@@ -861,6 +991,48 @@ const appSlice = createSlice({
         state.paymentTerms = null;
       })
 
+      .addCase(getPlotsetting.fulfilled, (state, action) => {
+        state.plotSetting = action.payload;
+      })
+      .addCase(getPlotHold.fulfilled, (state, action) => {
+        state.plotHold = action.payload;
+      })
+
+      .addCase(getPayoutSettings.fulfilled, (state, action) => {
+        state.payoutSettings = action.payload;
+      })
+
+      .addCase(updatePayoutSettings.fulfilled, (state, action) => {
+        state.payoutSettings = action.payload;
+      })
+
+      .addCase(getRating.fulfilled, (state, action) => {
+        state.ratingData = action.payload;
+      })
+
+      .addCase(getNotifications.fulfilled, (state, action) => {
+        state.notifications = action.payload;
+      })
+
+      .addCase(readNotification.fulfilled, (state, action) => {
+        const notification = state.notifications.find(
+          (n) => n._id === action.payload,
+        );
+
+        if (notification) {
+          notification.isRead = true;
+        }
+      })
+
+      .addCase(getStaffRoles.fulfilled, (state, action) => {
+        state.staffRoles = action.payload;
+      })
+
+      .addCase(updateStaffRole.fulfilled, (state, action) => {
+        state.staffRoles = state.staffRoles.map((i) =>
+          i._id === action.payload._id ? action.payload : i,
+        );
+      })
       // LOADING (optional global)
       .addMatcher(
         (action) => action.type.endsWith("/pending"),

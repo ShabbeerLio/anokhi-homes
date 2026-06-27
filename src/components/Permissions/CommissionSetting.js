@@ -1,20 +1,69 @@
 import React, { useEffect, useState } from "react";
-import { getRank } from "../../Redux/Slices/AppSlices";
+import { getPayoutSettings, getRank } from "../../Redux/Slices/AppSlices";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import Host from "../../Host/Host";
 
 const CommissionSetting = ({ setAlert }) => {
     const dispatch = useDispatch();
-    const { rankData } = useSelector((state) => state.app);
+    const { rankData, payoutSettings } = useSelector((state) => state.app);
     useEffect(() => {
         dispatch(getRank());
-    }, []);
+        dispatch(getPayoutSettings());
+    }, [dispatch]);
     const [config, setConfig] = useState({
         tdsPercent: 2,
-        adminPercent: 5,
-        referralPercent: 2,
-        cashbackPercent: 2,
-        cashbackDays: 60,
+        adminChargePercent: 5,
     });
+    useEffect(() => {
+        if (payoutSettings) {
+            setConfig({
+                tdsPercent: payoutSettings.tdsPercent || 2,
+                adminChargePercent:
+                    payoutSettings.adminChargePercent || 5,
+            });
+        }
+    }, [payoutSettings]);
+
+    const updateCommissionSetting = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            await axios.put(
+                `${Host}/api/payout-settings`,
+                {
+                    tdsPercent: config.tdsPercent,
+                    adminChargePercent:
+                        config.adminChargePercent,
+                },
+                {
+                    headers: {
+                        "auth-token": token,
+                    },
+                }
+            );
+
+            dispatch(getPayoutSettings());
+
+            setAlert({
+                status: "Success",
+                message: "Settings Updated Successfully",
+            });
+
+            setTimeout(() => setAlert(null), 3000);
+        } catch (err) {
+            console.log(err);
+
+            setAlert({
+                status: "Error",
+                message:
+                    err.response?.data?.message ||
+                    "Unable to update settings",
+            });
+
+            setTimeout(() => setAlert(null), 3000);
+        }
+    };
 
     const [levels, setLevels] = useState([]);
 
@@ -30,7 +79,10 @@ const CommissionSetting = ({ setAlert }) => {
                                 type="number"
                                 value={config.tdsPercent}
                                 onChange={(e) =>
-                                    setConfig({ ...config, tdsPercent: +e.target.value })
+                                    setConfig({
+                                        ...config,
+                                        tdsPercent: Number(e.target.value),
+                                    })
                                 }
                             />
                         </div>
@@ -38,22 +90,22 @@ const CommissionSetting = ({ setAlert }) => {
                             <label>Admin Charge %</label>
                             <input
                                 type="number"
-                                value={config.adminPercent}
+                                value={config.adminChargePercent}
                                 onChange={(e) =>
-                                    setConfig({ ...config, adminPercent: +e.target.value })
+                                    setConfig({
+                                        ...config,
+                                        adminChargePercent: Number(e.target.value),
+                                    })
                                 }
                             />
                         </div>
                         <div className="modal-actions">
                             <button
                                 className="btn primary"
-                                onClick={() => {
-                                    setAlert({ message: "Commission settings updated successfully!", status: "Success" });
-                                    setTimeout(() => {
-                                        setAlert(null);
-                                    }, 5000);
-                                }}>
-                                Update</button>
+                                onClick={updateCommissionSetting}
+                            >
+                                Update
+                            </button>
                         </div>
                     </div>
                 </div>

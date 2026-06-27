@@ -2,18 +2,34 @@ import React, { useState } from "react";
 import EnquireModal from "../Modals/EnquireModal";
 import { X } from "lucide-react";
 import { formatCurrency } from "../Utils/FormatCurrency";
+import ViewModal from "../Modals/ViewModal";
+import axios from "axios";
+import Host from "../../Host/Host";
+import HoldPlotModal from "./HoldPlotModal";
 
-const PLOT_TYPES = ["FOR_SALE", "SOLD", "PENDING", "ROAD", "NOT_FOR_SALE"];
+const PLOT_TYPES = [
+  "FOR_SALE",
+  "HOLD",
+  "SOLD",
+  "PENDING",
+  "ROAD",
+  "NOT_FOR_SALE",
+];
 
-const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
+const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert, projectId }) => {
   const isAdmin = mood === "admin";
 
   const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+  const [showHoldModal, setShowHoldModal] = useState(false);
 
   const PLOT_ACTION_CONFIG = {
     FOR_SALE: {
       label: mood === "user" ? "Enquire Now" : "Book Plot",
       className: "agent btn sale",
+    },
+    HOLD: {
+      label: mood === "user" ? "Plot on Hold" : "Plot on Hold",
+      className: "agent btn hold",
     },
 
     SOLD: {
@@ -44,6 +60,32 @@ const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
   const agent = {
     id: "AG123",
     name: "Rahul Sharma",
+  };
+  const [type, setType] = useState("FREE");
+
+  const submit = async () => {
+    const token = localStorage.getItem("token");
+
+    // await axios.post(
+    //   `${Host}/api/hold/${type.toLowerCase()}`,
+    //   {
+    //     colony,
+    //     plotId: plot._id,
+    //     customer,
+    //   },
+    //   {
+    //     headers: {
+    //       "auth-token": token,
+    //     },
+    //   },
+    // );
+
+    setAlert({
+      message: "Hold Request Submitted",
+      status: "Success",
+    });
+
+    onClose();
   };
 
   return (
@@ -240,13 +282,22 @@ const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
             plot.plotType !== "ROAD" &&
             plot.plotType !== "NOT_FOR_SALE" && (
               <>
-                {plot.plotType === "FOR_SALE" ? (
-                  <button
-                    className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
-                    onClick={handleActionClick}
-                  >
-                    {PLOT_ACTION_CONFIG[plot.plotType]?.label}
-                  </button>
+                {plot.plotType === "FOR_SALE" && mood === "agent" ? (
+                  <>
+                    <button
+                      className="btn sale"
+                      onClick={() => setShowHoldModal(true)}
+                    >
+                      Hold Plot
+                    </button>
+
+                    <button
+                      className="btn secondary"
+                      onClick={handleActionClick}
+                    >
+                      Book Plot
+                    </button>
+                  </>
                 ) : (
                   <button
                     className={PLOT_ACTION_CONFIG[plot.plotType]?.className}
@@ -289,6 +340,25 @@ const PlotModal = ({ plot, onClose, mood, updatePlot, setAlert }) => {
             onClose={onClose}
             setAlert={setAlert}
           />
+        </div>
+      )}
+      {showHoldModal && (
+        <div
+          className="modal-bg enquiry-modal"
+          onClick={() => setShowHoldModal(false)}
+        >
+          <div
+            className="modal"
+            onClick={() => setShowHoldModal(false)}
+          >
+            <HoldPlotModal
+              projectId={projectId}
+              plot={plot}
+              setShowHoldModal={setShowHoldModal}
+              onClose={onClose}
+              setAlert={setAlert}
+            />
+          </div>
         </div>
       )}
     </div>

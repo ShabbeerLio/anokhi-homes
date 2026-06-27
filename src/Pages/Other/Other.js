@@ -23,18 +23,22 @@ import {
   updateUser,
   deleteUser,
   getAgentByReferralId,
+  getStaffRoles,
 } from "../../Redux/Slices/AppSlices";
 import NiUser from "../../icons/ni-user";
+import Stars from "../../components/Utils/Stars";
 
 const ITEMS_PER_PAGE = 15;
 const Other = ({ mood, setAlert }) => {
   const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.app);
+  const { users, staffRoles } = useSelector((state) => state.app);
 
   useEffect(() => {
     dispatch(getUser());
+    dispatch(getStaffRoles());
   }, []);
 
+  // console.log(staffRoles, "staffRoles")
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -209,7 +213,7 @@ const Other = ({ mood, setAlert }) => {
     }
   };
 
-  console.log(currentData, "currentData")
+  // console.log(currentData, "currentData")
 
   return (
     <div className="plot-container user-table-box">
@@ -302,6 +306,7 @@ const Other = ({ mood, setAlert }) => {
               <span>Referral Id</span>
               <span>Designation</span>
               <span>Referral By</span>
+              <span>Rating</span>
               <span>Status</span>
               <span>Actions</span>
             </div>
@@ -332,8 +337,9 @@ const Other = ({ mood, setAlert }) => {
                   {item.name} {item.position && `(${item.position})`}
                 </span>
                 <span>{item?.referralId}</span>
-                <span className="title">{item.role !== "user" ? <>{item.designation}({item.directIncomePercent}%) </> : "-"}</span>
+                <span className="title">{item.role === "agent" ? <>{item.designation}({item.directIncomePercent}%) </> : item.role === "staff" ? <>{item.staffRole?.name}</> : "-"}</span>
                 <span className="title">{item?.referredBy?.name || "-"} {item?.referredBy?.referralId && `(${item?.referredBy?.referralId})`}</span>
+                {item.role === "agent" ? <span className="title"><Stars rating={item.overallRating} />({item.overallRating?.toFixed(1)})</span> : "-"}
 
                 {((item.status !== "approval" && mood === "admin" || item.status !== "approval" && mood === "staff") && (
                   <label className="switch">
@@ -394,7 +400,7 @@ const Other = ({ mood, setAlert }) => {
                 <div className="user-card-title">
                   {/* <img src={item.avatar} alt="" /> */}
                   <div className="user-card-detail">
-                    <h4>{item.name} <span>{item.position && `(${item.position})`}</span></h4>
+                    <h4>{item.name} <span className="title">{item.role === "agent" ? <>{item.designation}({item.directIncomePercent}%) </> : item.role === "staff" ? <>({item.staffRole?.name})</> : "-"}</span></h4>
                     {/* <p></p> */}
                   </div>
                 </div>
@@ -433,10 +439,12 @@ const Other = ({ mood, setAlert }) => {
                   )}
                 </div>
               </div>
-              <div className="user-card-bottom">
-                <span>Referal Id </span>
-                <span>{item.referralId}</span>
-              </div>
+              {item.role === "agent" &&
+                <div className="user-card-bottom">
+                  <span>Referal Id </span>
+                  <span>{item.referralId}</span>
+                </div>
+              }
               <div className="user-card-bottom">
                 <span>
                   {item.role === "staff"
@@ -620,13 +628,16 @@ const Other = ({ mood, setAlert }) => {
         {/* Staff Only */}
         {formData.role === "staff" && (
           <div className="field">
-            <input
-              placeholder="Department / Role"
-              value={formData.role || ""}
+            <select
+              value={formData.staffRole}
               onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
+                setFormData({ ...formData, staffRole: e.target.value })
               }
-            />
+            >
+              {staffRoles.map((item) => (
+                <option value={item._id}>{item.name}</option>
+              ))}
+            </select>
           </div>
         )}
 

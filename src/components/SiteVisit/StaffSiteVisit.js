@@ -2,7 +2,7 @@ import NiSitevisit from "../../icons/ni-sitevisit";
 import DashboardCard from "../Cards/DashboardCard";
 import VisitTable from "./VisitTable";
 
-const StaffSiteVisit = ({ siteVisits, mood, staffType, setAlert }) => {
+const StaffSiteVisit = ({ siteVisits, mood, staffType, setAlert, landingPage }) => {
   const totalVisits = siteVisits?.length || 0;
 
   const totalCompleted =
@@ -47,14 +47,14 @@ const StaffSiteVisit = ({ siteVisits, mood, staffType, setAlert }) => {
           <h4>Site Visits</h4>
           <VisitTable
             data={siteVisits}
-            actions={["Add Visit", "Update Status", "Reschedule"]}
+            landingPage={landingPage}
           />
         </>
       )}
 
       {staffType === "marketing" && (
         <>
-          <VisitTable data={siteVisits} actions={[]} setAlert={setAlert} />
+          <VisitTable data={siteVisits} actions={[]} setAlert={setAlert} landingPage={landingPage}/>
         </>
       )}
     </div>

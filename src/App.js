@@ -46,6 +46,8 @@ import HelpCenter from "./Pages/HelpCenter/HelpCenter";
 import Income from "./Pages/Income/Income";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllColonies, getLandingPage } from "./Redux/Slices/AppSlices";
+import HoldPlot from "./Pages/HoldPlot/HoldPlot";
+import Rating from "./Pages/Rating/Rating";
 
 const LandingLayout = ({ mood, data }) => {
   return (
@@ -177,7 +179,7 @@ function App() {
                       />
                       <Route
                         path="/bookings"
-                        element={<Booking mood={mood} setAlert={setAlert} />}
+                        element={<Booking mood={mood} setAlert={setAlert} landingPage={landingPage}/>}
                       />
                       <Route
                         path="/offers-discounts"
@@ -205,7 +207,7 @@ function App() {
                       />
                       <Route
                         path="/site-visits"
-                        element={<SiteVisit mood={mood} setAlert={setAlert} />}
+                        element={<SiteVisit mood={mood} setAlert={setAlert} landingPage={landingPage}/>}
                       />
                       <Route
                         path="/payments"
@@ -253,6 +255,18 @@ function App() {
                         path="/plot/:plotId/:projectId"
                         element={
                           <ProjectDetail mood={mood} setAlert={setAlert} />
+                        }
+                      />
+                      <Route
+                        path="/holdplot"
+                        element={
+                          <HoldPlot mood={mood} setAlert={setAlert} />
+                        }
+                      />
+                      <Route
+                        path="/rating"
+                        element={
+                          <Rating mood={mood} setAlert={setAlert} />
                         }
                       />
                     </Routes>

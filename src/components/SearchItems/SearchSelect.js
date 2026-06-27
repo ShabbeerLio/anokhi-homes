@@ -5,7 +5,8 @@ const SearchSelect = ({
   label,
   placeholder = "Search...",
   options = [],
-  value = null,
+  multiple = false,
+  value = multiple ? [] : null,
   onChange,
   displayKey = "name",
   searchKeys = ["name"],
@@ -25,8 +26,6 @@ const SearchSelect = ({
     ),
   );
 
-  console.log(filteredOptions,"filteredOptions")
-
   // 🖱 Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -41,15 +40,40 @@ const SearchSelect = ({
 
   // Sync input with selected value
   useEffect(() => {
-    if (value) {
+    if (!multiple && value) {
       setSearch(value[displayKey]);
     }
-  }, [value, displayKey]);
+
+    if (multiple) {
+      setSearch("");
+    }
+  }, [value, multiple]);
+
+  const selectedIds = multiple ? value.map((v) => v._id) : [];
+  // console.log(filteredOptions,"filteredOptions")
 
   return (
     <div className="ss-container" ref={containerRef}>
       {label && <label className="ss-label">{label}</label>}
+      {multiple && value.length > 0 && (
+        <div className="ss-tags">
+          {value.map((item) => (
+            <div className="ss-tag" key={item._id}>
+              {item[displayKey]}
 
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  onChange(value.filter((v) => v._id !== item._id));
+                }}
+              >
+                ×
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
       <input
         className="ss-input"
         placeholder={placeholder}
@@ -70,19 +94,31 @@ const SearchSelect = ({
               <div className="ss-item no-result">No results found</div>
             )
           ) : (
-            filteredOptions.map((option) => (
-              <div
-                key={option._id}
-                className="ss-item"
-                onClick={() => {
-                  onChange(option);
-                  setSearch(option[displayKey]);
-                  setOpen(false);
-                }}
-              >
-                {renderOption ? renderOption(option) : option[displayKey]}
-              </div>
-            ))
+            filteredOptions
+              .filter((o) => !multiple || !selectedIds.includes(o._id))
+              .map((option) => (
+                <div
+                  key={option._id}
+                  className="ss-item"
+                  onClick={() => {
+                    if (multiple) {
+                      if (selectedIds.includes(option._id)) {
+                        onChange(value.filter((v) => v._id !== option._id));
+                      } else {
+                        onChange([...value, option]);
+                      }
+
+                      setSearch("");
+                    } else {
+                      onChange(option);
+                      setSearch(option[displayKey]);
+                      setOpen(false);
+                    }
+                  }}
+                >
+                  {renderOption ? renderOption(option) : option[displayKey]}
+                </div>
+              ))
           )}
         </div>
       )}

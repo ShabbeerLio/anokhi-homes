@@ -38,6 +38,19 @@ export default function PlotCanvas({
 
   /* ---------- helpers ---------- */
 
+  useEffect(() => {
+    const updateScale = () => {
+      if (window.innerWidth < 576) setScale(0.35);
+      else if (window.innerWidth < 768) setScale(0.5);
+      else setScale(1);
+    };
+
+    updateScale();
+    window.addEventListener("resize", updateScale);
+
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
+
   const getPoint = (e) => {
     const rect = svgRef.current.getBoundingClientRect();
     return [
@@ -316,14 +329,14 @@ export default function PlotCanvas({
       ref={containerRef}
       className={`plot-draw card ${isFullscreen ? "fullscreen" : ""}`}
       style={{
-        height: mood === "admin" ? "600px" : "100dvh",
+        height: mood === "admin" ? "600px" : "90dvh",
       }}
     >
       <Compass />
 
       <svg
         ref={svgRef}
-        width="100%"
+        width={mood === "admin" ? "100%" : "100%"}
         height={mood === "admin" ? "500" : "100%"}
         onWheel={mood === "admin" ? handleWheel : undefined}
         onMouseDown={handleMouseDown}

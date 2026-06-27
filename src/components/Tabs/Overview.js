@@ -6,23 +6,26 @@ import DeleteModal from "../Modals/DeleteModal";
 import AddLocationModal from "../Modals/AddLocationModal";
 import formatDate from "../DateFormate/DateFormate";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUserApproval, updateUser, getRank } from "../../Redux/Slices/AppSlices";
+import { updateUserApproval, updateUser, getRank, getStaffRoles } from "../../Redux/Slices/AppSlices";
 import NiEdit from "../../icons/ni-edit";
 import { X } from "lucide-react";
 import { uploadImage } from "../../Pages/LandingSetting/LandingApi";
 import axios from "axios";
 import Host from "../../Host/Host";
 import { formatCurrency } from "../Utils/FormatCurrency";
+import Stars from "../Utils/Stars";
 
 const Overview = ({ userData, mood, setAlert }) => {
   const dispatch = useDispatch();
-  const { rankData } = useSelector((state) => state.app);
+  const { rankData, staffRoles } = useSelector((state) => state.app);
   useEffect(() => {
     dispatch(getRank());
+    dispatch(getStaffRoles());
   }, []);
   const [rankOpen, setRankOpen] = useState(false);
+  const [staffRoleOpen, setStaffRoleOpen] = useState(false);
   const [ranks, setRanks] = useState(rankData);
-  console.log(ranks, "userDranksata")
+  console.log(staffRoles, "staffRoles")
   const [localUser, setLocalUser] = useState(userData);
   const [selectedLevel, setSelectedLevel] = useState(localUser?.level || "");
   const [disapproveOpen, setDisapproveOpen] = useState(false);
@@ -35,15 +38,66 @@ const Overview = ({ userData, mood, setAlert }) => {
   const [saving, setSaving] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [confirmPasswordModal, setConfirmPasswordModal] = useState(false);
+  const [staffPermissions, setStaffPermissions] = useState(null);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
+
+  const ALL_PERMISSIONS = [
+    // Lead
+    { key: "lead.view", label: "View Leads" },
+    { key: "lead.add", label: "Add Lead" },
+    { key: "lead.edit", label: "Edit Lead" },
+    { key: "lead.assign", label: "Assign Lead" },
+    // Site Visit
+    { key: "sitevisit.view", label: "View Site Visit" },
+    { key: "sitevisit.add", label: "Create Site Visit" },
+    { key: "sitevisit.complete", label: "Complete Site Visit" },
+
+    // Booking
+    { key: "booking.view", label: "View Booking" },
+    { key: "booking.add", label: "Create Booking" },
+    { key: "booking.approve", label: "Approve Booking" },
+    { key: "booking.reject", label: "Reject Booking" },
+
+    // Plot
+    { key: "plot.view", label: "View Plot" },
+    { key: "plot.add", label: "Add Plot" },
+    { key: "plot.edit", label: "Edit Plot" },
+    { key: "plot.delete", label: "Delete Plot" },
+    { key: "plot.change_status", label: "Change Status" },
+
+    // Payment
+    { key: "payment.view", label: "View Payments" },
+    { key: "payment.add", label: "Add Payment" },
+    { key: "payment.approve", label: "Approve Payment" },
+
+    // Reports
+    { key: "report.view", label: "View Reports" },
+    { key: "report.export", label: "Export Reports" },
+  ];
+
   useEffect(() => {
     setSelectedLevel(localUser?.level || "");
   }, [localUser]);
+
+  useEffect(() => {
+    if (localUser?.staffRole) {
+      const role = staffRoles.find(
+        (item) =>
+          item._id ===
+          (typeof localUser.staffRole === "object"
+            ? localUser.staffRole._id
+            : localUser.staffRole)
+      );
+
+      setStaffPermissions(role || null);
+    }
+  }, [localUser, staffRoles]);
+
 
   const [editData, setEditData] = useState({
     panNumber: localUser?.panNumber || "",
@@ -61,9 +115,16 @@ const Overview = ({ userData, mood, setAlert }) => {
     nomineeAadharNumber: localUser?.nomineeAadharNumber || "",
     nomineeAadharPhoto: localUser?.nomineeAadharPhoto || "",
   });
+
   useEffect(() => {
-    setLocalUser(userData);
-  }, [userData]);
+    if (localUser) {
+      setFormData((prev) => ({
+        ...prev,
+        staffRole: localUser?.staffRole?._id || "",
+      }));
+    }
+  }, [localUser]);
+
   useEffect(() => {
     if (localUser) {
       setEditData({
@@ -342,6 +403,46 @@ const Overview = ({ userData, mood, setAlert }) => {
     }
   };
 
+  const handleUpdateStaffRole = async () => {
+    try {
+      const result = await dispatch(
+        updateUser({
+          id: localUser._id,
+          data: {
+            staffRole: formData.staffRole,
+          },
+        })
+      ).unwrap();
+
+      const role = staffRoles.find(
+        (item) => item._id === formData.staffRole
+      );
+
+      setLocalUser({
+        ...result,
+        staffRole: role,
+      });
+
+      setStaffPermissions(role || null);
+      setStaffRoleOpen(false);
+      setAlert({
+        message: "Staff role updated successfully",
+        status: "Success",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    } catch (err) {
+      console.log(err);
+      setAlert({
+        message: "Failed to update staff role",
+        status: "Error",
+      });
+
+      setTimeout(() => setAlert(null), 3000);
+    }
+  };
+
+
   const parentRank = rankData.find(
     (r) => r.designation === localUser.referredBy?.designation
   );
@@ -349,6 +450,8 @@ const Overview = ({ userData, mood, setAlert }) => {
   const allowedRanks = rankData.filter(
     (rank) => !parentRank || rank.level <= parentRank.level
   );
+
+  // console.log(staffPermissions, "staffPermissions")
 
   return (
     <div className="card overview-card">
@@ -476,6 +579,34 @@ const Overview = ({ userData, mood, setAlert }) => {
             </>
           )}
 
+          <h4>Rating</h4>
+
+          <div className="overview-grid">
+            <div>
+              <label>Overall Rating </label>
+              <p><Stars rating={localUser.overallRating} /></p>
+            </div>
+            <div>
+              <label>Lead Rating </label>
+              <p><Stars rating={localUser.leadRating} /></p>
+            </div>
+            <div>
+              <label>Site Visit Rating</label>
+              <p><Stars rating={localUser.siteVisitRating} /></p>
+            </div>
+            <div>
+              <label>Booking Rating</label>
+              <p><Stars rating={localUser.bookingRating} /></p>
+            </div>
+            <div>
+              <label>Customer Rating</label>
+              <p><Stars rating={localUser.customerRating} /></p>
+            </div>
+            <div>
+              <label>Total Rating</label>
+              <p>{localUser.totalCustomerRatings || 0}</p>
+            </div>
+          </div>
           <h4>Business Statistics</h4>
 
           <div className="overview-grid">
@@ -883,23 +1014,58 @@ const Overview = ({ userData, mood, setAlert }) => {
             </div>
 
             <div>
-              <label>Staff Role</label>
-              <p>{localUser.staffRole}</p>
+              <label>Staff Role
+
+                {mood === "admin" && localUser.role === "staff" && (
+                  <span
+                    style={{ marginLeft: 8, cursor: "pointer" }}
+                    onClick={() => setStaffRoleOpen(true)}
+                  >
+                    <NiEdit />
+                  </span>
+                )}
+              </label>
+
+              <p>{localUser.staffRole?.name}</p>
             </div>
+
+            {/* <div>
+              <label>Staff Role</label>
+              <p>{localUser.staffRole?.name}</p>
+            </div> */}
 
             <div>
               <label>Status</label>
               <p>{localUser.status}</p>
             </div>
           </div>
+          {mood === "admin" && localUser.status === "approval" && (
+            <div className="modal-actions">
+              <button
+                className="site-visit-approval status active"
+                onClick={handleApprove}
+              >
+                <NiTick /> Approve
+              </button>
+
+              <button
+                className="site-visit-approval status failed"
+                onClick={() => setDisapproveOpen(true)}
+              >
+                <NiCross /> Disapprove
+              </button>
+            </div>
+          )}
 
           <h4>Permissions</h4>
 
           <div className="permission-list">
-            {localUser.permissions?.length ? (
-              localUser.permissions.map((permission) => (
-                <div key={permission} className="permission-item active">
-                  {permission}
+            {staffPermissions?.permissions?.length ? (
+              ALL_PERMISSIONS.filter((item) =>
+                staffPermissions.permissions.includes(item.key)
+              ).map((item) => (
+                <div key={item.key} className="permission-item active">
+                  {item.label}
                 </div>
               ))
             ) : (
@@ -1048,6 +1214,39 @@ const Overview = ({ userData, mood, setAlert }) => {
         </div>
       </AddLocationModal>
       <AddLocationModal
+        open={staffRoleOpen}
+        onClose={() => setStaffRoleOpen(false)}
+        title="Update Staff Role"
+      >
+        <div className="field">
+          <label>Staff Role</label>
+
+          <select
+            value={formData.staffRole}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                staffRole: e.target.value,
+              })
+            }
+          >
+            <option value="">Select Staff Role</option>
+
+            {staffRoles.map((item) => (
+              <option key={item._id} value={item._id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="modal-actions">
+          <button onClick={handleUpdateStaffRole}>
+            Update Staff Role
+          </button>
+        </div>
+      </AddLocationModal>
+      <AddLocationModal
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
         title="Document Preview"
@@ -1056,11 +1255,7 @@ const Overview = ({ userData, mood, setAlert }) => {
           <img
             src={previewImage}
             alt="Document"
-            style={{
-              maxWidth: "100%",
-              maxHeight: "70vh",
-              borderRadius: "8px",
-            }}
+            className="image-preview-full"
           />
         </div>
       </AddLocationModal>

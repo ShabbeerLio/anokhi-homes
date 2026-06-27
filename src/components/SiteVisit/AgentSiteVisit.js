@@ -2,7 +2,7 @@ import NiSitevisit from "../../icons/ni-sitevisit";
 import DashboardCard from "../Cards/DashboardCard";
 import VisitTable from "./VisitTable";
 
-const AgentSiteVisit = ({ siteVisits, mood, setAlert }) => {
+const AgentSiteVisit = ({ siteVisits, mood, setAlert ,landingPage}) => {
   const totalVisits = siteVisits?.length || 0;
 
   const totalCompleted =
@@ -50,6 +50,7 @@ const AgentSiteVisit = ({ siteVisits, mood, setAlert }) => {
         actions={["Edit", "Update Status", "Add Feedback", "Set Interest"]}
         setAlert={setAlert}
         mood={mood}
+        landingPage={landingPage}
       />
     </div>
   );

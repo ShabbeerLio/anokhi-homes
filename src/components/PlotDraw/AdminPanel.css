@@ -190,6 +190,10 @@
   background-color: orange;
   border: 1px solid orange;
 }
+.btn.hold {
+  background-color: #8c00ff;
+  border: 1px solid #8c00ff;
+}
 
 .bg-tools {
   display: flex;
@@ -259,5 +263,17 @@
 @media (max-width: 768px) {
   .modal {
     min-width: 90%;
+  }
+  .plot-draw.card{
+    height: 70dvh !important;
+  }
+  .plot-compass {
+    position: absolute;
+    top: 70%;
+    right: 60%;
+    z-index: 5;
+}
+.plot-colors {
+    bottom: 1%;
   }
 }

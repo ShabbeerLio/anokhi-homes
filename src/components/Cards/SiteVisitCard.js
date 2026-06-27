@@ -15,9 +15,10 @@ import formatDate from "../DateFormate/DateFormate";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Host from "../../Host/Host";
-import { getAccountDetails, getPaymentTerms, getPlots, getSiteVisit } from "../../Redux/Slices/AppSlices";
+import { getAccountDetails, getPaymentTerms, getPlots, getPlotsetting, getSiteVisit } from "../../Redux/Slices/AppSlices";
 import NoteItem from "../NoteItem/NoteItem";
 import { uploadImage } from "../../Pages/LandingSetting/LandingApi";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const SiteVisitCard = ({
   item,
@@ -27,17 +28,16 @@ const SiteVisitCard = ({
   mood,
   dashboard,
   setAlert,
+  landingPage
 }) => {
   const dispatch = useDispatch();
-  const { plots, userDetail, paymentTerms } = useSelector((state) => state.app);
+  const { plots, userDetail, paymentTerms, plotSetting } = useSelector((state) => state.app);
 
   useEffect(() => {
-    dispatch(getPlots(item?.colony?._id));
     dispatch(getAccountDetails());
     dispatch(getPaymentTerms());
-  }, [item?.colony?._id]);
-
-  // console.log(plots?.plots, "plots")
+    dispatch(getPlotsetting());
+  }, []);
 
   const [activeRow, setActiveRow] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -52,9 +52,19 @@ const SiteVisitCard = ({
   const [panelMode, setPanelMode] = useState(null);
   const [formData, setFormData] = useState({});
   const [selectedPlot, setSelectedPlot] = useState(null);
-  const [editingNoteId, setEditingNoteId] = useState(null);
-  const [editText, setEditText] = useState("");
+  // const [editingNoteId, setEditingNoteId] = useState(null);
+  // const [editText, setEditText] = useState("");
   const [noteImage, setNoteImage] = useState(null);
+  const [editingNote, setEditingNote] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [selectedColony, setSelectedColony] = useState(null);
+  const [type, setType] = useState("FREE");
+
+  useEffect(() => {
+    if (selectedColony?._id) {
+      dispatch(getPlots(selectedColony._id));
+    }
+  }, [selectedColony]);
 
   useEffect(() => {
     if (!viewOpen) {
@@ -110,8 +120,9 @@ const SiteVisitCard = ({
   };
 
 
-  const handleAddNote = async (visitId) => {
+  const handleAddNote = async (visitId, selectedColony) => {
     try {
+      setSaving(true);
       const token = localStorage.getItem("token");
       let image = "";
       if (noteImage) {
@@ -119,11 +130,13 @@ const SiteVisitCard = ({
         image = upload.url;
 
       }
+      console.log(image)
       const res = await axios.post(
         `${Host}/api/sitevisit/add-note/${visitId}`,
         {
           note: noteText,
           image,
+          colonyId: selectedColony
         },
         {
           headers: {
@@ -142,12 +155,13 @@ const SiteVisitCard = ({
         message: "Note added successfully",
         status: "Success",
       });
-
+      setSaving(false);
       dispatch(getSiteVisit()); // optional refresh
 
       setTimeout(() => setAlert(null), 3000);
     } catch (err) {
       console.error(err);
+      setSaving(false);
       setAlert({
         message: err.response?.data?.message || "Failed to add note",
         status: "Error",
@@ -158,6 +172,7 @@ const SiteVisitCard = ({
 
   const handleEditNote = async (visitId, noteId) => {
     try {
+      setSaving(true);
       const token = localStorage.getItem("token");
       let image = noteImage;
       if (noteImage instanceof File) {
@@ -167,7 +182,7 @@ const SiteVisitCard = ({
       const res = await axios.put(
         `${Host}/api/sitevisit/edit-note/${visitId}/${noteId}`,
         {
-          note: editText,
+          note: noteText,
           image
         },
         {
@@ -178,15 +193,15 @@ const SiteVisitCard = ({
       );
 
       setNotes(res.data.visit.notes);
-      setEditingNoteId(null);
-      setEditText("");
+      setEditingNote(null);
+      setNoteText("");
       setNoteImage(null);
-      dispatch(getSiteVisit());
-
+      setSaving(false);
       setAlert({ message: "Note updated", status: "Success" });
       setTimeout(() => setAlert(null), 3000);
     } catch (err) {
       console.error(err);
+      setSaving(false);
       setAlert({ message: "Edit failed", status: "Error" });
       setTimeout(() => setAlert(null), 3000);
     }
@@ -245,7 +260,7 @@ const SiteVisitCard = ({
           sitevisitId: item._id, // 🔥 IMPORTANT
           customer: item.customer._id,
           location: item.location?._id,
-          colony: item.colony?._id,
+          colony: selectedColony._id,
           plot: selectedPlot._id, // 🔥 IMPORTANT
 
           requestAmount: formData.requestAmount,
@@ -318,6 +333,37 @@ const SiteVisitCard = ({
     }
   };
 
+  const handleHoldPlot = async () => {
+    const token = localStorage.getItem("token");
+    await axios.post(
+      `${Host}/api/plothold/${type.toLowerCase()}`,
+      {
+        colony: selectedColony._id,
+        plotId: selectedPlot._id,
+        customer: item.customer._id,
+      },
+      {
+        headers: {
+          "auth-token": token,
+        },
+      },
+    );
+    setAlert({
+      message: "Hold Request Submitted",
+      status: "Success",
+    });
+    dispatch(getSiteVisit());
+
+    // reset UI
+    setViewOpen(false);
+    setSelectedPlot(null);
+    setFormData({});
+    setPanelMode(null);
+
+    setTimeout(() => setAlert(null), 3000);
+    // setShowHoldModal(false);
+    // onClose();
+  };
 
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
@@ -388,7 +434,7 @@ const SiteVisitCard = ({
           </p>
           <p>{item.customer.phone}</p>
           {mood !== "agent" && <p>{item.agent?.name || "-"}</p>}
-          <p> {item.colony?.name}, {item.location.name}</p>
+          <p> {item.colonies?.length}, {item?.location?.name}</p>
           <p>{item.visitDate}</p>
         </div>
       </div>
@@ -638,7 +684,13 @@ const SiteVisitCard = ({
             </p>
             <p>{item.customer.phone}</p>
             {mood !== "agent" && <p>{item.agent?.name || "-"}</p>}
-            <p>{item.location?.name || "-"}</p>
+            <p>{item.customer.phone}</p>
+            {mood !== "agent" && <p>{item.agent?.name || "-"}</p>}
+            <p> {item.colonies?.map((i) => (
+              <>
+                {i?.colony?.name}
+              </>
+            ))}, {item?.location?.name}</p>
             <p>{item.visitDate}</p>
             <div className="table-filters">
               <button
@@ -657,6 +709,14 @@ const SiteVisitCard = ({
           <div className="modal-actions">
             <button
               onClick={() => {
+                setPanelMode("holdplot");
+                setShowReport(false);
+              }}
+            >
+              Hold Plot
+            </button>
+            <button
+              onClick={() => {
                 setPanelMode("booking");
                 setShowReport(false);
               }}
@@ -669,11 +729,45 @@ const SiteVisitCard = ({
           {panelMode === "booking" && (
             <>
               <h4>Request Booking</h4>
+              <div className="field">
+                <label>Colony</label>
+
+                <select
+                  value={selectedColony?._id || ""}
+                  onChange={(e) => {
+                    const colony = item.colonies.find(
+                      (c) => c.colony._id === e.target.value
+                    )?.colony;
+
+                    setSelectedColony(colony);
+                    setSelectedPlot(null);
+
+                    setFormData((prev) => ({
+                      ...prev,
+                      colony: colony?._id || "",
+                      plot: "",
+                    }));
+                  }}
+                >
+                  <option value="">Select Colony</option>
+
+                  {item.colonies.map((c) => (
+                    <option key={c.colony._id} value={c.colony._id}>
+                      {c.colony.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div className="field">
                 <SearchSelect
                   label="Plots"
-                  placeholder="Search Plot..."
+                  placeholder={
+                    selectedColony
+                      ? "Search Plot..."
+                      : "Select Colony First"
+                  }
+                  disabled={!selectedColony}
                   options={plots?.plots}
                   value={selectedPlot}
                   onChange={(selected) => {
@@ -865,6 +959,125 @@ const SiteVisitCard = ({
               </div>
             </>
           )}
+          {panelMode === "holdplot" && (
+            <>
+              <h4>Hold Plot</h4>
+              <div className="field">
+                <label>Colony</label>
+
+                <select
+                  value={selectedColony?._id || ""}
+                  onChange={(e) => {
+                    const colony = item.colonies.find(
+                      (c) => c.colony._id === e.target.value
+                    )?.colony;
+
+                    setSelectedColony(colony);
+                    setSelectedPlot(null);
+
+                    setFormData((prev) => ({
+                      ...prev,
+                      colony: colony?._id || "",
+                      plot: "",
+                    }));
+                  }}
+                >
+                  <option value="">Select Colony</option>
+
+                  {item.colonies.map((c) => (
+                    <option key={c.colony._id} value={c.colony._id}>
+                      {c.colony.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="field">
+                <SearchSelect
+                  label="Plots"
+                  placeholder={
+                    selectedColony
+                      ? "Search Plot..."
+                      : "Select Colony First"
+                  }
+                  disabled={!selectedColony}
+                  options={plots?.plots}
+                  value={selectedPlot}
+                  onChange={(selected) => {
+                    setSelectedPlot(selected);
+
+                    setFormData({
+                      ...formData,
+                      plot: selected._id,
+                      plotId: selected.plotId,
+                      pricePerSqft: selected.price,
+                      plotArea: selected.area,
+                      priceRange: selected.priceRange,
+                    });
+                  }}
+                  displayKey="plotNumber"
+                  searchKeys={["plotNumber", "status"]}
+                  renderOption={(p) => (
+                    <div>
+                      <b>{p.plotNumber}</b>
+                      <small style={{ display: "block", color: "#666" }}>
+                        {p.plotType}
+                      </small>
+                    </div>
+                  )}
+                />
+              </div>
+              <div className="field">
+                <label>Hold Type</label>
+
+                <select value={type} onChange={(e) => setType(e.target.value)}>
+                  <option value="FREE">Free Hold</option>
+                  <option value="PAID">Paid Hold</option>
+                </select>
+              </div>
+              <div className="installment-box">
+                {type === "FREE" ? (
+                  <>
+                    <h4>Free Hold</h4>
+                    <div className="installment">
+                      <span>Hold Days</span>
+                      <span>{plotSetting?.freeHoldDays} Days</span>
+                    </div>
+                    <div className="installment">
+                      <span>Amount</span>
+                      <span>₹{formatCurrency(0)}</span>
+                    </div>
+                    <div className="installment">
+                      <span>First Hold </span>
+                      <span> No Approval</span>
+                    </div>
+                    <div className="installment">
+                      <span>Second Hold </span>
+                      <span>Admin Approval Required</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h4>Paid Hold</h4>
+                    <div className="installment">
+                      <span>Hold Days</span>
+                      <span>{plotSetting?.paidHoldDays} Days</span>
+                    </div>
+                    <div className="installment">
+                      <span>Amount</span>
+                      <span>₹{formatCurrency(plotSetting?.paidAmount)}</span>
+                    </div>
+                    <div className="installment">
+                      <span>Admin Approval Required</span>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="modal-actions">
+                <button onClick={handleHoldPlot}>Submit Hold</button>
+              </div>
+            </>
+          )}
           {panelMode === "report" && (
             <>
               {/* <h4>Site Visit</h4> */}
@@ -910,17 +1123,18 @@ const SiteVisitCard = ({
                   <NoteItem
                     item={item}
                     notes={notes}
-                    editingNoteId={editingNoteId}
-                    editText={editText}
                     noteText={noteText}
                     noteImage={noteImage}
                     setNoteImage={setNoteImage}
-                    setEditingNoteId={setEditingNoteId}
-                    setEditText={setEditText}
                     setNoteText={setNoteText}
                     handleAddNote={handleAddNote}
                     handleEditNote={handleEditNote}
                     handleDeleteNote={handleDeleteNote}
+                    mood={mood}
+                    editingNote={editingNote}
+                    setEditingNote={setEditingNote}
+                    saving={saving}
+                    setSaving={setSaving}
                   />
                 </>
               )}
@@ -932,9 +1146,9 @@ const SiteVisitCard = ({
       <AddLocationModal
         open={policyOpen}
         onClose={() => setPolicyOpen(false)}
-        title="Cancellation Policy"
+        title="Cancellation and Refund Policy"
       >
-        <CancellationPolicy />
+        <CancellationPolicy landingPage={landingPage} />
       </AddLocationModal>
     </div>
   );

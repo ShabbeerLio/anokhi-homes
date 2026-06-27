@@ -10,6 +10,7 @@ import CommissionSetting from "../../components/Permissions/CommissionSetting";
 import { getAccountDetails } from "../../Redux/Slices/AppSlices";
 import { useDispatch, useSelector } from "react-redux";
 import PaymentTerms from "../../components/Permissions/PaymentTerms";
+import PlotHoldSetting from "../../components/Permissions/PlotHoldSetting";
 
 /* Dummy Components */
 const ProfileSettings = ({ setAlert, userDetail, navigate }) => (
@@ -50,7 +51,7 @@ const Setting = ({ mood, setAlert }) => {
   const TABS = useMemo(() => {
     switch (mood) {
       case "admin":
-        return ["Profile", "Staff Permissions", "Logs", "Commission Settings", "Payment Terms",];
+        return ["Profile", "Staff Permissions", "Logs", "Commission Settings", "Payment Terms","Plot Hold"];
 
       case "staff":
         return ["Profile"];
@@ -95,6 +96,12 @@ const Setting = ({ mood, setAlert }) => {
       case "Payment Terms":
         return mood === "admin" ? (
           <PaymentTerms
+            setAlert={setAlert}
+          />
+        ) : null;
+      case "Plot Hold":
+        return mood === "admin" ? (
+          <PlotHoldSetting
             setAlert={setAlert}
           />
         ) : null;

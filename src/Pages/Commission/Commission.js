@@ -252,6 +252,8 @@ const Commission = ({ mood }) => {
                         <span>Referral ID</span>
                         <span>Business</span>
                         <span>Wallet</span>
+                        <span>Hold</span>
+                        <span>Released</span>
                         <span>Total Income</span>
                         <span>Action</span>
                     </div>

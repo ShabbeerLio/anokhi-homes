@@ -20,7 +20,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const userData = location.state;
-  console.log(userData, "userData")
+  // console.log(userData, "userData")
   const dispatch = useDispatch();
   const { userDetail } = useSelector((state) => state.app);
   useEffect(() => {
@@ -38,7 +38,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
   //   if (!userData) return null;
 
   const isOwnProfile = userDetail?._id === userData?._id;
-  console.log(isOwnProfile, "isOwnProfile")
+  // console.log(isOwnProfile, "isOwnProfile")
 
   const handleAvatarChange = async (file) => {
     if (!file) return;
@@ -134,7 +134,7 @@ const Profile = ({ mood, currentUser, setAlert }) => {
     // STAFF PROFILE
     if (userData.role === "staff") {
       if (mood === "admin") {
-        tabs.push("Overview", "Permissions");
+        tabs.push("Overview");
       }
       if (mood === "staff" && isOwnProfile) {
         tabs.push("Overview");

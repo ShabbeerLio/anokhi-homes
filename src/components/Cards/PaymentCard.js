@@ -17,6 +17,8 @@ import axios from "axios";
 import { getPayments } from "../../Redux/Slices/AppSlices";
 import { useDispatch } from "react-redux";
 import { formatCurrency } from "../Utils/FormatCurrency";
+import downloadReceipt from "../Utils/downloadReceipt";
+import NiReceipt from "../../icons/ni-receipt";
 
 const PaymentCard = ({
   item,
@@ -32,6 +34,7 @@ const PaymentCard = ({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  
   const navigate = useNavigate();
   useEffect(() => {
     if (!viewOpen) {
@@ -47,7 +50,7 @@ const PaymentCard = ({
       const res = await axios.put(
         `${Host}/api/payment/action/${itemId}`,
         {
-          action
+          action,
         },
         {
           headers: {
@@ -93,6 +96,11 @@ const PaymentCard = ({
           </div>
         </div>
         <div className="dots">
+          <span
+            onClick={() => downloadReceipt(item._id)}
+          >
+            <NiReceipt/>
+          </span>
           <span
             onClick={(e) => {
               e.stopPropagation();
@@ -142,8 +150,17 @@ const PaymentCard = ({
           <p>{formatDate(item?.createdAt)}</p>
           <p>{item?.customer?.phone}</p>
           <p>
-            {item?.booking?.plot?.plotId}, {item?.booking?.colony?.name},{" "}
-            {item?.booking?.location?.name}
+            {item?.booking ? (
+              <>
+                {item?.booking?.plot?.plotNumber}, {item?.booking?.colony?.name}
+                , {item?.booking?.location?.name}
+              </>
+            ) : (
+              <>
+                {item?.hold?.plot?.plotNumber}, {item?.hold?.colony?.name},{" "}
+                {item?.hold?.location?.name}
+              </>
+            )}
           </p>
           <p>₹{formatCurrency(item.amount)}</p>
           <p>{item.paymentMode}</p>

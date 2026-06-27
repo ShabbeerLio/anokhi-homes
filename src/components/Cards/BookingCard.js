@@ -11,9 +11,10 @@ import formatDate from "../DateFormate/DateFormate";
 import axios from "axios";
 import Host from "../../Host/Host";
 import { useDispatch, useSelector } from "react-redux";
-import { getBooking } from "../../Redux/Slices/AppSlices";
+import { getBooking, getRating } from "../../Redux/Slices/AppSlices";
 import NiSitevisit from "../../icons/ni-sitevisit";
 import { formatCurrency } from "../Utils/FormatCurrency";
+import NiStar from "../../icons/ni-star";
 
 const BookingCard = ({
   item,
@@ -25,6 +26,11 @@ const BookingCard = ({
   setAlert,
 }) => {
   const dispatch = useDispatch();
+  const { ratingData } = useSelector((state) => state.app);
+
+  useEffect(() => {
+    dispatch(getRating());
+  }, []);
   const [activeRow, setActiveRow] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
@@ -42,6 +48,7 @@ const BookingCard = ({
     };
   }, [viewOpen]);
 
+  const ratingdone = ratingData.find((i) => i.booking._id === item._id)
   const total = Number(item.finalAmount || 0);
   const paid = Number(item.amountPaid || 0);
   const remaining = total - paid;
@@ -66,6 +73,10 @@ const BookingCard = ({
   };
 
   const isApproval = item.status === "approval";
+  const [cratingData, setCratingData] = useState({
+    stars: 5,
+    review: "",
+  });
 
   // Example: requested amount = next pending installment
   const requestedAmount = (() => {
@@ -330,6 +341,44 @@ const BookingCard = ({
     fetchSummary();
   }, [item._id]);
 
+  const handleSubmitRating = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.post(
+        `${Host}/api/rating/submit`,
+        {
+          bookingId: item._id,
+          stars: cratingData.stars,
+          review: cratingData.review,
+        },
+        {
+          headers: {
+            "auth-token": token,
+          },
+        }
+      );
+      setAlert({
+        message: "Rating submitted successfully",
+        status: "Success",
+      });
+      setPanelMode(null);
+      dispatch(getBooking());
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
+    } catch (err) {
+      console.log(err);
+
+      setAlert({
+        message:
+          err.response?.data?.msg ||
+          "Unable to submit rating",
+        status: "Error",
+      });
+    }
+  };
+
   // console.log(paymentSummary, "paymentSummary");
   // console.log(bookingPaid, "bookingPaid")
 
@@ -528,6 +577,23 @@ const BookingCard = ({
               </button>
             </div>
           )}
+        <div>
+          {!ratingdone && item.status === "completed" && mood === "user" &&
+            <div className="modal-actions">
+              <button
+                className=" view-report-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPanelMode("rating");
+                  setShowReport(false);
+                  setViewOpen(true);
+                }}
+              >
+                Please Give Rating
+              </button>
+            </div>
+          }
+        </div>
       </div>
 
       <DeleteModal
@@ -804,15 +870,15 @@ const BookingCard = ({
                 {/* {paymentSummary} */}
                 <div className="installment">
                   <span>Due Amount</span>
-                  <span>{paymentSummary.dueAmount}</span>
+                  <span>₹{formatCurrency(paymentSummary.dueAmount)}</span>
                 </div>
                 <div className="installment">
                   <span>Paid Amount</span>
-                  <span>{paymentSummary.paidAmount}</span>
+                  <span>₹{formatCurrency(paymentSummary.paidAmount)}</span>
                 </div>
                 <div className="installment">
                   <span>Total Amount</span>
-                  <span>{paymentSummary.totalAmount}</span>
+                  <span>₹{formatCurrency(paymentSummary.totalAmount)}</span>
                 </div>
               </div>
               <h4>Payment History</h4>
@@ -827,7 +893,7 @@ const BookingCard = ({
                   <div className="installment">
                     <span>{i.paymentType}</span>
                     <span>{i.paymentMode}</span>
-                    <span>{i.amount}</span>
+                    <span>₹{formatCurrency(i.amount)}</span>
                     <span>{formatDate(i.createdAt)}</span>
                   </div>
                 ))}
@@ -842,7 +908,7 @@ const BookingCard = ({
                 >
                   <span>Booking Amount (10%)</span>
                   <span>
-                    ₹{bookingAmount.toLocaleString()}(
+                    ₹{formatCurrency(bookingAmount)}(
                     {bookingPaid ? "Paid" : "Pending"})
                   </span>
                 </div>
@@ -855,7 +921,7 @@ const BookingCard = ({
                   >
                     <span>Agreement Amount (25%)</span>
                     <span>
-                      ₹{agreementAmount.toLocaleString()} (
+                      ₹{formatCurrency(agreementAmount)} (
                       {agreementPaid ? "paid" : "pending"})
                     </span>
                   </div>
@@ -926,6 +992,64 @@ const BookingCard = ({
                 </div>
 
                 <p>{Math.floor(progress)}% Paid</p>
+              </div>
+            </>
+          )}
+          {panelMode === "rating" && (
+            <>
+              <h4>Rate Associate</h4>
+
+              <div className="rating-stars">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "30px",
+                      color:
+                        star <= cratingData.stars
+                          ? "#FFC107"
+                          : "#d9d9d9",
+                    }}
+                    onClick={() =>
+                      setCratingData({
+                        ...cratingData,
+                        stars: star,
+                      })
+                    }
+                  >
+                    <NiStar
+                      key={star}
+                      color={
+                        star <= Math.round(cratingData.stars)
+                          ? "#FFC107"
+                          : "#D9D9D9"
+                      }
+                    />
+                  </span>
+                ))}
+              </div>
+              <p style={{ marginBottom: "1rem", justifyContent: "center" }}>Rate your experience with our Associate.</p>
+
+              {/* <div className="field">
+                <label>Review</label>
+
+                <textarea
+                  placeholder="Write your experience..."
+                  value={ratingData.review}
+                  onChange={(e) =>
+                    setRatingData({
+                      ...ratingData,
+                      review: e.target.value,
+                    })
+                  }
+                />
+              </div> */}
+
+              <div className="modal-actions">
+                <button onClick={handleSubmitRating}>
+                  Submit Rating
+                </button>
               </div>
             </>
           )}

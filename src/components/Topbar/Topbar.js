@@ -180,6 +180,12 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
               >
                 Help and Support
               </div>
+              <div
+                className="pm-item"
+                onClick={() => navigate(`/rating`)}
+              >
+                Rating
+              </div>
 
               <button className="pm-logout" onClick={handleLogout}>
                 Sign out

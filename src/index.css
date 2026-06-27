@@ -89,7 +89,7 @@ body {
   border-radius: 1.125rem;
   color: #9f9f9f;
   text-decoration: none;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
 .menu:hover {
   background: #f1e7f5;
@@ -313,14 +313,14 @@ body {
 
 /* Sidebar wrapper */
 .sidebar-wrap {
-  width: 260px;
+  width: 18%;
   transition: 0.3s;
 }
 
 /* Page */
 .page-wrap {
   flex: 1;
-  width: 100%;
+  width: 82%;
   position: relative;
 }
 .mobile-btn {
@@ -489,7 +489,7 @@ button.verified {
   border: 2px solid #ef4444 !important; /* red */
 }
 
-.topbar-nav-logo{
+.topbar-nav-logo {
   width: 15%;
 }
 
@@ -504,7 +504,7 @@ button.verified {
 }
 
 .terms-section {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .terms-section h2 {
@@ -525,7 +525,7 @@ button.verified {
   font-weight: 500;
   text-align: left;
 }
-.terms-checkbox input{
+.terms-checkbox input {
   width: 10%;
 }
 
@@ -584,20 +584,28 @@ button.verified {
   .mobile-btn {
     display: block;
   }
-  .top-left{
+  .top-left {
     display: flex;
   }
-  .mobile-btn{
+  .mobile-btn {
     border: none;
     background-color: transparent;
     color: #9f9f9f;
   }
-  .mobile-btn svg{
+  .mobile-btn svg {
     width: 30px;
     height: 30px;
   }
-  .topbar-nav-logo{
+  .topbar-nav-logo {
     width: 60%;
     padding: 2px 0;
+  }
+  .sidebar-wrap {
+    width: 100%;
+  }
+
+  /* Page */
+  .page-wrap {
+    width: 100%;
   }
 }

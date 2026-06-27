@@ -35,8 +35,6 @@ const ManagementCard = ({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [panelMode, setPanelMode] = useState(null);
-  const [editingNoteId, setEditingNoteId] = useState(null);
-  const [editText, setEditText] = useState("");
   const [agentSearch, setAgentSearch] = useState("");
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [noteText, setNoteText] = useState("");
@@ -44,7 +42,10 @@ const ManagementCard = ({
   const [disapproveOpen, setDisapproveOpen] = useState(false);
   const [lostReason, setLostReason] = useState(item.lostReason || "");
   const [formData, setFormData] = useState({});
-  const [selectedProjects, setSelectedProjects] = useState(null);
+  // const [selectedProjects, setSelectedProjects] = useState(null);
+  const [editingNote, setEditingNote] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [selectedColonies, setSelectedColonies] = useState([]);
 
   useEffect(() => {
     dispatch(getAllColonies());
@@ -134,6 +135,7 @@ const ManagementCard = ({
 
   const handleAddNote = async (leadId) => {
     try {
+      setSaving(true);
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
@@ -157,10 +159,11 @@ const ManagementCard = ({
       });
 
       dispatch(getLeads()); // optional refresh
-
+      setSaving(false);
       setTimeout(() => setAlert(null), 3000);
     } catch (err) {
       console.error(err);
+      setSaving(false);
       setAlert({
         message: err.response?.data?.message || "Failed to add note",
         status: "Error",
@@ -170,11 +173,12 @@ const ManagementCard = ({
 
   const handleEditNote = async (leadId, noteId) => {
     try {
+      setSaving(true);
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
         `${Host}/api/lead/edit-note/${leadId}/${noteId}`,
-        { note: editText },
+        { note: editingNote },
         {
           headers: {
             "auth-token": token,
@@ -183,12 +187,12 @@ const ManagementCard = ({
       );
 
       setNotes(res.data.lead.notes);
-      setEditingNoteId(null);
-      setEditText("");
+      setEditingNote(null);
       dispatch(getLeads());
-
+      setSaving(false);
       setAlert({ message: "Note updated", status: "Success" });
     } catch (err) {
+      setSaving(false);
       console.error(err);
       setAlert({ message: "Edit failed", status: "Error" });
     }
@@ -286,8 +290,8 @@ const ManagementCard = ({
       const payload = {
         lead: item._id,
         customer: item.customer,
-        location: selectedProjects?.locationId?._id,
-        colony: selectedProjects?._id,
+        location: selectedColonies[0]?.locationId?._id,
+        colonies: selectedColonies.map((c) => c._id),
         visitDate: formData.visitHour + " " + formData.visitPeriod + " " + formData.visitDate,
       };
 
@@ -311,7 +315,7 @@ const ManagementCard = ({
       dispatch(getLeads());
       setViewOpen(false);
       setFormData({});
-      setSelectedProjects(null);
+      setSelectedColonies(null);
       setTimeout(() => setAlert(null), 3000);
     } catch (err) {
       console.error(err);
@@ -822,6 +826,25 @@ const ManagementCard = ({
               </div>
               <div className="field">
                 <SearchSelect
+                  label="Colonies"
+                  multiple
+                  placeholder="Select Colonies"
+                  options={allColonies}
+                  value={selectedColonies}
+                  onChange={setSelectedColonies}
+                  displayKey="name"
+                  searchKeys={["name"]}
+                  renderOption={(p) => (
+                    <div>
+                      <b>{p.name}</b>
+
+                      <small style={{ display: "block" }}>{p.locationId?.name}</small>
+                    </div>
+                  )}
+                />
+              </div>
+              {/* <div className="field">
+                <SearchSelect
                   label="Site"
                   placeholder="Search Project or location"
                   options={allColonies}
@@ -841,13 +864,13 @@ const ManagementCard = ({
                     </div>
                   )}
                 />
-              </div>
+              </div> */}
 
               <div className="modal-actions">
                 <button
                   onClick={() => {
                     // console.log("Site Visit Requested", formData);
-                    if (!formData.visitDate || !selectedProjects) {
+                    if (!formData.visitDate || !selectedColonies) {
                       setAlert({
                         message: "Please select date and location",
                         status: "Error",
@@ -900,15 +923,15 @@ const ManagementCard = ({
             <NoteItem
               item={item}
               notes={notes}
-              editingNoteId={editingNoteId}
-              editText={editText}
               noteText={noteText}
-              setEditingNoteId={setEditingNoteId}
-              setEditText={setEditText}
               setNoteText={setNoteText}
               handleAddNote={handleAddNote}
               handleEditNote={handleEditNote}
               handleDeleteNote={handleDeleteNote}
+              editingNote={editingNote}
+              setEditingNote={setEditingNote}
+              saving={saving}
+              setSaving={setSaving}
             />
           )}
 
@@ -917,23 +940,23 @@ const ManagementCard = ({
           {panelMode === "lost" && (
             <>
               {/* EXISTING NOTES */}
-              <h5>Notes History</h5>
 
-              {notes.length === 0 && <p>No notes available.</p>}
 
-              {[...notes].reverse().map((n) => (
-                <>
-                  <div key={n._id} className="note-item" >
-                    <small>
-                      <span className="comment agent">
-                        {n.by?.name || "User"}
-                      </span>{" "}
-                      {new Date(n?.date).toLocaleString()}
-                    </small>
-                    <p>{n.text}</p>
-                  </div>
-                </>
-              ))}
+              {notes.length === 0 && <><h5>Notes History</h5> <p>No notes available.</p></>}
+
+              <NoteItem
+                item={item}
+                notes={notes}
+                noteText={noteText}
+                setNoteText={setNoteText}
+                handleAddNote={handleAddNote}
+                handleEditNote={handleEditNote}
+                handleDeleteNote={handleDeleteNote}
+                editingNote={editingNote}
+                setEditingNote={setEditingNote}
+                saving={saving}
+                setSaving={setSaving}
+              />
 
               {/* ONLY AGENT CAN ADD NOTE */}
               {/* {mood === "agent" && (
@@ -975,20 +998,20 @@ const ManagementCard = ({
                 <strong>Conversion Date:</strong> {formatDate(item?.updatedAt)}
               </p>
 
-              <h5>Notes History</h5>
-              {[...notes].reverse().map((n) => (
-                <>
-                  <div key={n._id} className="note-item" >
-                    <small>
-                      <span className="comment agent">
-                        {n.by?.name || "User"}
-                      </span>{" "}
-                      {new Date(n?.date).toLocaleString()}
-                    </small>
-                    <p>{n.text}</p>
-                  </div>
-                </>
-              ))}
+              {/* <h5>Notes History</h5> */}
+              <NoteItem
+                item={item}
+                notes={notes}
+                noteText={noteText}
+                setNoteText={setNoteText}
+                handleAddNote={handleAddNote}
+                handleEditNote={handleEditNote}
+                handleDeleteNote={handleDeleteNote}
+                editingNote={editingNote}
+                setEditingNote={setEditingNote}
+                saving={saving}
+                setSaving={setSaving}
+              />
             </>
           )}
         </div>

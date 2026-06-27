@@ -1,135 +1,130 @@
-import React, { useState } from "react";
-// import "./Settings.css";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getStaffRoles, updateStaffRole } from "../../Redux/Slices/AppSlices";
 
-/* ================= ROLE DEFAULT PERMISSIONS ================= */
+const ALL_PERMISSIONS = [
+  // Lead
+  { key: "lead.view", label: "View Leads" },
+  { key: "lead.add", label: "Add Lead" },
+  { key: "lead.edit", label: "Edit Lead" },
+  { key: "lead.assign", label: "Assign Lead" },
+  // Site Visit
+  { key: "sitevisit.view", label: "View Site Visit" },
+  { key: "sitevisit.add", label: "Create Site Visit" },
+  { key: "sitevisit.complete", label: "Complete Site Visit" },
 
-const ROLE_PERMISSIONS = {
-    manager: [
-        "Manage Leads",
-        "Assign Agents",
-        "Approve Bookings",
-        "View Reports",
-    ],
+  // Booking
+  { key: "booking.view", label: "View Booking" },
+  { key: "booking.add", label: "Create Booking" },
+  { key: "booking.approve", label: "Approve Booking" },
+  { key: "booking.reject", label: "Reject Booking" },
 
-    plot_manager: [
-        "Add Plot",
-        "Edit Plot",
-        "Delete Plot",
-        "Mark Plot Sold",
-    ],
+  // Plot
+  { key: "plot.view", label: "View Plot" },
+  { key: "plot.add", label: "Add Plot" },
+  { key: "plot.edit", label: "Edit Plot" },
+  { key: "plot.delete", label: "Delete Plot" },
+  { key: "plot.change_status", label: "Change Status" },
 
-    lead_manager: [
-        "Add Lead",
-        "Edit Lead",
-        "Delete Lead",
-        "Assign Lead",
-    ],
+  // Payment
+  { key: "payment.view", label: "View Payments" },
+  { key: "payment.add", label: "Add Payment" },
+  { key: "payment.approve", label: "Approve Payment" },
 
-    accounts_manager: [
-        "Add Payment",
-        "Approve Payment",
-        "Generate Invoice",
-        "View Outstanding",
-    ],
-
-    operations_manager: [
-        "Schedule Visit",
-        "Update Visit Status",
-        "Add Visit Notes",
-    ],
-};
-
-/* ================= ALL EXTRA PERMISSIONS ================= */
-
-const ALL_EXTRA_PERMISSIONS = [
-    "Delete Payment",
-    "Access Financial Reports",
-    "Export Data",
-    "Modify Commission",
-    "Deactivate User",
-    "Create Teams",
+  // Reports
+  { key: "report.view", label: "View Reports" },
+  { key: "report.export", label: "Export Reports" },
 ];
 
-const StaffPermission = () => {
-    const [activeRole, setActiveRole] = useState("manager");
+const StaffPermission = ({ setAlert }) => {
+  const dispatch = useDispatch();
 
-    const [permissions, setPermissions] = useState(
-        ROLE_PERMISSIONS[activeRole]
+  const { staffRoles } = useSelector((state) => state.app);
+
+  const [activeRole, setActiveRole] = useState(null);
+  const [permissions, setPermissions] = useState([]);
+
+  useEffect(() => {
+    dispatch(getStaffRoles());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (staffRoles?.length > 0 && !activeRole) {
+      setActiveRole(staffRoles[0]);
+      setPermissions(staffRoles[0].permissions || []);
+    }
+  }, [staffRoles]);
+
+  const togglePermission = (permission) => {
+    if (permissions.includes(permission)) {
+      setPermissions(permissions.filter((item) => item !== permission));
+    } else {
+      setPermissions([...permissions, permission]);
+    }
+  };
+
+  const handleSave = () => {
+    dispatch(
+      updateStaffRole({
+        id: activeRole._id,
+        permissions,
+      }),
     );
+    setAlert({
+      message: "Permissions updated",
+      status: "Success",
+    });
 
-    const togglePermission = (perm) => {
-        if (permissions.includes(perm)) {
-            setPermissions(permissions.filter((p) => p !== perm));
-        } else {
-            setPermissions([...permissions, perm]);
-        }
-    };
+    setTimeout(() => setAlert(null), 3000);
+  };
 
-    return (
-        <div>
+  return (
+    <div>
+      {/* ROLE TABS */}
 
-            {/* ROLE TABS */}
-            <div className="table-filters role-tabs">
-                {Object.keys(ROLE_PERMISSIONS).map((role) => (
-                    <button
-                        key={role}
-                        className={activeRole === role ? "active" : ""}
-                        onClick={() => {
-                            setActiveRole(role);
-                            setPermissions(ROLE_PERMISSIONS[role]);
-                        }}
-                    >
-                        {role.replace("_", " ").toUpperCase()}
-                    </button>
-                ))}
-            </div>
+      <div className="table-filters role-tabs">
+        {staffRoles?.map((role) => (
+          <button
+            key={role._id}
+            className={activeRole?._id === role._id ? "active" : ""}
+            onClick={() => {
+              setActiveRole(role);
+              setPermissions(role.permissions || []);
+            }}
+          >
+            {role.name}
+          </button>
+        ))}
+      </div>
 
-            {/* DEFAULT PERMISSIONS */}
-            <div className="permission-section">
-                <h4>Default Role Permissions</h4>
+      {/* PERMISSIONS */}
 
-                {ROLE_PERMISSIONS[activeRole].map((perm) => (
-                    <div key={perm} className="permission-row card">
-                        <span>{perm}</span>
+      <div className="permission-section">
+        <h4>{activeRole?.name} Permissions</h4>
 
-                        <label className="switch">
-                            <input
-                                type="checkbox"
-                                checked={permissions.includes(perm)}
-                                onChange={() => togglePermission(perm)}
-                            />
-                            <span className="slider"></span>
-                        </label>
-                    </div>
-                ))}
-            </div>
+        {ALL_PERMISSIONS.map((permission) => (
+          <div key={permission.key} className="permission-row card">
+            <span>{permission.label}</span>
 
-            {/* EXTRA PERMISSIONS */}
-            <div className="permission-section">
-                <h4>Other Permissions</h4>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={permissions.includes(permission.key)}
+                onChange={() => togglePermission(permission.key)}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+        ))}
+      </div>
 
-                {ALL_EXTRA_PERMISSIONS.map((perm) => (
-                    <div key={perm} className="permission-row card">
-                        <span>{perm}</span>
-
-                        <label className="switch">
-                            <input
-                                type="checkbox"
-                                checked={permissions.includes(perm)}
-                                onChange={() => togglePermission(perm)}
-                            />
-                            <span className="slider"></span>
-                        </label>
-                    </div>
-                ))}
-            </div>
-            <div className="modal-actions">
-                <button className="btn primary" style={{ marginTop: "20px" }}>
-                    Save Changes
-                </button>
-            </div>
-        </div>
-    );
+      <div className="modal-actions">
+        <button className="btn primary" onClick={handleSave}>
+          Save Changes
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default StaffPermission;

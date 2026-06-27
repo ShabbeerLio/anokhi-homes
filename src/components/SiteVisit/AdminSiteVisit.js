@@ -3,7 +3,7 @@ import DashboardCard from "../Cards/DashboardCard";
 import Charts from "../Dashboard/Charts";
 import VisitTable from "./VisitTable";
 
-const AdminSiteVisit = ({ siteVisits, mood, setAlert }) => {
+const AdminSiteVisit = ({ siteVisits, mood, setAlert ,landingPage}) => {
   const totalVisits = siteVisits?.length || 0;
 
   const totalCompleted =
@@ -46,7 +46,7 @@ const AdminSiteVisit = ({ siteVisits, mood, setAlert }) => {
       </div>
       {/* Filters */}
       <h4>Site Visits</h4>
-      <VisitTable data={siteVisits} mood={mood} setAlert={setAlert} />
+      <VisitTable data={siteVisits} mood={mood} setAlert={setAlert} landingPage={landingPage}/>
       <h4>Monthly Revenue</h4>
       <div className="card">
         <Charts

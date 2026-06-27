@@ -35,6 +35,7 @@ function Sidebar({ closeMobile, mood }) {
   const menuConfig = {
     user: [
       { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/holdplot", label: "Hold Plots", icon: <NiTool /> },
       { path: "/management", label: "My Enquiry", icon: <NiManagement /> },
       { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
@@ -44,6 +45,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/management", label: "Lead Mgnt.", icon: <NiManagement /> },
       { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
       { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/holdplot", label: "Hold Plots", icon: <NiTool /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },
       { path: "/income", label: "Income", icon: <NiIncome /> },
@@ -61,6 +63,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/management", label: "Lead Mgnt.", icon: <NiManagement /> },
       { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
       { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/holdplot", label: "Hold Plots", icon: <NiTool /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/user", label: "Users", icon: <NiUser /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
@@ -77,6 +80,7 @@ function Sidebar({ closeMobile, mood }) {
       { path: "/management", label: "Lead Mgnt.", icon: <NiManagement /> },
       { path: "/site-visits", label: "Site Visits", icon: <NiSitevisit /> },
       { path: "/plot", label: "Plots", icon: <NiTool /> },
+      { path: "/holdplot", label: "Hold Plots", icon: <NiTool /> },
       { path: "/bookings", label: "Bookings", icon: <NiBooking /> },
       { path: "/teams", label: "Teams", icon: <NiTeams /> },
       { path: "/payments", label: "Payments", icon: <NiPayments /> },

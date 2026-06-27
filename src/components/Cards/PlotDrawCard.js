@@ -140,6 +140,7 @@ const PlotDrawCard = ({ data, mood, setAlert }) => {
           updatePlot={updatePlot}
           onClose={() => setSelectedPlot(null)}
           setAlert={setAlert}
+          projectId={projectId}
         />
       )}
     </>

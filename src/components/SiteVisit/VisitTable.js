@@ -20,7 +20,7 @@ import Host from "../../Host/Host";
 
 const ITEMS_PER_PAGE = 6;
 
-const VisitTable = ({ data, mood, setAlert }) => {
+const VisitTable = ({ data, mood, setAlert, landingPage }) => {
   const dispatch = useDispatch();
   const { leads, allColonies, usersRole } = useSelector((state) => state.app);
 
@@ -38,6 +38,7 @@ const VisitTable = ({ data, mood, setAlert }) => {
   const [selectedVisit, setSelectedVisit] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(null);
+  const [selectedColonies, setSelectedColonies] = useState([]);
   // console.log(data,"data")
 
   const [formData, setFormData] = useState({});
@@ -104,8 +105,8 @@ const VisitTable = ({ data, mood, setAlert }) => {
       const payload = {
         lead: formData.leadId,
         customer: formData.customer,
-        location: selectedProjects?.locationId?._id,
-        colony: selectedProjects?._id,
+        location: selectedColonies[0]?.locationId?._id,
+        colonies: selectedColonies.map((c) => c._id),
         agent: formData?.agent,
         visitDate:
           formData.visitHour +
@@ -138,6 +139,9 @@ const VisitTable = ({ data, mood, setAlert }) => {
         message: err.response?.data?.message || "Request failed",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 5000);
     }
   };
   const handleEditVisit = async () => {
@@ -151,7 +155,7 @@ const VisitTable = ({ data, mood, setAlert }) => {
   const [selectedPlot, setSelectedPlot] = useState(null);
 
   // console.log(selectedCustomer, "selected");
-  // console.log(selectedVisit, "selectedVisit");
+  // console.log(selectedProjects, "selectedProjects");
 
   return (
     <div>
@@ -221,6 +225,7 @@ const VisitTable = ({ data, mood, setAlert }) => {
                 setOpen={setOpen}
                 mood={mood}
                 setAlert={setAlert}
+                landingPage={landingPage}
               />
             ))
         )}
@@ -366,22 +371,19 @@ const VisitTable = ({ data, mood, setAlert }) => {
         )}
         <div className="field">
           <SearchSelect
-            label="Site"
-            placeholder="Search Project or location"
+            label="Colonies"
+            multiple
+            placeholder="Select Colonies"
             options={allColonies}
-            value={selectedProjects}
-            onChange={(selected) => {
-              setSelectedProjects(selected);
-              setFormData({ ...formData, location: selected.name });
-            }}
+            value={selectedColonies}
+            onChange={setSelectedColonies}
             displayKey="name"
-            searchKeys={["name", "location"]}
+            searchKeys={["name"]}
             renderOption={(p) => (
               <div>
                 <b>{p.name}</b>
-                <small style={{ display: "block", color: "#666" }}>
-                  {p?.locationId?.name}
-                </small>
+
+                <small style={{ display: "block" }}>{p.locationId?.name}</small>
               </div>
             )}
           />
@@ -393,9 +395,9 @@ const VisitTable = ({ data, mood, setAlert }) => {
               if (isEditMode) {
                 handleEditVisit();
               } else {
-                if (!formData.visitDate || !selectedProjects) {
+                if (!formData.visitDate || selectedColonies.length === 0) {
                   setAlert({
-                    message: "Please select date and location",
+                    message: "Please select at least one colony",
                     status: "Error",
                   });
                   return;

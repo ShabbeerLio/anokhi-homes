@@ -758,7 +758,16 @@ const Signup = ({ mood, setAlert, setMood, data }) => {
                     }
                   }}
                 >
+                  <h4 style={{ marginBottom: "0" }}>Term & Conditions</h4>
                   {data?.policies?.termcondition?.sections?.map((section) => (
+                    <div key={section._id} className="terms-section">
+                      {section.heading && <h2>{section.heading}</h2>}
+                      {section.content && <p>{section.content}</p>}
+                    </div>
+                  ))}
+                  <hr />
+                  <h4 style={{ marginBottom: "0" }}>Privacy Policy</h4>
+                  {data?.policies?.privacy?.sections?.map((section) => (
                     <div key={section._id} className="terms-section">
                       {section.heading && <h2>{section.heading}</h2>}
                       {section.content && <p>{section.content}</p>}

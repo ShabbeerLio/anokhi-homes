@@ -22,6 +22,12 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
         <span>{item.referralId}</span>
         <span>₹{item.selfBusiness}</span>
         <span>₹{formatCurrency(item.wallet)}</span>
+        <span>
+          ₹{formatCurrency(item.holdCommission)}
+        </span>
+        <span>
+          ₹{formatCurrency(item.releasedCommission)}
+        </span>
         <span>₹{formatCurrency(item.totalIncome)}</span>
         <div className="dots">
           <span onClick={() => setViewOpen(true)}>
@@ -60,6 +66,12 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
           >
             Rewards
           </button>
+          <button
+            className={activeTab === "payouts" ? "active" : ""}
+            onClick={() => setActiveTab("payouts")}
+          >
+            Payouts
+          </button>
         </div>
 
         {activeTab === "summary" && (
@@ -96,9 +108,36 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
 
             <div className="report-view-box-right active">
               <h5>Commission Summary</h5>
-              <p><strong>Total Commission :</strong>  ₹{formatCurrency(item.totalCommission)} </p>
-              <p><strong>Credited :</strong>  ₹{formatCurrency(item.creditedCommission)} </p>
-              <p><strong>Pending :</strong>  ₹{formatCurrency(item.pendingCommission)} </p>
+
+              <p>
+                <strong>Gross Commission :</strong>
+                ₹{formatCurrency(item.grossCommission)}
+              </p>
+
+              <p>
+                <strong>TDS :</strong>
+                ₹{formatCurrency(item.tdsDeducted)}
+              </p>
+
+              <p>
+                <strong>Admin Charge :</strong>
+                ₹{formatCurrency(item.adminDeducted)}
+              </p>
+
+              <p>
+                <strong>Net Commission :</strong>
+                ₹{formatCurrency(item.totalNetCommission)}
+              </p>
+
+              <p>
+                <strong>Released :</strong>
+                ₹{formatCurrency(item.releasedCommission)}
+              </p>
+
+              <p>
+                <strong>On Hold :</strong>
+                ₹{formatCurrency(item.holdCommission)}
+              </p>
             </div>
 
             <div className="report-view-box-right active">
@@ -160,6 +199,70 @@ const CommissionTable = ({ index, item, exportToExcel }) => {
             ) : (
               <p>No rewards available</p>
             )}
+          </div>
+        )}
+        {activeTab === "payouts" && (
+          <div className="report-view-box-right active">
+
+            {item.payouts?.length ? (
+              item.payouts.map((payout) => (
+                <div className="history-card" key={payout._id}>
+
+                  <h5>
+                    {new Date(
+                      payout.cycleStart
+                    ).toLocaleDateString()}
+                    {" - "}
+                    {new Date(
+                      payout.cycleEnd
+                    ).toLocaleDateString()}
+                  </h5>
+
+                  <p>
+                    <strong>Gross :</strong>
+                    ₹{formatCurrency(payout.grossAmount)}
+                  </p>
+
+                  <p>
+                    <strong>TDS :</strong>
+                    ₹{formatCurrency(payout.tdsAmount)}
+                  </p>
+
+                  <p>
+                    <strong>Admin :</strong>
+                    ₹{formatCurrency(
+                      payout.adminChargeAmount
+                    )}
+                  </p>
+
+                  <p>
+                    <strong>Net :</strong>
+                    ₹{formatCurrency(payout.netAmount)}
+                  </p>
+
+                  <p>
+                    <strong>Release Date :</strong>
+
+                    {new Date(
+                      payout.releaseDate
+                    ).toLocaleDateString()}
+                  </p>
+
+                  <span
+                    className={`status ${payout.status === "released"
+                        ? "active"
+                        : "pending"
+                      }`}
+                  >
+                    {payout.status}
+                  </span>
+
+                </div>
+              ))
+            ) : (
+              <p>No payouts available.</p>
+            )}
+
           </div>
         )}
       </ViewModal>

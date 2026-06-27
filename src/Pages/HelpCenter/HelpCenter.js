@@ -145,7 +145,7 @@ const HelpCenter = ({ mood, setAlert }) => {
       <div className="table-filters">
         <div className="page-head-title">
           <div className="page-tools">
-            <h2>Help and SupporA</h2>
+            <h2>Help and Support</h2>
           </div>
           <Breadcrumb />
         </div>

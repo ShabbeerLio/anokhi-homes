@@ -10,6 +10,7 @@ export default function Compass() {
             </div>
             <div className="plot-colors">
                 <span style={{background: PLOT_COLORS["FOR_SALE"]}}> <NiPlotcolor/> For Sale</span>
+                <span style={{background: PLOT_COLORS["HOLD"]}}> <NiPlotcolor/> Hold</span>
                 <span style={{background: PLOT_COLORS["SOLD"]}}> <NiPlotcolor/> Sold</span>
                 <span style={{background: PLOT_COLORS["PENDING"]}}> <NiPlotcolor/> Pending</span>
                 <span style={{background: PLOT_COLORS["NOT_FOR_SALE"]}}> <NiPlotcolor/> Not For Sale</span>

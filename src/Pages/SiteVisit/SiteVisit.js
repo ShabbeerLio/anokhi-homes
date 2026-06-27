@@ -9,12 +9,12 @@ import { LucidePlus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountDetails, getSiteVisit } from "../../Redux/Slices/AppSlices";
 
-const SiteVisit = ({ mood, staffType, setAlert }) => {
+const SiteVisit = ({ mood, staffType, setAlert, landingPage }) => {
   const [open, setOpen] = React.useState(false);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [selectedBooking, setSelectedBooking] = React.useState(null);
-   const dispatch = useDispatch();
-  const { userDetail,  siteVisit } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
+  const { userDetail, siteVisit } = useSelector((state) => state.app);
 
   useEffect(() => {
     dispatch(getAccountDetails());
@@ -24,19 +24,42 @@ const SiteVisit = ({ mood, staffType, setAlert }) => {
   const renderPage = () => {
     switch (mood) {
       case "admin":
-        return <AdminSiteVisit siteVisits={siteVisit} mood={mood} setAlert={setAlert} />;
+        return (
+          <AdminSiteVisit
+            siteVisits={siteVisit}
+            mood={mood}
+            setAlert={setAlert}
+            landingPage={landingPage}
+          />
+        );
       case "agent":
-        return <AgentSiteVisit siteVisits={siteVisit} mood={mood} setAlert={setAlert} />;
+        return (
+          <AgentSiteVisit
+            siteVisits={siteVisit}
+            mood={mood}
+            setAlert={setAlert}
+            landingPage={landingPage}
+          />
+        );
       case "staff":
         return (
-          <StaffSiteVisit siteVisits={siteVisit}
+          <StaffSiteVisit
+            siteVisits={siteVisit}
             mood={mood}
             staffType={"operations"}
             setAlert={setAlert}
+            landingPage={landingPage}
           />
         );
       case "user":
-        return <UserSiteVisit siteVisits={siteVisit} mood={mood} setAlert={setAlert} />;
+        return (
+          <UserSiteVisit
+            siteVisits={siteVisit}
+            mood={mood}
+            setAlert={setAlert}
+            landingPage={landingPage}
+          />
+        );
       default:
         return <div>Access Denied</div>;
     }
