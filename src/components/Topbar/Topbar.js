@@ -72,7 +72,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
         </button>
         <span className="logo">
           {/* <MainLogo /> */}
-          {/* {mood === "admin" ? (
+          {mood === "admin" ? (
             <img className="topbar-nav-logo" src={AdminLogo} alt="" />
           ) : mood === "staff" ? (
             <img className="topbar-nav-logo" src={StaffLogo} alt="" />
@@ -80,8 +80,8 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
             <img className="topbar-nav-logo" src={AgentLogo} alt="" />
           ) : (
             <img className="topbar-nav-logo" src={UserLogo} alt="" />
-          )} */}
-          <img className="topbar-nav-logo" src={mainLoag} alt="" />
+          )}
+          {/* <img className="topbar-nav-logo" src={mainLoag} alt="" /> */}
         </span>
       </div>
 
