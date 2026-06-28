@@ -20,18 +20,7 @@ import NiDiscount from "../../icons/ni-discount";
 import NiCommission from "../../icons/ni-commission";
 import NiStar from "../../icons/ni-star";
 
-const NotificationModal = () => {
-    const dispatch = useDispatch();
-
-    const { notifications } = useSelector((state) => state.app);
-
-    useEffect(() => {
-        dispatch(getNotifications());
-    }, [dispatch]);
-
-    const handleRead = (id) => {
-        dispatch(readNotification(id));
-    };
+const NotificationModal = ({notifications, handleRead}) => {
     return (
         <div className="notif-modal">
             <h3>Notifications</h3>

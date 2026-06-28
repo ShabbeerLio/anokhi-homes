@@ -365,6 +365,8 @@ const SiteVisitCard = ({
     // onClose();
   };
 
+  // console.log(item, "item")
+
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
       <div className="user-card-top">
@@ -676,7 +678,7 @@ const SiteVisitCard = ({
             {mood !== "agent" && <p>Associate</p>}
             <p>Site</p>
             <p>Visit Date</p>
-            <p>Notes</p>
+            {/* <p>Notes</p> */}
           </div>
           <div className="user-card-bottom-right">
             <p>
@@ -1047,14 +1049,14 @@ const SiteVisitCard = ({
                       <span>Amount</span>
                       <span>₹{formatCurrency(0)}</span>
                     </div>
-                    <div className="installment">
+                    {/* <div className="installment">
                       <span>First Hold </span>
                       <span> No Approval</span>
                     </div>
                     <div className="installment">
                       <span>Second Hold </span>
                       <span>Admin Approval Required</span>
-                    </div>
+                    </div> */}
                   </>
                 ) : (
                   <>
@@ -1067,9 +1069,9 @@ const SiteVisitCard = ({
                       <span>Amount</span>
                       <span>₹{formatCurrency(plotSetting?.paidAmount)}</span>
                     </div>
-                    <div className="installment">
+                    {/* <div className="installment">
                       <span>Admin Approval Required</span>
-                    </div>
+                    </div> */}
                   </>
                 )}
               </div>
@@ -1108,16 +1110,19 @@ const SiteVisitCard = ({
               {/* <h5>Notes History</h5> */}
 
               {/* {notes.length === 0 && <p>No notes available.</p>} */}
+              {/* {item.status === "rejected" &&
+                <>
+                  {notes.map((n, i) => (
+                    <div key={i} className="note-item">
+                      <small>
+                        <span>{n?.by}</span> {n?.date}
+                      </small>
+                      <p>{n?.text}</p>
+                    </div>
+                  ))}
+                </>} */}
 
-              {/* {notes.map((n, i) => (
-                <div key={i} className="note-item">
-                  <small>
-                    <span>{n.by}</span> {n.date}
-                  </small>
-                  <p>{n.text}</p>
-                </div>
-              ))} */}
-              {/* ONLY AGENT CAN ADD NOTE */}
+
               {(item.status === "scheduled" || item.status === "approval" || item.status === "completed" || item.status === "rescheduled") && (
                 <>
                   <NoteItem

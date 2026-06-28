@@ -802,6 +802,18 @@ export const getNotifications = createAsyncThunk(
     return await res.json();
   },
 );
+export const getNotificationsCount = createAsyncThunk(
+  "app/getNotificationsCount",
+  async () => {
+    const res = await fetch(`${Host}/api/notification/count`, {
+      headers: {
+        "auth-token": getToken(),
+      },
+    });
+
+    return await res.json();
+  },
+);
 
 export const readNotification = createAsyncThunk(
   "app/readNotification",
@@ -891,6 +903,7 @@ const appSlice = createSlice({
     plotHold: [],
     ratingData: [],
     notifications: [],
+    notificationsCount: [],
     staffRoles: [],
     paymentTerms: null,
     loading: false,
@@ -1042,6 +1055,9 @@ const appSlice = createSlice({
 
       .addCase(getNotifications.fulfilled, (state, action) => {
         state.notifications = action.payload;
+      })
+      .addCase(getNotificationsCount.fulfilled, (state, action) => {
+        state.notificationsCount = action.payload;
       })
 
       .addCase(readNotification.fulfilled, (state, action) => {

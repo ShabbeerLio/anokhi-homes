@@ -13,6 +13,7 @@ import NiCross from "../../icons/ni-cross";
 import NiTick from "../../icons/ni-tick";
 import ViewModal from "../Modals/ViewModal";
 import SearchSelect from "../SearchItems/SearchSelect";
+import { formatCurrency } from "../Utils/FormatCurrency";
 
 const PlotHoldCard = ({ item, mood, setAlert }) => {
     const dispatch = useDispatch();
@@ -203,7 +204,7 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
                     <p>{item.colony?.name}</p>
                     {mood !== "agent" && <p>{item.agent?.name}</p>}
                     <p>{item.holdType}</p>
-                    <p>₹{item.amount}</p>
+                    <p>₹{formatCurrency(item.amount)}</p>
                     {item.expiresAt && <p className="countdown">{getRemainingDays(item.expiresAt)}</p>}
                 </div>
             </div>

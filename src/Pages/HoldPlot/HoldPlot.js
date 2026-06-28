@@ -13,7 +13,7 @@ const HoldPlot = ({ mood, setAlert }) => {
     dispatch(getPlotHold());
   }, []);
   // getPlotHold
-  console.log(plotHold,"plotHold")
+  // console.log(plotHold,"plotHold")
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedplothold, setSelectedplothold] = useState();

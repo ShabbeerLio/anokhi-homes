@@ -15,15 +15,17 @@ import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
 import mainLoag from "../../Assets/Logo/Final_pah-logo-green-hq.png"
 import NiUser from "../../icons/ni-user";
 import { useDispatch, useSelector } from "react-redux";
-import { getAccountDetails } from "../../Redux/Slices/AppSlices";
+import { getAccountDetails, getNotifications, getNotificationsCount, readNotification } from "../../Redux/Slices/AppSlices";
 import NiDrawr from "../../icons/ni-drawr";
 import Floating from "../LandingPage/Floating";
 
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   const dispatch = useDispatch();
-  const { userDetail } = useSelector((state) => state.app);
+  const { userDetail, notificationsCount, notifications } = useSelector((state) => state.app);
   useEffect(() => {
     dispatch(getAccountDetails());
+    dispatch(getNotificationsCount());
+    dispatch(getNotifications());
   }, []);
 
   const currentUser = userDetail;
@@ -62,7 +64,12 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
     localStorage.removeItem("token");
   };
 
-  // console.log(currentUser, "currentUser");
+  const handleRead = (id) => {
+    dispatch(readNotification(id));
+    dispatch(getNotificationsCount());
+  };
+
+  // console.log(notificationsCount?.unread, "notificationsCount");
 
   return (
     <div className="topbar">
@@ -108,8 +115,8 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
           }}
         >
           <NiBell />
-          <span>0</span>
-          {openNotif && <NotificationModal />}
+          <span>{notificationsCount?.unread}</span>
+          {openNotif && <NotificationModal notifications={notifications} handleRead={handleRead} />}
         </div>
 
         {/* Dark Mode */}
