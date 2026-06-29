@@ -25,6 +25,7 @@ const Home = ({ data, setAlert }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
   const [visibleCount, setVisibleCount] = useState(5);
+  const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -92,6 +93,7 @@ const Home = ({ data, setAlert }) => {
   }, [data]);
 
   const handleSave = async () => {
+    setSaving(true);
     let uploadedImage = null;
 
     if (formData.image instanceof File) {
@@ -172,12 +174,15 @@ const Home = ({ data, setAlert }) => {
       });
       setTimeout(() => setAlert(null), 3000);
       setOpen(false);
+      setSaving(false);
     } catch (error) {
       console.log(error);
+      setSaving(false);
     }
   };
 
   const handleDelete = async (section, id) => {
+    setSaving(true);
     try {
       if (section === "service") {
         await deleteService(id);
@@ -203,8 +208,10 @@ const Home = ({ data, setAlert }) => {
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false);
     } catch (error) {
       console.log(error);
+      setSaving(false);
     }
   };
 
@@ -372,11 +379,12 @@ const Home = ({ data, setAlert }) => {
         </div>
         <div className="modal-actions">
           <button
+            disabled={saving}
             onClick={() => {
               handleSave();
             }}
           >
-            {isEditMode ? "Update " : "Add"}
+            {saving ? "Saving..." : isEditMode ? "Update " : "Add"}
           </button>
         </div>
       </AddLocationModal>

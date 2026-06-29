@@ -62,6 +62,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
   const [open, setOpen] = useState(false);
   const [selectedOffers, setSelectedOffers] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState(null);
 
   const [formData, setFormData] = useState({});
@@ -184,6 +185,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
   /* ---------- SAVE ---------- */
 
   const handleSubmit = async () => {
+    setSaving(true)
     try {
       let response;
 
@@ -236,6 +238,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       dispatch(getRewards());
       dispatch(getCashback());
 
+      setSaving(false)
       setOpen(false);
     } catch (error) {
       setAlert({
@@ -245,10 +248,12 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
 
   const handleDelete = async (id) => {
+    setSaving(true)
     try {
       if (tab === "offers") {
         await dispatch(deleteOffer(id));
@@ -272,6 +277,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (error) {
       setAlert({
         message: "Delete Failed",
@@ -280,10 +286,12 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
 
   const handleToggleStatus = async (item) => {
+    setSaving(true)
     try {
       if (tab === "offers") {
         await dispatch(toggleOfferStatus(item._id));
@@ -298,12 +306,15 @@ const OffersDiscounts = ({ mood, setAlert }) => {
         await dispatch(toggleCashbackStatus(item._id));
         dispatch(getCashback());
       }
+      setSaving(false)
     } catch (error) {
       console.log(error);
+      setSaving(false)
     }
   };
 
   const handleClaimCash = async (id) => {
+    setSaving(true)
     try {
       await dispatch(claimRewardCash(id)).unwrap();
 
@@ -317,6 +328,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (error) {
       setAlert({
         message: error?.msg || "Failed",
@@ -325,10 +337,12 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
 
   const handleClaimGift = async (id) => {
+    setSaving(true)
     try {
       await dispatch(claimRewardGift(id)).unwrap();
 
@@ -341,6 +355,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (error) {
       setAlert({
         message: error?.msg || "Failed",
@@ -349,6 +364,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
   // console.log(selectedProjects, "selectedProjects");
@@ -459,6 +475,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
               myRewards={myRewards}
               ClaimCash={handleClaimCash}
               ClaimGift={handleClaimGift}
+              saving={saving}
             />
           ))}
 
@@ -477,6 +494,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
               setOpen={setOpen}
               mood={mood}
               setAlert={setAlert}
+              saving={saving}
             />
           ))}
         {tab === "cashback" &&
@@ -491,6 +509,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
               setIsEditMode={setIsEditMode}
               setOpen={setOpen}
               setAlert={setAlert}
+              saving={saving}
             />
           ))}
       </div>
@@ -975,7 +994,7 @@ const OffersDiscounts = ({ mood, setAlert }) => {
         )} */}
 
         <div className="modal-actions">
-          <button onClick={handleSubmit}>
+          <button disabled={saving} onClick={handleSubmit}>
             {isEditMode ? "Update" : "Add"}
           </button>
         </div>

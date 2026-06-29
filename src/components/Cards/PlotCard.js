@@ -16,6 +16,7 @@ const PlotCard = ({
   setAlert,
   onDelete,
   plotData,
+  saving,
 }) => {
   const navigate = useNavigate();
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -25,7 +26,7 @@ const PlotCard = ({
       .trim()
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "");
-  console.log(p, "p");
+  // console.log(p, "p");
 
   return (
     <>
@@ -90,6 +91,7 @@ const PlotCard = ({
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
           <button
+            disabled={saving}
             onClick={(e) => {
               e.stopPropagation();
               setDeleteOpen(false);

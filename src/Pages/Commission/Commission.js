@@ -24,6 +24,7 @@ const Commission = ({ mood, setAlert }) => {
     const [statusFilter, setStatusFilter] = useState("");
     const [page, setPage] = useState(1);
     const [exportOpen, setExportOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
     useEffect(() => {
         dispatch(getIncomeSummary());
     }, []);
@@ -110,6 +111,7 @@ const Commission = ({ mood, setAlert }) => {
     const exportToExcel = (
         rowsData = filteredData
     ) => {
+        setSaving(true)
         const headers = [
             "Agent",
             "Phone",
@@ -154,9 +156,10 @@ const Commission = ({ mood, setAlert }) => {
             "commission-report.csv";
 
         link.click();
+        setSaving(false)
     };
 
-    console.log(paginatedData, "paginatedData")
+    // console.log(paginatedData, "paginatedData")
 
 
     return (
@@ -278,11 +281,12 @@ const Commission = ({ mood, setAlert }) => {
                 title="Export Report"
             >
                 <button
+                disabled={saving}
                     onClick={() =>
                         exportToExcel()
                     }
                 >
-                    Export Now
+                    {saving ? "Exporting" : "Export Now"}
                 </button>
             </ViewModal>
         </div>

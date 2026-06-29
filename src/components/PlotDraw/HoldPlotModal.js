@@ -18,14 +18,15 @@ export default function HoldPlotModal({
   onClose,
   setAlert,
 }) {
-    // console.log(projectId,"projectId")
-    // console.log(plot,"plot")
+  // console.log(projectId,"projectId")
+  // console.log(plot,"plot")
   const dispatch = useDispatch();
 
   const { userDetail, usersRole, plotSetting } = useSelector(
     (state) => state.app,
   );
   const [customer, setCustomer] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [type, setType] = useState("FREE");
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function HoldPlotModal({
       return;
     }
     const token = localStorage.getItem("token");
+    setSaving(true);
     await axios.post(
       `${Host}/api/plothold/${type.toLowerCase()}`,
       {
@@ -62,6 +64,7 @@ export default function HoldPlotModal({
     setTimeout(() => setAlert(null), 3000);
     setShowHoldModal(false);
     onClose();
+    setSaving(false);
   };
 
   return (
@@ -151,7 +154,9 @@ Price : ₹${plot.price}`}
       </div> */}
 
       <div className="modal-actions">
-        <button onClick={submit}>Submit Hold</button>
+        <button disabled={saving} onClick={submit}>
+          {saving ? "Saving..." : "Submit Hold"}
+        </button>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const Gallery = ({ data, setAlert }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
-  const [saving, setSaving] = useState(null)
+  const [saving, setSaving] = useState(false)
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;

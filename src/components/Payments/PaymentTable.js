@@ -24,7 +24,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
   }, []);
 
 
-  console.log(data,"data")
+  // console.log(data,"data")
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -34,6 +34,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [formData, setFormData] = useState({});
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (selectedPayment) {
@@ -83,6 +84,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
 
   // console.log(selectedBooking, "selectedBooking");
   const handleAddPayments = async () => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
 
@@ -117,7 +119,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
         transactionId: formData.transactionId || "",
       };
 
-      console.log(payload,"payload")
+      console.log(payload, "payload")
 
       await axios.post(`${Host}/api/payment/add`, payload, {
         headers: {
@@ -138,6 +140,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
       setOpen(false);
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.error(err);
       setAlert({
@@ -146,6 +149,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
       });
       setOpen(false);
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
@@ -286,7 +290,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
         </div>
         {selectedBooking && (
           <>
-            <div className="payment-details" style={{border: "1px solid #d4d4d4", borderRadius:"1.75rem", padding:"1rem 1rem 0 1rem", marginBottom:"1rem"}}>
+            <div className="payment-details" style={{ border: "1px solid #d4d4d4", borderRadius: "1.75rem", padding: "1rem 1rem 0 1rem", marginBottom: "1rem" }}>
               <span>Booking Details</span>
               <p>Customer :- <small>{formData?.customer?.name} ({formData?.customer?.phone})</small></p>
               <p>Plot Price / sqft :- <small>{formatCurrency(formData?.pricePerSqft)}/sqft</small></p>
@@ -400,7 +404,7 @@ const PaymentTable = ({ data, mood, setAlert }) => {
               setOpen(false);
             }}
           >
-            {isEditMode ? "Update Payment" : "Add Payment"}
+            {saving ? "Saving..." : isEditMode ? "Update Payment" : "Add Payment"}
           </button>
         </div>
       </AddLocationModal>

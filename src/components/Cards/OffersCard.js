@@ -16,10 +16,12 @@ const OffersCard = ({
   setOpen,
   mood,
   setAlert,
+  saving,
 }) => {
   const [activeRow, setActiveRow] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
+  // const [saving, setSaving] = useState(false);
 
   const isOffer = item.priceValue;
   const isDiscount = item.amount;
@@ -127,6 +129,7 @@ const OffersCard = ({
 
         <div className="modal-actions">
           <button
+            disabled={saving}
             onClick={async () => {
               await handleDelete(item._id);
 

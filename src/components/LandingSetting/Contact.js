@@ -16,9 +16,10 @@ const Home = ({ data, setAlert }) => {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [type, setType] = useState(""); // "banner" | "service" | "testimonial"
-    const [isEditMode, setIsEditMode] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false);
     const [formData, setFormData] = useState({});
+    const [saving, setSaving] = useState(false);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -84,6 +85,7 @@ const Home = ({ data, setAlert }) => {
     // });
 
     const handleSave = async () => {
+        setSaving(true)
         try {
 
             let updatedData = {
@@ -132,9 +134,11 @@ const Home = ({ data, setAlert }) => {
 
             setFormData({});
             setOpen(false);
+            setSaving(false)
 
         } catch (error) {
             console.log(error);
+            setSaving(false)
         }
     };
 
@@ -142,6 +146,7 @@ const Home = ({ data, setAlert }) => {
         section,
         id
     ) => {
+        setSaving(true)
         try {
             await deleteContact(id);
             setHomePageData((prev) => ({
@@ -162,8 +167,10 @@ const Home = ({ data, setAlert }) => {
                 () => setAlert(null),
                 3000
             );
+            setSaving(false)
         } catch (error) {
             console.log(error);
+            setSaving(false)
         }
     };
 
@@ -173,6 +180,7 @@ const Home = ({ data, setAlert }) => {
                 <h4>Contact</h4>
                 <div className="page-tools">
                     <button
+                        disabled={saving}
                         className="add-button"
                         onClick={() => handleAdd("address")}
                     >
@@ -229,11 +237,12 @@ const Home = ({ data, setAlert }) => {
                 </div>
                 <div className="modal-actions">
                     <button
+                        disabled={saving}
                         onClick={() => {
                             handleSave();
                         }}
                     >
-                        {isEditMode ? "Update " : "Add"}
+                        {saving ? "saving... " : isEditMode ? "Update " : "Add"}
                     </button>
                 </div>
             </AddLocationModal>

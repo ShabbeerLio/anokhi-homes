@@ -5,13 +5,9 @@ import ViewModal from "../Modals/ViewModal";
 
 const ReceiptModal = ({ open, onClose, paymentId }) => {
   const token = localStorage.getItem("token");
-
+  const [saving, setSaving] = usestate(false);
   return (
-    <ViewModal
-      open={open}
-      onClose={onClose}
-      title="Payment Receipt"
-    >
+    <ViewModal open={open} onClose={onClose} title="Payment Receipt">
       <div
         style={{
           display: "flex",
@@ -21,7 +17,14 @@ const ReceiptModal = ({ open, onClose, paymentId }) => {
       >
         <button
           className="view-report-btn"
-          onClick={() => downloadReceipt(paymentId)}
+          onClick={() => {
+            downloadReceipt(paymentId);
+            setSaving(true);
+            setTimeout(() => {
+              setSaving(false);
+            }, 3000);
+          }}
+          disabled={saving}
         >
           <NiDownload />
           Download

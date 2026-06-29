@@ -30,6 +30,7 @@ const Projects = ({ mood, setAlert }) => {
   const [search, setSearch] = useState();
   const [selectedProject, setSelectedProject] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     image: "",
@@ -57,8 +58,9 @@ const Projects = ({ mood, setAlert }) => {
 
   const handleAddPlots = async () => {
     try {
+      setSaving(true)
       const token = localStorage.getItem("token");
-
+      
       await axios.post(
         `${Host}/api/colony/add`,
         {
@@ -72,39 +74,42 @@ const Projects = ({ mood, setAlert }) => {
           },
         },
       );
-
+      
       dispatch(getProjects(plotId));
-
+      
       setAlert({
         message: "Project added successfully!",
         status: "Success",
       });
-
+      
       setOpen(false);
-
+      
       setFormData({
         name: "",
         image: "",
         description: "",
       });
-
+      
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
-
+      
       setAlert({
         message: "Failed to add project",
         status: "Error",
       });
-
+      
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
-
+  
   const handleEditPlots = async () => {
     try {
+      setSaving(true)
       const token = localStorage.getItem("token");
-
+      
       await axios.put(
         `${Host}/api/colony/edit/${selectedProject._id}`,
         formData,
@@ -115,56 +120,61 @@ const Projects = ({ mood, setAlert }) => {
           },
         },
       );
-
+      
       dispatch(getProjects(plotId));
-
+      
       setAlert({
         message: "Project updated successfully!",
         status: "Success",
       });
-
+      
       setOpen(false);
-
+      
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
-
+      
       setAlert({
         message: "Failed to update project",
         status: "Error",
       });
-
+      
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
-
+  
   const handleDeleteProject = async (id) => {
     try {
+      setSaving(true)
       const token = localStorage.getItem("token");
-
+      
       await axios.delete(`${Host}/api/colony/delete/${id}`, {
         headers: {
           "auth-token": token,
         },
       });
-
+      
       dispatch(getProjects(plotId));
-
+      
       setAlert({
         message: "Project deleted successfully!",
         status: "Success",
       });
-
+      
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
-
+      
       setAlert({
         message: "Failed to delete project",
         status: "Error",
       });
-
+      
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
@@ -228,6 +238,7 @@ const Projects = ({ mood, setAlert }) => {
                   setAlert={setAlert}
                   onDelete={handleDeleteProject}
                   plotData={plotData}
+                  saving={saving}
                 />
               );
             })
@@ -329,7 +340,7 @@ const Projects = ({ mood, setAlert }) => {
 
         <div className="modal-actions">
           <button onClick={isEditMode ? handleEditPlots : handleAddPlots}>
-            {isEditMode ? "Update Project" : "Add Project"}
+            {saving ? "Saving...":isEditMode ? "Update Project" : "Add Project"}
           </button>
         </div>
       </AddLocationModal>

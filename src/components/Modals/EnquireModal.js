@@ -48,6 +48,7 @@ const EnquireModal = ({
 
   //   console.log("plot", plot);
   const [showStatus, setShowStatus] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("processing");
 
   const handleChange = (e) => {
@@ -57,6 +58,7 @@ const EnquireModal = ({
   const handleSubmit = async () => {
     const token = localStorage.getItem("token");
     setShowStatus(true);
+    setSaving(true);
     setStatus("processing");
     try {
       const payload = {
@@ -91,15 +93,18 @@ const EnquireModal = ({
         setShowEnquiryModal(false);
         onClose();
       }, 5000);
+      setSaving(false);
     } catch (err) {
       console.error(err);
       setAlert({ message: "Failed to add lead", status: "Error" });
+      setSaving(false);
     } finally {
       setTimeout(() => setAlert(null), 5000);
+      setSaving(false);
     }
   };
 
-  console.log(plot,"plot")
+  // console.log(plot, "plot");
 
   return (
     <>
@@ -226,8 +231,16 @@ Area: ${plot.area} sq.ft`}
         </div>
 
         <div className="modal-actions">
-          <button className="btn primary" onClick={handleSubmit}>
-            {mood === "agent" ? "Add Lead" : "Send Enquiry"}
+          <button
+            className="btn primary"
+            disabled={saving}
+            onClick={handleSubmit}
+          >
+            {saving
+              ? "Saving..."
+              : mood === "agent"
+                ? "Add Lead"
+                : "Send Enquiry"}
           </button>
         </div>
       </div>

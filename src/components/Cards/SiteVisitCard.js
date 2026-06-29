@@ -75,6 +75,7 @@ const SiteVisitCard = ({
 
   const handleVisitAction = async (visitId, action, extraData = {}) => {
     try {
+      setSaving(true)
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
@@ -109,6 +110,7 @@ const SiteVisitCard = ({
       setNewVisitDate("");
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.error(err);
       setAlert({
@@ -116,9 +118,9 @@ const SiteVisitCard = ({
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
-
 
   const handleAddNote = async (visitId, selectedColony) => {
     try {
@@ -232,6 +234,7 @@ const SiteVisitCard = ({
   };
 
   const handleAddBooking = async () => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
 
@@ -292,6 +295,7 @@ const SiteVisitCard = ({
       setFormData({});
       setPanelMode(null);
 
+      setSaving(false)
       setTimeout(() => setAlert(null), 3000);
 
     } catch (err) {
@@ -300,6 +304,8 @@ const SiteVisitCard = ({
         message: err.response?.data?.message || "Booking failed",
         status: "Error",
       });
+      setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
@@ -334,6 +340,7 @@ const SiteVisitCard = ({
   };
 
   const handleHoldPlot = async () => {
+    setSaving(true)
     const token = localStorage.getItem("token");
     await axios.post(
       `${Host}/api/plothold/${type.toLowerCase()}`,
@@ -353,20 +360,20 @@ const SiteVisitCard = ({
       status: "Success",
     });
     dispatch(getSiteVisit());
-
+    
     // reset UI
     setViewOpen(false);
     setSelectedPlot(null);
     setFormData({});
     setPanelMode(null);
-
+    
     setTimeout(() => setAlert(null), 3000);
+    setSaving(false)
     // setShowHoldModal(false);
     // onClose();
   };
-
+  
   // console.log(item, "item")
-
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
       <div className="user-card-top">
@@ -444,6 +451,7 @@ const SiteVisitCard = ({
         <div className="modal-actions">
           <button
             className="site-visit-approval status active"
+            disabled={saving}
             onClick={() => {
               handleVisitAction(item._id, "approve");
             }}
@@ -507,6 +515,7 @@ const SiteVisitCard = ({
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
           <button
+          disabled={saving}
             onClick={(e) => {
               e.stopPropagation();
               console.log("Site Visit deleted");
@@ -596,6 +605,7 @@ const SiteVisitCard = ({
 
         <div className="modal-actions">
           <button
+          disabled={saving}
             onClick={() => {
               if (
                 !formData.visitDate ||
@@ -648,6 +658,7 @@ const SiteVisitCard = ({
 
         <div className="modal-actions">
           <button
+          disabled={saving}
             onClick={() => {
               if (!formData.notes?.trim()) {
                 setAlert({
@@ -919,6 +930,7 @@ const SiteVisitCard = ({
 
               <div className="modal-actions">
                 <button
+                disabled={saving}
                   onClick={() => {
                     if (!selectedPlot) {
                       setAlert({
@@ -1076,7 +1088,7 @@ const SiteVisitCard = ({
                 )}
               </div>
               <div className="modal-actions">
-                <button onClick={handleHoldPlot}>Submit Hold</button>
+                <button disabled={saving} onClick={handleHoldPlot}>Submit Hold</button>
               </div>
             </>
           )}

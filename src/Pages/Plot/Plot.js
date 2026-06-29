@@ -22,6 +22,7 @@ const PlotList = ({ mood, setAlert }) => {
   const [open, setOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState();
 
   const [formData, setFormData] = useState({
@@ -48,50 +49,54 @@ const PlotList = ({ mood, setAlert }) => {
 
   const handleAddLocation = async () => {
     try {
+      setSaving(true)
       const token = localStorage.getItem("token");
-
+      
       await axios.post(`${Host}/api/location/add`, formData, {
         headers: {
           "auth-token": token,
           "Content-Type": "application/json",
         },
       });
-
+      
       dispatch(getLocation());
-
+      
       setAlert({
         message: "Location added successfully!",
         status: "Success",
       });
-
+      
       setOpen(false);
-
+      
       setFormData({
         name: "",
         description: "",
         image: "",
       });
-
+      
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
-
+      
       setAlert({
         message: "Failed to add location",
         status: "Error",
       });
-
+      
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
   const handleEditLocation = async () => {
     try {
+      setSaving(true)
       const token = localStorage.getItem("token");
-
+      
       await axios.put(
         `${Host}/api/location/edit/${selectedLocation._id}`,
         formData,
@@ -102,64 +107,69 @@ const PlotList = ({ mood, setAlert }) => {
           },
         },
       );
-
+      
       dispatch(getLocation());
-
+      
       setAlert({
         message: "Location updated successfully!",
         status: "Success",
       });
-
+      
       setOpen(false);
-
+      
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
-
+      
       setAlert({
         message: "Failed to update location",
         status: "Error",
       });
-
+      
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
-
+  
   const handleDeleteLocation = async (id) => {
     try {
+      setSaving(true)
       const token = localStorage.getItem("token");
-
+      
       await axios.delete(`${Host}/api/location/delete/${id}`, {
         headers: {
           "auth-token": token,
         },
       });
-
+      
       dispatch(getLocation());
-
+      
       setAlert({
         message: "Location deleted successfully!",
         status: "Success",
       });
-
+      
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
-
+      
       setAlert({
         message: "Failed to delete location",
         status: "Error",
       });
-
+      
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
 

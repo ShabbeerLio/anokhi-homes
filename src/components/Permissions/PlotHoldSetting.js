@@ -7,6 +7,7 @@ import axios from "axios";
 const PlotHoldSetting = ({ setAlert }) => {
     const dispatch = useDispatch();
     const { userDetail, plotSetting } = useSelector((state) => state.app);
+    const[saving, setSaving] = useState(false)
 
     useEffect(() => {
         dispatch(getPlotsetting());
@@ -25,9 +26,10 @@ const PlotHoldSetting = ({ setAlert }) => {
     }, [plotSetting]);
 
     const updatePlotHoldSetting = async () => {
+        setSaving(true)
         try {
             const token = localStorage.getItem("token");
-
+            
             await axios.put(
                 `${Host}/api/plothold/settings`,
                 {
@@ -46,17 +48,19 @@ const PlotHoldSetting = ({ setAlert }) => {
                 status: "Success",
                 message: "Settings Updated Successfully",
             });
-
+            
             setTimeout(() => setAlert(null), 3000);
+            setSaving(false)
         } catch (err) {
             console.log(err);
             setAlert({
                 status: "Error",
                 message:
-                    err.response?.data?.message ||
-                    "Unable to update settings",
+                err.response?.data?.message ||
+                "Unable to update settings",
             });
             setTimeout(() => setAlert(null), 3000);
+            setSaving(false)
         }
     };
     return (
@@ -94,9 +98,10 @@ const PlotHoldSetting = ({ setAlert }) => {
                     <div className="modal-actions">
                         <button
                             className="btn primary"
+                            disabled={saving}
                             onClick={updatePlotHoldSetting}
                         >
-                            Update
+                            {saving ? "Updating" : "Update"}
                         </button>
                     </div>
                 </div>
@@ -132,10 +137,11 @@ const PlotHoldSetting = ({ setAlert }) => {
                     </div>
                     <div className="modal-actions">
                         <button
+                        disabled={saving}
                             className="btn primary"
                             onClick={updatePlotHoldSetting}
                         >
-                            Update
+                            {saving ? "Updating" : "Update"}
                         </button>
                     </div>
                 </div>

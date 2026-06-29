@@ -21,6 +21,7 @@ const Booking = ({ mood, setAlert }) => {
   const { userDetail, booking, users, siteVisit, plots, paymentTerms } = useSelector((state) => state.app);
   const [customersList, setCustomersList] = useState([]);
   const [agentsList, setAgentsList] = useState([]);
+  const [saving,setSaving] = useState(false)
 
   useEffect(() => {
     dispatch(getAccountDetails());
@@ -118,19 +119,20 @@ const Booking = ({ mood, setAlert }) => {
   //   }, 5000);
   // };
   const handleAddBooking = async () => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
-
+      
       if (!selectedPlot) {
         setAlert({ message: "Please select plot", status: "Error" });
         return;
       }
-
+      
       if (!formData.requestAmount) {
         setAlert({ message: "Enter request amount", status: "Error" });
         return;
       }
-
+      
       if (!formData.termsAccepted) {
         setAlert({
           message: "Please accept terms & conditions",
@@ -138,7 +140,7 @@ const Booking = ({ mood, setAlert }) => {
         });
         return;
       }
-
+      
       console.log(formData, "formData")
       const res = await axios.post(
         `${Host}/api/booking/add`,
@@ -148,13 +150,13 @@ const Booking = ({ mood, setAlert }) => {
           location: formData.location?._id,
           colony: formData.colony?._id,
           plot: selectedPlot._id, // 🔥 IMPORTANT
-
+          
           requestAmount: formData.requestAmount,
 
           bookingDays: formData.bookingDays,
           agreementDays: formData.agreementDays,
           fullPaymentDays: formData.fullPaymentDays,
-
+          
           termsAccepted: formData.termsAccepted,
         },
         {
@@ -164,16 +166,17 @@ const Booking = ({ mood, setAlert }) => {
           },
         }
       );
-
+      
       setAlert({
         message: "Booking created successfully",
         status: "Success",
       });
-
+      
       dispatch(getBooking());
       setOpen(false);
       setTimeout(() => setAlert(null), 3000);
-
+      setSaving(false)
+      
     } catch (err) {
       console.error(err);
       setAlert({
@@ -181,16 +184,19 @@ const Booking = ({ mood, setAlert }) => {
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
-
+  
   const handleEditBooking = () => {
+    setSaving(true)
     console.log("Editing booking:", formData);
     setOpen(false);
     setAlert({ message: "Booking updated successfully!", status: "Success" });
     setTimeout(() => {
       setAlert(null);
     }, 5000);
+    setSaving(false)
   };
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -497,6 +503,7 @@ const Booking = ({ mood, setAlert }) => {
 
         <div className="modal-actions">
           <button
+          disabled={saving}
             onClick={() => {
               if (!selectedPlot) {
                 setAlert({
@@ -539,7 +546,7 @@ const Booking = ({ mood, setAlert }) => {
               setOpen(false);
             }}
           >
-            {isEditMode ? "Update Booking" : "Book Now"}
+            {saving? "Saving..." :isEditMode ? "Update Booking" : "Book Now"}
           </button>
         </div>
       </AddLocationModal>

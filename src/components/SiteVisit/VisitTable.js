@@ -39,6 +39,7 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [selectedColonies, setSelectedColonies] = useState([]);
+  const [saving, setSaving] = useState(false);
   // console.log(data,"data")
 
   const [formData, setFormData] = useState({});
@@ -97,6 +98,7 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
   );
 
   const handleAddVisit = async () => {
+    setSaving(true);
     console.log("Adding visit:", formData);
     setOpen(false);
     try {
@@ -133,6 +135,7 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
       setTimeout(() => {
         setAlert(null);
       }, 5000);
+      setSaving(false);
     } catch (err) {
       console.error(err);
       setAlert({
@@ -142,6 +145,7 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
       setTimeout(() => {
         setAlert(null);
       }, 5000);
+      setSaving(false);
     }
   };
   const handleEditVisit = async () => {
@@ -408,7 +412,7 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
               setOpen(false);
             }}
           >
-            {isEditMode ? "Update Visit" : "Add Visit"}
+            {saving ? "Saving..." : isEditMode ? "Update Visit" : "Add Visit"}
           </button>
         </div>
       </AddLocationModal>

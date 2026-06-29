@@ -26,6 +26,7 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
     }, []);
     const token = localStorage.getItem("token");
     const [viewOpen, setViewOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [panelMode, setPanelMode] = useState(null);
     const [formData, setFormData] = useState({});
     const [policyOpen, setPolicyOpen] = useState(false);
@@ -45,6 +46,7 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
     }, [plot]);
 
     const handleAction = async (action) => {
+        setSaving(true)
         try {
             await axios.put(
                 `${Host}/api/plothold/action/${item._id}`,
@@ -64,12 +66,14 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
             });
             setTimeout(() => setAlert(null), 3000);
             dispatch(getPlotHold());
+            setSaving(false)
         } catch (err) {
             setAlert({
                 status: "Error",
                 message: err.response?.data?.message || "Something went wrong",
             });
             setTimeout(() => setAlert(null), 3000);
+            setSaving(false)
         }
     };
 
@@ -83,6 +87,7 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
     };
 
     const handleAddBooking = async () => {
+        setSaving(true)
         try {
             const token = localStorage.getItem("token");
 
@@ -137,18 +142,20 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
 
             dispatch(getPlotHold());
 
-            // reset UI
             setViewOpen(false);
             setFormData({});
             setPanelMode(null);
 
             setTimeout(() => setAlert(null), 3000);
+            setSaving(false)
         } catch (err) {
             console.error(err);
             setAlert({
                 message: err.response?.data?.message || "Booking failed",
                 status: "Error",
             });
+            setTimeout(() => setAlert(null), 3000);
+            setSaving(false)
         }
     };
 
@@ -212,6 +219,7 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
             {(mood === "admin" || mood === "staff") && item.status === "APPROVAL" && (
                 <div className="modal-actions">
                     <button
+                        disabled={saving}
                         className="site-visit-approval status active"
                         onClick={() => handleAction("approve")}
                     >
@@ -219,6 +227,7 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
                     </button>
 
                     <button
+                        disabled={saving}
                         className="site-visit-approval status failed"
                         onClick={() => handleAction("reject")}
                     >
@@ -454,6 +463,7 @@ const PlotHoldCard = ({ item, mood, setAlert }) => {
 
                             <div className="modal-actions">
                                 <button
+                                    disabled={saving}
                                     onClick={() => {
                                         if (!plot) {
                                             setAlert({

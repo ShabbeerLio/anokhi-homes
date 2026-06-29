@@ -10,10 +10,12 @@ import { useDispatch } from "react-redux";
 const CommissionTable = ({ index, item, exportToExcel, mood, setAlert }) => {
   const dispatch = useDispatch();
   const [viewOpen, setViewOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("summary");
   const [formData, setFormData] = useState({})
 
   const handleAddPayment = async () => {
+    setSaving(true)
     try {
       if (!item.nextPayout) {
         setAlert({
@@ -101,6 +103,7 @@ const CommissionTable = ({ index, item, exportToExcel, mood, setAlert }) => {
         message: "Payment added successfully.",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
       setFormData({});
       setViewOpen(false);
     } catch (err) {
@@ -112,6 +115,7 @@ const CommissionTable = ({ index, item, exportToExcel, mood, setAlert }) => {
           err?.message || "Unable to add payment.",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
@@ -540,6 +544,7 @@ const CommissionTable = ({ index, item, exportToExcel, mood, setAlert }) => {
               )}
             <button
               disabled={item.nextPayout?.balance <= 0}
+              disabled={saving}
               onClick={handleAddPayment}
             >
               {item.nextPayout?.balance <= 0

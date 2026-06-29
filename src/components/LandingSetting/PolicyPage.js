@@ -13,6 +13,7 @@ const PolicyPage = ({ data, setAlert }) => {
   const dispatch = useDispatch();
   const [activeType, setActiveType] = useState("privacy");
   const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const [PolicyData, setPolicyData] = useState({
     privacy: {
@@ -64,6 +65,7 @@ const PolicyPage = ({ data, setAlert }) => {
 
   // 👉 Save section
   const handleSave = async () => {
+    setSaving(true);
     try {
       const updatedPolicies = {
         ...PolicyData,
@@ -89,76 +91,72 @@ const PolicyPage = ({ data, setAlert }) => {
         status: "Success",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false);
     } catch (error) {
       console.log(error);
+      setSaving(false);
     }
   };
 
   // 👉 Add section
   const handleAdd = async () => {
+    setSaving(true);
     try {
       const newSection = {
         heading: "New Section",
-
         content: "Write here...",
       };
 
       const updatedPolicies = {
         ...PolicyData,
-
         [activeType]: {
           ...PolicyData[activeType],
-
           lastUpdated: new Date().toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "short",
             year: "numeric",
           }),
-
           sections: [...PolicyData[activeType].sections, newSection],
         },
       };
-
       const res = await updatePolicies(updatedPolicies);
-      
       setPolicyData(res);
-
       setAlert({
         message: "Section added successfully!",
-
         status: "Success",
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false);
     } catch (error) {
       console.log(error);
+      setSaving(false);
     }
   };
 
   // 👉 Delete section
   const handleDelete = async (id) => {
+    setSaving(true);
     try {
       await deletePolicySection(activeType, id);
-
       setPolicyData((prev) => ({
         ...prev,
-
         [activeType]: {
           ...prev[activeType],
-
           sections: prev[activeType].sections.filter((sec) => sec._id !== id),
         },
       }));
       dispatch(getLandingPage());
       setAlert({
         message: "Deleted successfully!",
-
         status: "Success",
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false);
     } catch (error) {
       console.log(error);
+      setSaving(false);
     }
   };
 
@@ -181,7 +179,7 @@ const PolicyPage = ({ data, setAlert }) => {
             </button>
           ))}
 
-          <button className="add-button" onClick={handleAdd}>
+          <button className="add-button" disabled={saving} onClick={handleAdd}>
             <LucidePlus /> Add Section
           </button>
         </div>
@@ -252,7 +250,7 @@ const PolicyPage = ({ data, setAlert }) => {
             </div>
             {isEditing && formData?._id === sec._id && (
               <div className="modal-actions">
-                <button onClick={handleSave}>Save</button>
+                <button disabled={saving} onClick={handleSave}>{saving ? "Saving..." : "Save"}</button>
                 <button onClick={() => setIsEditing(false)}>Cancel</button>
               </div>
             )}

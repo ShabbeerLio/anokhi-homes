@@ -28,6 +28,7 @@ const TargetCard = ({
   const progress = Math.min((agentSales / item.targetBusiness) * 100, 100);
   const userReward = myRewards?.find((r) => r.reward?._id === item._id);
   const canClaim = userReward?.status === "unclaimed";
+  const [saving, setsaving] = useState(false);
 
   return (
     <div className="user-card card">
@@ -133,14 +134,28 @@ const TargetCard = ({
         <div className="modal-actions">
           <button
             className="site-visit-approval status active"
-            onClick={() => ClaimCash(userReward._id)}
+            onClick={() => {
+              ClaimCash(userReward._id);
+              setsaving(true);
+              setTimeout(() => {
+                setsaving(false);
+              }, 3000);
+            }}
+            disabled={saving}
           >
             <NiTick /> Get Cash
           </button>
 
           <button
             className="site-visit-approval status active"
-            onClick={() => ClaimGift(userReward._id)}
+            onClick={() => {
+              ClaimGift(userReward._id);
+              setsaving(true);
+              setTimeout(() => {
+                setsaving(false);
+              }, 3000);
+            }}
+            disabled={saving}
           >
             <NiTick /> Get Gift
           </button>

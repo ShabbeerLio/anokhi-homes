@@ -26,7 +26,7 @@ const HelpCenter = ({ mood, setAlert }) => {
   }, []);
 
   const mergedTickets = helpTickets || [];
-
+  const [saving, setSaving] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(null);
 
   const selectedTicket = mergedTickets.find((t) => t._id === selectedPosition);
@@ -55,7 +55,7 @@ const HelpCenter = ({ mood, setAlert }) => {
   // ===========================
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setSaving(true);
     let attachments = [];
     if (formData.attachment) {
       const upload = await uploadImage(formData.attachment);
@@ -86,12 +86,14 @@ const HelpCenter = ({ mood, setAlert }) => {
     setTimeout(() => {
       setAlert(null);
     }, 3000);
+    setSaving(false);
   };
 
   // ===========================
   // ADD REPLY
   // ===========================
   const handleReply = async () => {
+    setSaving(true);
     if (!replyData.message) return;
 
     await dispatch(
@@ -119,12 +121,14 @@ const HelpCenter = ({ mood, setAlert }) => {
     setTimeout(() => {
       setAlert(null);
     }, 3000);
+    setSaving(false);
   };
 
   // ===========================
   // CLOSE TICKET
   // ===========================
   const handleCloseTicket = async (id) => {
+    setSaving(true);
     await dispatch(closeHelpTicket(id));
 
     await dispatch(getHelpTickets());
@@ -138,6 +142,7 @@ const HelpCenter = ({ mood, setAlert }) => {
     setTimeout(() => {
       setAlert(null);
     }, 3000);
+    setSaving(false);
   };
 
   return (
@@ -329,14 +334,17 @@ const HelpCenter = ({ mood, setAlert }) => {
                 )}
 
                 <div className="modal-actions">
-                  <button onClick={handleReply}>Send Reply</button>
+                  <button disabled={saving} onClick={handleReply}>
+                    {saving ? "Sending..." : "Send Reply"}
+                  </button>
                   {/* CLOSE */}
                   {selectedTicket.status !== "Closed" && (
                     <button
+                      disabled={saving}
                       className="post-button"
                       onClick={() => handleCloseTicket(selectedTicket._id)}
                     >
-                      Close Ticket
+                      {saving ? "Closing..." : "Close Ticket"}
                     </button>
                   )}
                 </div>
@@ -431,7 +439,9 @@ const HelpCenter = ({ mood, setAlert }) => {
           </div> */}
 
           <div className="modal-actions">
-            <button type="submit">Submit Ticket</button>
+            <button disabled={saving} type="submit">
+              {saving ? "Submitting" : "Submit Ticket"}
+            </button>
           </div>
         </form>
       </AddLocationModal>
@@ -450,7 +460,7 @@ const HelpCenter = ({ mood, setAlert }) => {
             src={imageModal.src}
             alt="Preview"
             className="image-preview-full"
-            style={{width: "100%", objectFit:"cover"}}
+            style={{ width: "100%", objectFit: "cover" }}
           />
         </div>
       </AddLocationModal>

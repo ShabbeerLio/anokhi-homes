@@ -43,6 +43,7 @@ const StaffPermission = ({ setAlert }) => {
 
   const [activeRole, setActiveRole] = useState(null);
   const [permissions, setPermissions] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     dispatch(getStaffRoles());
@@ -64,6 +65,7 @@ const StaffPermission = ({ setAlert }) => {
   };
 
   const handleSave = () => {
+    setSaving(true);
     dispatch(
       updateStaffRole({
         id: activeRole._id,
@@ -76,6 +78,7 @@ const StaffPermission = ({ setAlert }) => {
     });
 
     setTimeout(() => setAlert(null), 3000);
+    setSaving(false);
   };
 
   return (
@@ -119,8 +122,8 @@ const StaffPermission = ({ setAlert }) => {
       </div>
 
       <div className="modal-actions">
-        <button className="btn primary" onClick={handleSave}>
-          Save Changes
+        <button className="btn primary" disabled={saving} onClick={handleSave}>
+          {saving ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </div>

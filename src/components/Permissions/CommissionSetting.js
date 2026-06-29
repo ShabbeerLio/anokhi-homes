@@ -6,6 +6,7 @@ import Host from "../../Host/Host";
 
 const CommissionSetting = ({ setAlert }) => {
     const dispatch = useDispatch();
+    const [saving, setSaving] = useState(false)
     const { rankData, payoutSettings } = useSelector((state) => state.app);
     useEffect(() => {
         dispatch(getRank());
@@ -26,6 +27,7 @@ const CommissionSetting = ({ setAlert }) => {
     }, [payoutSettings]);
 
     const updateCommissionSetting = async () => {
+        setSaving(true)
         try {
             const token = localStorage.getItem("token");
 
@@ -51,6 +53,7 @@ const CommissionSetting = ({ setAlert }) => {
             });
 
             setTimeout(() => setAlert(null), 3000);
+            setSaving(false)
         } catch (err) {
             console.log(err);
 
@@ -62,6 +65,7 @@ const CommissionSetting = ({ setAlert }) => {
             });
 
             setTimeout(() => setAlert(null), 3000);
+            setSaving(false)
         }
     };
 
@@ -101,6 +105,7 @@ const CommissionSetting = ({ setAlert }) => {
                         </div>
                         <div className="modal-actions">
                             <button
+                                disabled={saving}
                                 className="btn primary"
                                 onClick={updateCommissionSetting}
                             >

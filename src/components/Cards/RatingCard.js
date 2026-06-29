@@ -8,7 +8,7 @@ const RatingCard = ({ item, mood, ratingData }) => {
         (r) => r.agent?._id === item._id
     );
 
-    console.log(agentRatings, "agentRatings")
+    // console.log(agentRatings, "agentRatings")
     return (
         <>
             <div className="user-card card">

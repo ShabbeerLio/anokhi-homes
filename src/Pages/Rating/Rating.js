@@ -54,7 +54,7 @@ const Rating = ({ mood, setAlert }) => {
         startIndex + ITEMS_PER_PAGE,
     );
 
-    console.log(currentData, "currentData");
+    // console.log(currentData, "currentData");
 
     return (
         <div className="plot-container">

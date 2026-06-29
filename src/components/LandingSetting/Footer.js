@@ -23,6 +23,7 @@ const Home = ({ data, setAlert }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
+  const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -76,6 +77,7 @@ const Home = ({ data, setAlert }) => {
   }, [data]);
 
   const handleSave = async () => {
+    setSaving(true);
     try {
       let updatedData = {
         ...homePageData,
@@ -113,8 +115,10 @@ const Home = ({ data, setAlert }) => {
 
       setFormData({});
       setOpen(false);
+      setSaving(false);
     } catch (error) {
       console.log(error);
+      setSaving(false);
     }
   };
 
@@ -207,7 +211,7 @@ const Home = ({ data, setAlert }) => {
               handleSave();
             }}
           >
-            {isEditMode ? "Update " : "Add"}
+            {saving ? "saving..." : isEditMode ? "Update " : "Add"}
           </button>
         </div>
       </AddLocationModal>

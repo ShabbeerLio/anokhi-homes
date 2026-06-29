@@ -24,6 +24,7 @@ const DataTable = ({ data, mood, setAlert }) => {
   const [customersList, setCustomersList] = useState([]);
   const [agentsList, setAgentsList] = useState([]);
   const [showNewCustomer, setShowNewCustomer] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     dispatch(getUser());
@@ -49,7 +50,7 @@ const DataTable = ({ data, mood, setAlert }) => {
   const [dateFilter, setDateFilter] = useState("");
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
 
   // console.log(data,"data")
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -112,6 +113,7 @@ const DataTable = ({ data, mood, setAlert }) => {
     const token = localStorage.getItem("token");
     // console.log(token, "token");
     // console.log("Adding lead:", formData);
+    setSaving(true);
     try {
       const payload = {
         customerId: formData.customerId,
@@ -135,15 +137,20 @@ const DataTable = ({ data, mood, setAlert }) => {
         email: "",
       });
       dispatch(getLeads());
+      setSaving(false);
     } catch (err) {
       console.error(err);
       setAlert({ message: "Failed to add lead", status: "Error" });
+      setTimeout(() => setAlert(null), 5000);
+      setSaving(false);
     } finally {
       setTimeout(() => setAlert(null), 5000);
+      setSaving(false);
     }
   };
   const handleEditLead = async () => {
     try {
+      setSaving(true);
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
@@ -158,13 +165,13 @@ const DataTable = ({ data, mood, setAlert }) => {
       );
 
       dispatch(getLeads());
-
       setAlert({
         message: "Lead updated successfully",
         status: "Success",
       });
       setTimeout(() => setAlert(null), 5000);
 
+      setSaving(false);
       setOpen(false);
     } catch (err) {
       console.error(err);
@@ -173,10 +180,12 @@ const DataTable = ({ data, mood, setAlert }) => {
         status: "Error",
       });
       setTimeout(() => setAlert(null), 5000);
+      setSaving(false);
     }
   };
 
   const handleAddCustomerAndLead = async () => {
+    setSaving(true);
     try {
       // Create customer
       const result = await dispatch(
@@ -232,12 +241,14 @@ const DataTable = ({ data, mood, setAlert }) => {
         status: "Success",
       });
       setTimeout(() => setAlert(null), 5000);
+      setSaving(false);
     } catch (err) {
       setAlert({
         message: err?.msg || "Failed",
         status: "Error",
       });
       setTimeout(() => setAlert(null), 5000);
+      setSaving(false);
     }
   };
 
@@ -467,13 +478,15 @@ const DataTable = ({ data, mood, setAlert }) => {
                   <div className="ss-item no-result">
                     <p>No customer found.</p>
 
-                    <button
-                      type="button"
-                      className="add-button"
-                      onClick={() => setShowNewCustomer(true)}
-                    >
-                      + Add New Customer
-                    </button>
+                    <div className="modal-actions">
+                      <button
+                        type="button"
+                        // className="add-button"
+                        onClick={() => setShowNewCustomer(true)}
+                      >
+                        Add New Customer
+                      </button>
+                    </div>
                   </div>
                 }
               />
@@ -503,6 +516,7 @@ const DataTable = ({ data, mood, setAlert }) => {
 
         <div className="modal-actions">
           <button
+            disabled={saving}
             onClick={() => {
               if (showNewCustomer) {
                 handleAddCustomerAndLead();

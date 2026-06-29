@@ -60,6 +60,7 @@ const ManagementCard = ({
   }, [viewOpen]);
 
   const handleAssignAgent = async (leadId, agentId) => {
+    setSaving(true)
     console.log("Assigning", agentId, "to lead", leadId);
     const token = localStorage.getItem("token");
     const res = await axios.put(`${Host}/api/lead/assign/${leadId}`, { agentId }, {
@@ -75,9 +76,11 @@ const ManagementCard = ({
     });
 
     setTimeout(() => setAlert(null), 3000);
+    setSaving(false)
   };
 
   const handleReAssignAgent = async (leadId, agentId) => {
+    setSaving(true)
     console.log("Reassigning", agentId, "to lead", leadId);
     const token = localStorage.getItem("token");
     const res = await axios.put(`${Host}/api/lead/assign/${leadId}`, { agentId }, {
@@ -93,9 +96,11 @@ const ManagementCard = ({
     });
 
     setTimeout(() => setAlert(null), 3000);
+    setSaving(false)
   };
 
   const handleAgentAction = async (leadId, action, note = "") => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
 
@@ -124,12 +129,14 @@ const ManagementCard = ({
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.error(err);
       setAlert({
         message: err.response?.data?.message || "Something went wrong",
         status: "Error",
       });
+      setSaving(false)
     }
   };
 
@@ -695,6 +702,7 @@ const ManagementCard = ({
                         setSelectedAgent(null);
                         setViewOpen(false);
                       }}
+                      disabled={saving}
                     >
                       Assign
                     </button>
@@ -870,7 +878,7 @@ const ManagementCard = ({
                 <button
                   onClick={() => {
                     // console.log("Site Visit Requested", formData);
-                    if (!formData.visitDate || !selectedColonies) {
+                    if (!formData.visitDate || !selectedColonies[0]?.locationId?._id) {
                       setAlert({
                         message: "Please select date and location",
                         status: "Error",

@@ -40,6 +40,7 @@ const BookingCard = ({
   const [formData, setFormData] = useState({});
   const [panelMode, setPanelMode] = useState(null);
   const [timeline, setTimeline] = useState([]);
+  const [saving, setSaving] = useState([]);
 
   useEffect(() => {
     if (!viewOpen) {
@@ -189,6 +190,7 @@ const BookingCard = ({
 
   // console.log(bookingProgress, "bookingProgress")
   const handleBookingAction = async (bookingId, action, note = "") => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
 
@@ -215,6 +217,7 @@ const BookingCard = ({
       setFormData({});
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.error(err);
       setAlert({
@@ -222,10 +225,12 @@ const BookingCard = ({
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
   const handleDeleteBooking = async (bookingId) => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
 
@@ -243,6 +248,7 @@ const BookingCard = ({
       });
       setTimeout(() => setAlert(null), 3000);
 
+      setSaving(false)
       setDeleteOpen(false);
     } catch (err) {
       console.error(err);
@@ -251,11 +257,13 @@ const BookingCard = ({
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
   // Add Payment
   const handleAddPayment = async () => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
 
@@ -311,6 +319,7 @@ const BookingCard = ({
       setViewOpen(false);
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.error(err);
       setAlert({
@@ -318,6 +327,7 @@ const BookingCard = ({
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
@@ -342,6 +352,7 @@ const BookingCard = ({
   }, [item._id]);
 
   const handleSubmitRating = async () => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
 
@@ -367,6 +378,7 @@ const BookingCard = ({
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
 
@@ -376,6 +388,10 @@ const BookingCard = ({
           "Unable to submit rating",
         status: "Error",
       });
+      setTimeout(() => {
+        setAlert(null);
+      }, 3000);
+      setSaving(false)
     }
   };
 
@@ -561,6 +577,7 @@ const BookingCard = ({
           (item.status === "scheduled" || item.status === "approval") && (
             <div className="modal-actions">
               <button
+                disabled={saving}
                 className="site-visit-approval status active"
                 onClick={() => {
                   handleBookingAction(item._id, "approve");
@@ -614,6 +631,7 @@ const BookingCard = ({
 
         <div className="modal-actions">
           <button
+            disabled={saving}
             onClick={() => {
               if (!formData.notes?.trim()) {
                 setAlert({
@@ -622,7 +640,6 @@ const BookingCard = ({
                 });
                 return;
               }
-
               handleBookingAction(item._id, "reject", formData.notes);
             }}
           >
@@ -638,6 +655,7 @@ const BookingCard = ({
 
         <div className="modal-actions">
           <button
+            disabled={saving}
             onClick={(e) => {
               e.stopPropagation();
 
@@ -645,6 +663,7 @@ const BookingCard = ({
 
               handleDeleteBooking(item._id);
             }}
+            disabled={saving}
           >
             Yes
           </button>
@@ -655,6 +674,7 @@ const BookingCard = ({
               e.stopPropagation();
               setDeleteOpen(false);
             }}
+
           >
             Cancel
           </button>
@@ -900,7 +920,7 @@ const BookingCard = ({
                 )}
               <p>Notes : 35% cancellation charges</p>
               <div className="modal-actions">
-                <button onClick={handleAddPayment}>Add Payment</button>
+                <button disabled={saving} onClick={handleAddPayment}>Add Payment</button>
               </div>
             </>
           )}
@@ -1114,7 +1134,7 @@ const BookingCard = ({
               </div> */}
 
               <div className="modal-actions">
-                <button onClick={handleSubmitRating}>
+                <button disabled={saving} onClick={handleSubmitRating}>
                   Submit Rating
                 </button>
               </div>

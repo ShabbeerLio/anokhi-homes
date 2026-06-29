@@ -50,6 +50,7 @@ const Other = ({ mood, setAlert }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [selectedDeleteUser, setSelectedDeleteUser] = useState(null);
   const [referalMsg, setReferralMsg] = useState(null)
 
@@ -119,6 +120,7 @@ const Other = ({ mood, setAlert }) => {
   }, [setActiveRow]);
 
   const handleAddUser = async () => {
+    setSaving(true)
     try {
       const result = await dispatch(addUser(formData)).unwrap();
 
@@ -133,6 +135,7 @@ const Other = ({ mood, setAlert }) => {
         setAlert(null);
       }, 3000);
       setOpen(false);
+      setSaving(false)
     } catch (error) {
       setAlert({
         message: error.msg || "Failed to create user",
@@ -141,9 +144,11 @@ const Other = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
   const handleEditUser = async () => {
+    setSaving(true)
     try {
       await dispatch(
         updateUser({
@@ -163,8 +168,10 @@ const Other = ({ mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (error) {
       console.log(error);
+      setSaving(false)
     }
   };
 
@@ -657,6 +664,7 @@ const Other = ({ mood, setAlert }) => {
         {/* Actions */}
         <div className="modal-actions">
           <button
+            disabled={saving}
             onClick={() => {
               if (isEditMode) {
                 handleEditUser();
@@ -666,7 +674,7 @@ const Other = ({ mood, setAlert }) => {
               setOpen(false);
             }}
           >
-            {isEditMode ? "Update User" : "Add User"}
+            {saving ? "Saving..." : isEditMode ? "Update User" : "Add User"}
           </button>
         </div>
       </AddLocationModal>

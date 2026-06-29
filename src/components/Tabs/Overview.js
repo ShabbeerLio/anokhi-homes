@@ -151,6 +151,7 @@ const Overview = ({ userData, mood, setAlert }) => {
   if (!localUser) return null;
 
   const handleApprove = async () => {
+    setSaving(true)
     try {
       const result = await dispatch(
         updateUserApproval({
@@ -171,6 +172,7 @@ const Overview = ({ userData, mood, setAlert }) => {
           setAlert(null);
         }, 3000);
       }
+      setSaving(false)
     } catch (error) {
       console.log(error);
 
@@ -181,10 +183,12 @@ const Overview = ({ userData, mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
 
   const handleReject = async () => {
+    setSaving(true)
     try {
       const result = await dispatch(
         updateUserApproval({
@@ -208,6 +212,7 @@ const Overview = ({ userData, mood, setAlert }) => {
           setAlert(null);
         }, 3000);
       }
+      setSaving(false)
     } catch (error) {
       console.log(error);
 
@@ -218,6 +223,7 @@ const Overview = ({ userData, mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     }
   };
 
@@ -297,6 +303,7 @@ const Overview = ({ userData, mood, setAlert }) => {
       setTimeout(() => {
         setAlert(null);
       }, 3000);
+      setSaving(false)
     } catch (error) {
       console.log(error);
 
@@ -312,6 +319,7 @@ const Overview = ({ userData, mood, setAlert }) => {
   };
 
   const handleUpdateRank = async () => {
+    setSaving(true)
     try {
       const token = localStorage.getItem("token");
 
@@ -337,6 +345,7 @@ const Overview = ({ userData, mood, setAlert }) => {
       setRankOpen(false);
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
 
@@ -347,18 +356,20 @@ const Overview = ({ userData, mood, setAlert }) => {
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
   const handleChangePassword = async () => {
+    setSaving(true)
     if (!passwordData.currentPassword) {
       return setAlert({
         message: "Current password is required",
         status: "Error",
       });
       setTimeout(() => {
-          setAlert(null);
-        }, 3000);
+        setAlert(null);
+      }, 3000);
     }
 
     if (passwordData.newPassword.length < 6) {
@@ -409,6 +420,7 @@ const Overview = ({ userData, mood, setAlert }) => {
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       setAlert({
         message:
@@ -417,10 +429,12 @@ const Overview = ({ userData, mood, setAlert }) => {
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
   const handleUpdateStaffRole = async () => {
+    setSaving(true)
     try {
       const result = await dispatch(
         updateUser({
@@ -448,6 +462,7 @@ const Overview = ({ userData, mood, setAlert }) => {
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     } catch (err) {
       console.log(err);
       setAlert({
@@ -456,6 +471,7 @@ const Overview = ({ userData, mood, setAlert }) => {
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false)
     }
   };
 
@@ -549,10 +565,13 @@ const Overview = ({ userData, mood, setAlert }) => {
           {mood === "admin" && localUser.status === "approval" && (
             <div className="modal-actions">
               <button
+                disabled={saving}
                 className="site-visit-approval status active"
                 onClick={handleApprove}
               >
-                <NiTick /> Approve
+                {saving ? "Approving" : <>
+                  <NiTick /> Approve
+                </>}
               </button>
 
               <button
@@ -1173,8 +1192,8 @@ const Overview = ({ userData, mood, setAlert }) => {
       )}
       {mood !== "admin" && (
         <div className="modal-actions">
-          <button onClick={() => setPasswordModalOpen(true)}>
-            Change Password
+          <button disabled={saving} onClick={() => setPasswordModalOpen(true)}>
+            {saving ? "Changing" : "Change Password"}
           </button>
         </div>
       )}
@@ -1197,9 +1216,10 @@ const Overview = ({ userData, mood, setAlert }) => {
         <div className="modal-actions">
           <button
             className="site-visit-approval status failed"
+            disabled={saving}
             onClick={handleReject}
           >
-            <NiCross /> Disapprove
+            <NiCross /> Reject
           </button>
         </div>
       </DeleteModal>
@@ -1225,7 +1245,7 @@ const Overview = ({ userData, mood, setAlert }) => {
         </div>
 
         <div className="modal-actions">
-          <button onClick={handleUpdateRank}>
+          <button disabled={saving} onClick={handleUpdateRank}>
             Update Designation
           </button>
         </div>
@@ -1258,7 +1278,7 @@ const Overview = ({ userData, mood, setAlert }) => {
         </div>
 
         <div className="modal-actions">
-          <button onClick={handleUpdateStaffRole}>
+          <button disabled={saving} onClick={handleUpdateStaffRole}>
             Update Staff Role
           </button>
         </div>
@@ -1326,6 +1346,7 @@ const Overview = ({ userData, mood, setAlert }) => {
         <div className="modal-actions">
           <button
             disabled={!isPasswordFormValid}
+            disabled={saving}
             style={{
               opacity: !isPasswordFormValid ? 0.5 : 1,
               cursor: !isPasswordFormValid ? "not-allowed" : "pointer",

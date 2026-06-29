@@ -19,8 +19,57 @@ import NiPayments from "../../icons/ni-payments";
 import NiDiscount from "../../icons/ni-discount";
 import NiCommission from "../../icons/ni-commission";
 import NiStar from "../../icons/ni-star";
+import { useNavigate } from "react-router-dom";
 
-const NotificationModal = ({notifications, handleRead}) => {
+const NotificationModal = ({ notifications, handleRead }) => {
+    const navigate = useNavigate();
+
+    const handleNotificationClick = async (item) => {
+        await handleRead(item._id);
+
+        switch (item.referenceModel) {
+            case "Lead":
+                navigate(`/management`);
+                break;
+
+            case "SiteVisit":
+                navigate(`/site-visits`);
+                break;
+
+            case "Booking":
+                navigate(`/bookings`);
+                break;
+
+            case "Payment":
+                navigate(`/payments`);
+                break;
+
+            case "User":
+                navigate(`/user`);
+                break;
+
+            case "Payout":
+                navigate("/commission");
+                break;
+
+            case "Reward":
+                navigate("/rewards");
+                break;
+
+            case "PlotHold":
+                navigate("/holdplot");
+                break;
+
+            case "WalletTransaction":
+                navigate("/");
+                break;
+
+            default:
+                navigate("/dashboard");
+        }
+    };
+
+
     return (
         <div className="notif-modal">
             <h3>Notifications</h3>
@@ -39,7 +88,7 @@ const NotificationModal = ({notifications, handleRead}) => {
                         <div
                             key={item._id}
                             className={`notif-item ${item.isRead ? "" : "unread"}`}
-                            onClick={() => handleRead(item._id)}
+                            onClick={() => handleNotificationClick(item)}
                         >
                             <div className="notif-icon">
                                 {item.type === "lead" && <NiManagement />}

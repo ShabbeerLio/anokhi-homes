@@ -8,6 +8,7 @@ const Meta = ({ data, setAlert }) => {
   const dispatch = useDispatch();
   const [activePage, setActivePage] = useState("home");
   const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const [metaData, setMetaData] = useState({
     home: {
@@ -70,6 +71,7 @@ const Meta = ({ data, setAlert }) => {
 
   // save
   const handleSave = async () => {
+    setSaving(true);
     try {
       const updatedMeta = {
         ...metaData,
@@ -91,8 +93,10 @@ const Meta = ({ data, setAlert }) => {
       });
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false);
     } catch (error) {
       console.log(error);
+      setSaving(false);
     }
   };
   const handleEdit = () => {
@@ -199,11 +203,12 @@ const Meta = ({ data, setAlert }) => {
         {isEditing && (
           <div className="modal-actions">
             <button
+              disabled={saving}
               onClick={() => {
                 handleSave();
               }}
             >
-              Save
+              {saving ? "Saving..." : "Save"}
             </button>
           </div>
         )}

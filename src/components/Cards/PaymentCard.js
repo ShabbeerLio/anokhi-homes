@@ -34,7 +34,8 @@ const PaymentCard = ({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
-  
+  const [saving, setSaving] = useState(false);
+
   const navigate = useNavigate();
   useEffect(() => {
     if (!viewOpen) {
@@ -44,6 +45,7 @@ const PaymentCard = ({
   const paid = item.paidAmount || 0;
 
   const handleAction = async (itemId, action, extraData = {}) => {
+    setSaving(true);
     try {
       const token = localStorage.getItem("token");
 
@@ -68,6 +70,7 @@ const PaymentCard = ({
       dispatch(getPayments());
 
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false);
     } catch (err) {
       console.error(err);
       setAlert({
@@ -75,6 +78,7 @@ const PaymentCard = ({
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
+      setSaving(false);
     }
   };
 
@@ -96,10 +100,8 @@ const PaymentCard = ({
           </div>
         </div>
         <div className="dots">
-          <span
-            onClick={() => downloadReceipt(item._id)}
-          >
-            <NiReceipt/>
+          <span onClick={() => downloadReceipt(item._id)}>
+            <NiReceipt />
           </span>
           <span
             onClick={(e) => {
@@ -172,6 +174,7 @@ const PaymentCard = ({
         <div className="modal-actions">
           <button
             className="site-visit-approval status active"
+            disabled={saving}
             onClick={() => {
               handleAction(item._id, "approve");
             }}
@@ -181,6 +184,7 @@ const PaymentCard = ({
 
           <button
             className="site-visit-approval status failed"
+            disabled={saving}
             onClick={() => {
               handleAction(item._id, "reject");
             }}
