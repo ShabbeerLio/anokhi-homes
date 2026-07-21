@@ -119,14 +119,14 @@ const Setting = ({ mood, setAlert }) => {
             <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
             <h2>Settings</h2>
           </div>
-          <Breadcrumb />
+          {/* <Breadcrumb /> */}
         </div>
       </div>
 
       <div className="profile-grid">
         {/* LEFT SIDEBAR */}
         <div className="profile-sidebar">
-          <div className="profile-card card">
+          <div className="profile-card card" style={{background:"#25271d"}}>
             <div className="profile-nav">
               {TABS.map((tab) => (
                 <span

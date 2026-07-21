@@ -1,3 +1,13 @@
+.couter-box {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  backdrop-filter: blur(10px);
+  background-color: #fcfaf3aa;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1.5rem;
+}
 .counter-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -5,51 +15,50 @@
   width: 100%;
 }
 
-.counter-bx{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+.counter-bx {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
-.app.dark .counter-icon svg{
-color: #fff;
+.app.dark .counter-icon svg {
+  color: #fff;
 }
-.counter-icon svg{
-font-size: 60px;
-color: #4d4d4d;
-border: 1px solid var(--mood-color);
-border-radius: 50%;
-padding: 10px;
-}
-
-.counter-num h3{
-margin: 0;
-font-size: 40px;
-color: var(--mood-color);
-}
-.counter-num p{
-color: #4d4d4d;
+.counter-icon svg {
+  font-size: 60px;
+  color: #4d4d4d;
+  border: 1px solid var(--mood-color);
+  border-radius: 1.25rem;
+  padding: 10px;
 }
 
+.counter-num h3 {
+  margin: 0;
+  font-size: 30px;
+  color: var(--mood-color);
+}
+.counter-num p {
+  color: #4d4d4d;
+}
 
 @media (max-width: 900px) {
-    .counter-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  width: 100%;
-}
+  .counter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+  }
 
-.counter-bx {
+  .counter-bx {
     justify-content: flex-start;
-}
+  }
 }
 
 @media (max-width: 768px) {
-  .counter-num{
+  .counter-num {
     text-align: left;
   }
   .counter-num h3 {
-font-size: 30px;
+    font-size: 30px;
   }
 }

@@ -7,8 +7,12 @@ import "swiper/css/navigation";
 const Services = ({ data }) => {
   const ServicesData = data?.services;
   return (
-    <div className="landing-pages">
-      <h2>Your Trusted Partner</h2>
+    <div className="landing-pages home-about">
+      <h2 className="landing-title ">
+        Your Trusted
+        <span> Partner</span>
+      </h2>
+      {/* <h2>Your Trusted Partner</h2> */}
       <p>
         Anokhi Homes Pvt. Ltd. proudly presents premium real estate solutions
         with a commitment to honesty, transparency, and customer satisfaction.

@@ -24,13 +24,13 @@ const ProjectCards = ({
       .trim()
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "");
-      console.log(p,"p")
+      // console.log(p,"p")
 
   return (
     <>
       <div
         key={p._id}
-        className="plot-card card"
+        className="plot-card image-box card"
         onClick={() =>
           navigate(`/plot/${createSlug(p.name)}`, {
             state: p,

@@ -1,10 +1,24 @@
+.home-about {
+  text-align: center;
+  margin: 3rem auto;
+}
+
 .about-box {
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 1.5rem;
 }
-.landing-pages h2 {
+.landing-title {
   color: #4d4d4d;
   margin-top: 0;
+  font-size: 40px;
+}
+.landing-title span{
+  color: var(--mood-color)
+}
+.app.dark .landing-title h2 {
+  color: #fff;
 }
 .landing-pages p {
   color: #9f9f9f;
@@ -13,7 +27,7 @@
 }
 
 .about-left {
-  width: 50%;
+  width: 60%;
 }
 .about-left h3 {
   color: #4d4d4d;

@@ -40,7 +40,8 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [selectedColonies, setSelectedColonies] = useState([]);
   const [saving, setSaving] = useState(false);
-  // console.log(data,"data")
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const [formData, setFormData] = useState({});
 
@@ -82,14 +83,17 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
   const filtered = useMemo(() => {
     return data.filter((visit) => {
       const matchSearch =
-        visit.customer?.name?.toLowerCase()?.includes(search?.toLowerCase()) ||
+        visit.customer?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
         visit.customer?.phone?.includes(search);
-
       const matchStatus = statusFilter === "" || visit.status === statusFilter;
+      // use visitDate if available, otherwise createdAt
+      const visitDate = new Date(visit.visitDate || visit.createdAt);
+      const matchFrom = !fromDate || visitDate >= new Date(fromDate);
+      const matchTo = !toDate || visitDate <= new Date(`${toDate}T23:59:59`);
 
-      return matchSearch && matchStatus;
+      return matchSearch && matchStatus && matchFrom && matchTo;
     });
-  }, [search, statusFilter, data]);
+  }, [data, search, statusFilter, fromDate, toDate]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice(
@@ -205,13 +209,26 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
           </select>
         </div>
         <div className="searchItem">
+          <label>From</label>
           <input
             type="date"
-            // value={dateFilter}
-            // onChange={(e) => {
-            //     setDateFilter(e.target.value);
-            //     setPage(1);
-            // }}
+            value={fromDate}
+            onChange={(e) => {
+              setFromDate(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+
+        <div className="searchItem">
+          <label>To</label>
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => {
+              setToDate(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
       </div>
@@ -263,8 +280,8 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
       >
         <div className="field">
           <SearchSelect
-            label="Lead"
-            placeholder="Search name or number"
+            label="Leads Customer"
+            placeholder="Search Customer by Name or Number"
             options={leads}
             value={selectedCustomer}
             onChange={(selected) => {
@@ -287,11 +304,7 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
         </div>
         <div className="field">
           <label>Customer Name</label>
-          <input
-            value={selectedCustomer?.name}
-            readOnly
-            placeholder="Phone Number"
-          />
+          <input value={selectedCustomer?.name} readOnly placeholder="Name" />
         </div>
         <div className="field">
           <label>Customer Phone</label>
@@ -347,7 +360,7 @@ const VisitTable = ({ data, mood, setAlert, landingPage }) => {
           <div className="field">
             <SearchSelect
               label="Associate"
-              placeholder="Search name or number"
+              placeholder="Search Associate by Name or Number"
               options={usersRole}
               value={selectedAgent}
               onChange={(selected) => {

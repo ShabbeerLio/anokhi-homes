@@ -39,7 +39,6 @@ const Management = ({ mood, setAlert }) => {
         return (
           <StaffLeadManagement
             leads={leads}
-            staffType={"marketing"}
             mood={mood}
             setAlert={setAlert}
           />
@@ -55,12 +54,12 @@ const Management = ({ mood, setAlert }) => {
 
   return (
     <div className="plot-container">
-      <div className="table-filters">
+      {/* <div className="table-filters">
         <div className="page-head-title">
           <h2>Lead Management</h2>
           <Breadcrumb />
         </div>
-      </div>
+      </div> */}
       <div className="dashboard-container">{renderPage()}</div>
     </div>
   );

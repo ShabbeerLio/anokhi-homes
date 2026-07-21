@@ -26,11 +26,11 @@ const AdminLeadManagement = ({ leads, mood, setAlert }) => {
       </div>
 
       {/* Filters */}
-      <h4>Leads</h4>
+      <h4 style={{margin:"1rem 0"}}>Leads</h4>
       <DataTable  data={leads}  mood={mood} setAlert={setAlert} dashboard={""} />
 
       {/* Performance Graph */}
-      <h4>Weekly Revenue</h4>
+      {/* <h4>Weekly Revenue</h4>
       <div className="card">
         <Charts
           title="Lead Performance"
@@ -45,7 +45,7 @@ const AdminLeadManagement = ({ leads, mood, setAlert }) => {
           ]}
           dataKey="leads"
         />
-      </div>
+      </div> */}
     </div>
   );
 };

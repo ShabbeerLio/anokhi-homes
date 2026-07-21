@@ -11,7 +11,11 @@ import SearchSelect from "../SearchItems/SearchSelect";
 import formatDate from "../DateFormate/DateFormate";
 import Host from "../../Host/Host";
 import axios from "axios";
-import { addUser, getAllColonies, getLeads } from "../../Redux/Slices/AppSlices";
+import {
+  addUser,
+  getAllColonies,
+  getLeads,
+} from "../../Redux/Slices/AppSlices";
 import { useDispatch, useSelector } from "react-redux";
 import NiTick from "../../icons/ni-tick";
 import NiEdit from "../../icons/ni-edit";
@@ -27,7 +31,7 @@ const ManagementCard = ({
   dashboard,
   setAlert,
   agentsList,
-  onDeleteLead
+  onDeleteLead,
 }) => {
   const dispatch = useDispatch();
   const { allColonies } = useSelector((state) => state.app);
@@ -51,7 +55,6 @@ const ManagementCard = ({
     dispatch(getAllColonies());
   }, [dispatch]);
 
-
   useEffect(() => {
     if (!viewOpen) {
       setPanelMode(null);
@@ -60,15 +63,19 @@ const ManagementCard = ({
   }, [viewOpen]);
 
   const handleAssignAgent = async (leadId, agentId) => {
-    setSaving(true)
+    setSaving(true);
     console.log("Assigning", agentId, "to lead", leadId);
     const token = localStorage.getItem("token");
-    const res = await axios.put(`${Host}/api/lead/assign/${leadId}`, { agentId }, {
-      headers: {
-        "auth-token": token,
-        "Content-Type": "application/json",
+    const res = await axios.put(
+      `${Host}/api/lead/assign/${leadId}`,
+      { agentId },
+      {
+        headers: {
+          "auth-token": token,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
     dispatch(getLeads());
     setAlert({
       message: "Agent Assigned Successfully",
@@ -76,19 +83,23 @@ const ManagementCard = ({
     });
 
     setTimeout(() => setAlert(null), 3000);
-    setSaving(false)
+    setSaving(false);
   };
 
   const handleReAssignAgent = async (leadId, agentId) => {
-    setSaving(true)
+    setSaving(true);
     console.log("Reassigning", agentId, "to lead", leadId);
     const token = localStorage.getItem("token");
-    const res = await axios.put(`${Host}/api/lead/assign/${leadId}`, { agentId }, {
-      headers: {
-        "auth-token": token,
-        "Content-Type": "application/json",
+    const res = await axios.put(
+      `${Host}/api/lead/assign/${leadId}`,
+      { agentId },
+      {
+        headers: {
+          "auth-token": token,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
     dispatch(getLeads());
     setAlert({
       message: "Agent Ressigned Successfully",
@@ -96,11 +107,11 @@ const ManagementCard = ({
     });
 
     setTimeout(() => setAlert(null), 3000);
-    setSaving(false)
+    setSaving(false);
   };
 
   const handleAgentAction = async (leadId, action, note = "") => {
-    setSaving(true)
+    setSaving(true);
     try {
       const token = localStorage.getItem("token");
 
@@ -115,7 +126,7 @@ const ManagementCard = ({
             "auth-token": token,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       dispatch(getLeads());
@@ -129,14 +140,15 @@ const ManagementCard = ({
       });
 
       setTimeout(() => setAlert(null), 3000);
-      setSaving(false)
+      setSaving(false);
     } catch (err) {
       console.error(err);
       setAlert({
         message: err.response?.data?.message || "Something went wrong",
         status: "Error",
       });
-      setSaving(false)
+      setTimeout(() => setAlert(null), 3000);
+      setSaving(false);
     }
   };
 
@@ -153,7 +165,7 @@ const ManagementCard = ({
             "auth-token": token,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       // ✅ update UI from backend response
@@ -175,6 +187,7 @@ const ManagementCard = ({
         message: err.response?.data?.message || "Failed to add note",
         status: "Error",
       });
+      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -190,7 +203,7 @@ const ManagementCard = ({
           headers: {
             "auth-token": token,
           },
-        }
+        },
       );
 
       setNotes(res.data.lead.notes);
@@ -198,10 +211,12 @@ const ManagementCard = ({
       dispatch(getLeads());
       setSaving(false);
       setAlert({ message: "Note updated", status: "Success" });
+      setTimeout(() => setAlert(null), 3000);
     } catch (err) {
       setSaving(false);
       console.error(err);
       setAlert({ message: "Edit failed", status: "Error" });
+      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -215,15 +230,17 @@ const ManagementCard = ({
           headers: {
             "auth-token": token,
           },
-        }
+        },
       );
 
       setNotes(res.data.lead.notes);
       dispatch(getLeads());
       setAlert({ message: "Note deleted", status: "Success" });
+      setTimeout(() => setAlert(null), 3000);
     } catch (err) {
       console.error(err);
       setAlert({ message: "Delete failed", status: "Error" });
+      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -239,7 +256,7 @@ const ManagementCard = ({
             "auth-token": token,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       dispatch(getLeads());
@@ -259,6 +276,7 @@ const ManagementCard = ({
         message: err.response?.data?.message || "Failed",
         status: "Error",
       });
+      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -299,21 +317,22 @@ const ManagementCard = ({
         customer: item.customer,
         location: selectedColonies[0]?.locationId?._id,
         colonies: selectedColonies.map((c) => c._id),
-        visitDate: formData.visitHour + " " + formData.visitPeriod + " " + formData.visitDate,
+        visitDate:
+          formData.visitHour +
+          " " +
+          formData.visitPeriod +
+          " " +
+          formData.visitDate,
       };
 
       // console.log(payload,"payload")
 
-      const res = await axios.post(
-        `${Host}/api/sitevisit/add`,
-        payload,
-        {
-          headers: {
-            "auth-token": token,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await axios.post(`${Host}/api/sitevisit/add`, payload, {
+        headers: {
+          "auth-token": token,
+          "Content-Type": "application/json",
+        },
+      });
 
       setAlert({
         message: "Site visit requested",
@@ -330,6 +349,7 @@ const ManagementCard = ({
         message: err.response?.data?.message || "Request failed",
         status: "Error",
       });
+      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -405,14 +425,12 @@ const ManagementCard = ({
           {mood !== "agent" && <p>Associate</p>}
         </div>
         <div className="user-card-bottom-right">
-          <p>
-            {formatDate(item?.createdAt)}
-          </p>
+          <p>{formatDate(item?.createdAt)}</p>
           <p>{item?.phone}</p>
           {mood !== "agent" && <p>{item?.agent?.name || ""}</p>}
         </div>
       </div>
-      {mood === "admin" &&
+      {(mood === "admin" || mood === "staff") &&
         (item?.status === "new" ? (
           <div className="modal-actions">
             <button
@@ -420,7 +438,7 @@ const ManagementCard = ({
               onClick={(e) => {
                 e.stopPropagation();
                 setViewOpen(true);
-                setPanelMode("assign")
+                setPanelMode("assign");
               }}
             >
               <NiUser /> Assign Associate
@@ -433,21 +451,22 @@ const ManagementCard = ({
               onClick={(e) => {
                 e.stopPropagation();
                 setViewOpen(true);
-                setPanelMode("reassign")
+                setPanelMode("reassign");
               }}
             >
               <NiUser /> Re-assign Associate
             </button>
           </div>
-        ) : "")
-      }
+        ) : (
+          ""
+        ))}
       {mood === "agent" && item?.status === "assigned" && (
         <div className="modal-actions">
           <button
             onClick={(e) => {
               e.stopPropagation();
               setViewOpen(true);
-              setPanelMode("siteVisit")
+              setPanelMode("siteVisit");
             }}
           >
             Request Site Visit
@@ -474,12 +493,13 @@ const ManagementCard = ({
           </button>
         </div>
       )}
-      <DeleteModal open={disapproveOpen} onClose={() => setDisapproveOpen(false)}>
+      <DeleteModal
+        open={disapproveOpen}
+        onClose={() => setDisapproveOpen(false)}
+      >
         <h4>Reject Lead</h4>
         <div className="field">
-          <label>
-            Notes
-          </label>
+          <label>Notes</label>
           <textarea
             placeholder="Add Notes..."
             value={formData.notes || ""}
@@ -534,7 +554,6 @@ const ManagementCard = ({
             Cancel
           </button>
         </div>
-
       </DeleteModal>
 
       <ViewModal
@@ -552,7 +571,7 @@ const ManagementCard = ({
               <p>Report</p>
             ) : item?.status === "lost" ? (
               <p>Report</p>
-            ) :
+            ) : (
               // item?.status === "new" && mood === "admin" ? (
               //   <div className="table-filters">
               //     <button
@@ -564,16 +583,16 @@ const ManagementCard = ({
               //     </button>
               //   </div>
               // ) :
-              ""}
+              ""
+            )}
           </div>
           <div className="user-card-bottom-right">
-            <p>
-              {formatDate(item?.createdAt)}
-            </p>
+            <p>{formatDate(item?.createdAt)}</p>
             <p>{item?.status}</p>
             <p>{item?.phone}</p>
 
-            {item?.status === "new" && mood === "admin" ? (
+            {item?.status === "new" &&
+            (mood === "admin" || mood === "staff") ? (
               <>
                 <div className="table-filters">
                   <button
@@ -586,13 +605,12 @@ const ManagementCard = ({
                 </div>
               </>
             ) : (
-              <>
-                {mood !== "agent" && <p>{item?.agent?.name || ""}</p>}
-              </>
+              <>{mood !== "agent" && <p>{item?.agent?.name || ""}</p>}</>
             )}
 
             <div className="table-filters">
-              {(item?.status === "assigned" || item?.status === "unassigned") && (
+              {(item?.status === "assigned" ||
+                item?.status === "unassigned") && (
                 <button
                   className="view-report-btn"
                   onClick={() => setPanelMode("notes")}
@@ -623,9 +641,7 @@ const ManagementCard = ({
         </div>
         {mood === "agent" && item?.status === "assigned" && (
           <div className="modal-actions">
-            <button
-              onClick={() => setPanelMode("siteVisit")}
-            >
+            <button onClick={() => setPanelMode("siteVisit")}>
               Request Site Visit
             </button>
             <button
@@ -652,7 +668,7 @@ const ManagementCard = ({
                   <div className="field">
                     <SearchSelect
                       label=""
-                      placeholder="Search name or number"
+                      placeholder="Search Associate by Name or Number"
                       options={agentsList}
                       value={selectedAgent}
                       onChange={(selected) => {
@@ -678,10 +694,10 @@ const ManagementCard = ({
                     <div className="notif-item">
                       <img src={selectedAgent.avatar} alt="" />
                       <div>
-                        <p>
-                          {selectedAgent.name}
+                        <p>{selectedAgent.name}</p>
+                        <p className="associate-location">
+                          {selectedAgent.phone}
                         </p>
-                        <p className="associate-location">{selectedAgent.phone}</p>
                       </div>
                     </div>
                     <span
@@ -693,7 +709,9 @@ const ManagementCard = ({
                       <NiCross />
                     </span>
                   </div>
-                  <p className="associate-note">Assinging agent will move lead to assigned</p>
+                  <p className="associate-note">
+                    Assinging agent will move lead to assigned
+                  </p>
                   <div className="modal-actions">
                     <button
                       onClick={() => {
@@ -721,7 +739,7 @@ const ManagementCard = ({
                   <div className="field">
                     <SearchSelect
                       label=""
-                      placeholder="Search name or number"
+                      placeholder="Search Associate by Name or Number"
                       options={agentsList}
                       value={selectedAgent}
                       onChange={(selected) => {
@@ -747,10 +765,10 @@ const ManagementCard = ({
                     <div className="notif-item">
                       <img src={selectedAgent.avatar} alt="" />
                       <div>
-                        <p>
-                          {selectedAgent.name}
+                        <p>{selectedAgent.name}</p>
+                        <p className="associate-location">
+                          {selectedAgent.phone}
                         </p>
-                        <p className="associate-location">{selectedAgent.phone}</p>
                       </div>
                     </div>
                     <span
@@ -846,7 +864,9 @@ const ManagementCard = ({
                     <div>
                       <b>{p.name}</b>
 
-                      <small style={{ display: "block" }}>{p.locationId?.name}</small>
+                      <small style={{ display: "block" }}>
+                        {p.locationId?.name}
+                      </small>
                     </div>
                   )}
                 />
@@ -878,7 +898,10 @@ const ManagementCard = ({
                 <button
                   onClick={() => {
                     // console.log("Site Visit Requested", formData);
-                    if (!formData.visitDate || !selectedColonies[0]?.locationId?._id) {
+                    if (
+                      !formData.visitDate ||
+                      !selectedColonies[0]?.locationId?._id
+                    ) {
                       setAlert({
                         message: "Please select date and location",
                         status: "Error",
@@ -912,7 +935,10 @@ const ManagementCard = ({
                 <button
                   onClick={() => {
                     if (!formData.lostReason?.trim()) {
-                      setAlert({ message: "Please add reason", status: "Error" });
+                      setAlert({
+                        message: "Please add reason",
+                        status: "Error",
+                      });
                       setTimeout(() => setAlert(null), 3000);
                       return;
                     }
@@ -949,8 +975,11 @@ const ManagementCard = ({
             <>
               {/* EXISTING NOTES */}
 
-
-              {notes.length === 0 && <><h5>Notes History</h5> <p>No notes available.</p></>}
+              {notes.length === 0 && (
+                <>
+                  <h5>Notes History</h5> <p>No notes available.</p>
+                </>
+              )}
 
               <NoteItem
                 item={item}

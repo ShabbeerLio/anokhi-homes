@@ -20,7 +20,7 @@ const Contact = ({ data }) => {
   )?.content;
 
   const socialMedia = data?.footer?.socialmedia || [];
-  console.log(socialMedia,"socialMedia")
+  console.log(socialMedia, "socialMedia");
 
   const getSocialIcon = (title) => {
     switch (title?.toLowerCase()) {
@@ -46,11 +46,11 @@ const Contact = ({ data }) => {
   return (
     <>
       <div className="landing-head-box">
-        <div className="landing-head">
+        <div className="">
           <div className="landing-top">
             <h1>Contact Us</h1>
+            <LBreadcrumb />
           </div>
-          <LBreadcrumb />
         </div>
       </div>
       <div className="landing-pages">

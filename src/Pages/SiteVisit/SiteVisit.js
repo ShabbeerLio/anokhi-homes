@@ -21,6 +21,7 @@ const SiteVisit = ({ mood, staffType, setAlert, landingPage }) => {
     dispatch(getSiteVisit());
   }, []);
 
+  // console.log(siteVisit,"siteVisit")
   const renderPage = () => {
     switch (mood) {
       case "admin":
@@ -46,7 +47,6 @@ const SiteVisit = ({ mood, staffType, setAlert, landingPage }) => {
           <StaffSiteVisit
             siteVisits={siteVisit}
             mood={mood}
-            staffType={"operations"}
             setAlert={setAlert}
             landingPage={landingPage}
           />
@@ -70,10 +70,10 @@ const SiteVisit = ({ mood, staffType, setAlert, landingPage }) => {
   return (
     <div className="plot-container">
       <div className="table-filters">
-        <div className="page-head-title">
+        {/* <div className="page-head-title">
           <h2>Site Visit</h2>
           <Breadcrumb />
-        </div>
+        </div> */}
         <div className="page-tools">
           {mood === "user" && (
             <button

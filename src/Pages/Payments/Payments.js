@@ -25,7 +25,7 @@ const Payments = ({ mood, staffType, setAlert }) => {
       case "agent":
         return <AgentPayments payment={payment} mood={mood} setAlert={setAlert}/>;
       case "staff":
-        return <StaffPayments payment={payment} mood={mood} staffType={"accounts"} setAlert={setAlert}/>;
+        return <StaffPayments payment={payment} mood={mood} setAlert={setAlert}/>;
       case "user":
         return <UserPayments payment={payment} mood={mood} setAlert={setAlert}/>;
       default:
@@ -35,12 +35,12 @@ const Payments = ({ mood, staffType, setAlert }) => {
 
   return (
     <div className="plot-container">
-      <div className="table-filters">
+      {/* <div className="table-filters">
          <div className="page-head-title">
         <h2>Payments</h2>
           <Breadcrumb />
         </div>
-      </div>
+      </div> */}
       <div className="dashboard-container">{renderPage()}</div>
     </div>
   );

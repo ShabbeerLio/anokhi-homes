@@ -12,8 +12,18 @@ import axios from "axios";
 import Host from "../../Host/Host";
 import NiClosseye from "../../icons/ni-closseye";
 import NiOpenEye from "../../icons/ni-openEye";
+import UserForm from "../../components/UserForm/UserForm";
+import AddBookingForm from "../../components/UserForm/AddBookingForm";
+import AddPaymentForm from "../../components/UserForm/AddPaymentForm";
 
-const RenderFormFields = ({ actionType, formData, setFormData, setAlert }) => {
+const RenderFormFields = ({
+  actionType,
+  formData,
+  setFormData,
+  setAlert,
+  data,
+  onClose,
+}) => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.app);
   const [customersList, setCustomersList] = useState([]);
@@ -51,10 +61,12 @@ const RenderFormFields = ({ actionType, formData, setFormData, setAlert }) => {
         phone: "",
         email: "",
       });
+      setTimeout(() => setAlert(null), 3000);
       // dispatch(getLeads());
     } catch (err) {
       console.error(err);
       setAlert({ message: "Failed to add lead", status: "Error" });
+      setTimeout(() => setAlert(null), 3000);
     } finally {
       setTimeout(() => setAlert(null), 5000);
     }
@@ -255,140 +267,28 @@ const RenderFormFields = ({ actionType, formData, setFormData, setAlert }) => {
   switch (actionType) {
     case "Add Associate / Staff / Customer":
       return (
-        <>
-          <div className="field">
-            <label>User Type</label>
-            <select
-              value={formData.role}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
-            >
-              <option value="">Select Type</option>
-              <option value="user">Customer</option>
-              <option value="agent">Associate</option>
-              <option value="staff">Staff</option>
-            </select>
-          </div>
-
-          {/* Common Fields */}
-          {/* {formData.user && ( */}
-          <>
-            <div className="field">
-              <input
-                placeholder="Name (as per Aadhaar) "
-                value={formData.name || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="field">
-              <input
-                type="email"
-                placeholder="Email"
-                value={formData.email || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="field">
-              <input
-                placeholder="Phone"
-                value={formData.phone || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="field password-field">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={formData.password || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
-              <span
-                className="password-eye"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <NiClosseye /> : <NiOpenEye />}
-              </span>
-            </div>
-          </>
-          {/* )} */}
-
-          {/* Agent Only */}
-          {formData.role === "agent" && (
-            <>
-              <div className="field password-field">
-                <input
-                  placeholder="Referral Code"
-                  value={formData.referralId}
-                  onChange={(e) => handleReferralCheck(e.target.value)}
-                />
-              </div>
-              {referalMsg !== null &&
-                (referalMsg?.payload?.msg ? (
-                  <>
-                    <p style={{ color: "red" }}>{referalMsg?.payload?.msg}</p>
-                  </>
-                ) : (
-                  <>
-                    <p style={{ color: "green" }}>
-                      Referred by: {referalMsg?.payload?.name}
-                    </p>
-                  </>
-                ))}
-              <div className="plot-modal field">
-                <select
-                  value={formData.position}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      position: e.target.value,
-                    })
-                  }
-                >
-                  <option value="">Select Position</option>
-                  <option value="left">Left</option>
-                  <option value="right">Right</option>
-                </select>
-              </div>
-            </>
-          )}
-
-          {/* Staff Only */}
-          {formData.role === "staff" && (
-            <div className="field">
-              <input
-                placeholder="Department / Role"
-                value={formData.role || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, role: e.target.value })
-                }
-              />
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="modal-actions">
-            <button
-              onClick={() => {
-                handleAddUser();
-                // setOpen(false);
-              }}
-            >
-              Add User
-            </button>
-          </div>
-        </>
+        <div
+          className="auth-card"
+          style={{ padding: "0", width: "auto", boxShadow: "none" }}
+        >
+          <UserForm
+            mode="admin"
+            setAlert={setAlert}
+            onClose={onClose}
+            onSuccess={async (payload) => {
+              await dispatch(addUser(payload)).unwrap();
+              setAlert({
+                message: "Account created successfully",
+                status: "Success",
+              });
+              setTimeout(() => {
+                setAlert(null);
+              }, 3000);
+              // dispatch(getUser());
+            }}
+            data={data}
+          />
+        </div>
       );
 
     case "Add Project":
@@ -469,297 +369,18 @@ const RenderFormFields = ({ actionType, formData, setFormData, setAlert }) => {
 
     case "Add Booking":
       return (
-        <>
-          <div className="field">
-            <SearchSelect
-              label="Customer"
-              placeholder="Search name or number"
-              options={customers}
-              value={selectedCustomer}
-              onChange={(selected) => {
-                setSelectedCustomer(selected);
-                setFormData({ ...formData, customerId: selected.id });
-              }}
-              displayKey="name"
-              searchKeys={["name", "phone"]}
-              renderOption={(c) => (
-                <div>
-                  <b>{c.name}</b> ({c.phone})
-                </div>
-              )}
-            />
-          </div>
-          <div className="field">
-            <SearchSelect
-              label="Project"
-              placeholder="Search Project or location"
-              options={Projects}
-              value={selectedProjects}
-              onChange={(selected) => {
-                setSelectedProjects(selected);
-                setFormData({ ...formData, Project: selected.name });
-              }}
-              displayKey="name"
-              searchKeys={["name", "location"]}
-              renderOption={(p) => (
-                <div>
-                  <b>{p.name}</b>
-                  <small style={{ display: "block", color: "#666" }}>
-                    {p.location}
-                  </small>
-                </div>
-              )}
-            />
-          </div>
-          <div className="field">
-            <SearchSelect
-              label="Plots"
-              placeholder="Search Plot..."
-              options={plots}
-              value={selectedPlot}
-              onChange={(selected) => {
-                setSelectedPlot(selected);
-
-                setFormData({
-                  ...formData,
-                  plotId: selected.id,
-                  amount: selected.price,
-                });
-              }}
-              displayKey="name"
-              searchKeys={["name", "location"]}
-              renderOption={(p) => (
-                <div>
-                  <b>{p.name}</b>
-                  <small style={{ display: "block", color: "#666" }}>
-                    {p.status}
-                  </small>
-                </div>
-              )}
-            />
-          </div>
-
-          <div className="field">
-            <label>Amount</label>
-            <input
-              placeholder="Total Amount"
-              value={selectedPlot?.price || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, amount: e.target.value })
-              }
-            />
-          </div>
-
-          <div className="field">
-            <label>Amount Paid</label>
-            <input
-              placeholder="Amount Paid"
-              value={formData.amountPaid || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, amountPaid: e.target.value })
-              }
-            />
-          </div>
-          <div className="field">
-            <label>Amount Remaining</label>
-            <input
-              placeholder="Amount Remaining"
-              value={remainingAmount || 0}
-              disabled
-            />
-          </div>
-
-          {/* <div className="field">
-                        <label>Amount Type</label>
-                        <select
-                            value={formData.amountType || ""}
-                            onChange={(e) =>
-                                setFormData({ ...formData, amountType: e.target.value })
-                            }
-                        >
-                            <option value="">Select Type</option>
-                            <option value="Token">Token</option>
-                            <option value="Partial">Partial</option>
-                            <option value="Full">Full</option>
-                        </select>
-                    </div> */}
-        </>
+        <AddBookingForm
+          setAlert={setAlert}
+          setOpen={onClose}
+        />
       );
 
     case "Add Payment (Received)":
       return (
-        <>
-          {/* DATE */}
-          <div className="field">
-            <label>Date</label>
-            <input
-              type="date"
-              value={formData.date || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, date: e.target.value })
-              }
-            />
-          </div>
-
-          {/* CUSTOMER */}
-          <div className="field">
-            <SearchSelect
-              label="Customer Name"
-              placeholder="Search name or number"
-              options={customers}
-              value={selectedCustomer}
-              onChange={(selected) => {
-                setSelectedCustomer(selected);
-                setSelectedPlot(null);
-              }}
-              displayKey="name"
-              searchKeys={["name", "phone"]}
-              renderOption={(c) => (
-                <div>
-                  <b>{c.name}</b> ({c.phone})
-                </div>
-              )}
-            />
-          </div>
-
-          {/* PHONE */}
-          <div className="field">
-            <label>Phone</label>
-            <input value={selectedCustomer?.phone || ""} disabled />
-          </div>
-
-          <div className="field">
-            <SearchSelect
-              label="Project"
-              placeholder="Select Customer Project"
-              options={customerProjects}
-              value={selectedProject}
-              onChange={(selected) => {
-                setSelectedProject(selected);
-                setSelectedPlot(null);
-              }}
-              displayKey="name"
-              searchKeys={["name", "location"]}
-              renderOption={(p) => (
-                <div>
-                  <b>{p.name}</b>
-                  <small style={{ display: "block", color: "#666" }}>
-                    {p.location}
-                  </small>
-                </div>
-              )}
-            />
-          </div>
-          <div className="field">
-            <SearchSelect
-              label="Plot"
-              placeholder="Select Booked Plot"
-              options={customerPlots}
-              value={selectedPlot}
-              onChange={(selected) => {
-                setSelectedPlot(selected);
-
-                const booking = customerBookings.find(
-                  (b) => b.plotId === selected.id,
-                );
-
-                if (booking) {
-                  const paid = booking.payments.reduce(
-                    (sum, p) => sum + p.amount,
-                    0,
-                  );
-
-                  const remaining = booking.totalAmount - paid;
-
-                  let type = "Installment";
-                  if (paid === 0) type = "Token";
-                  if (remaining === 0) type = "Completed";
-
-                  setAmountInfo({
-                    total: booking.totalAmount,
-                    paid,
-                    remaining,
-                    remainingType: type,
-                  });
-                }
-              }}
-              displayKey="name"
-              searchKeys={["name"]}
-              renderOption={(p) => (
-                <div>
-                  <b>{p.name}</b>
-                  <small style={{ display: "block", color: "#666" }}>
-                    {p.status}
-                  </small>
-                </div>
-              )}
-            />
-          </div>
-
-          {selectedPlot && (
-            <div className="report-view-box-right active">
-              <p>
-                <strong>Total Amount</strong> ₹
-                {formatCurrency(amountInfo.total)}
-              </p>
-
-              <p>
-                <strong>Amount Paid</strong> ₹{formatCurrency(amountInfo.paid)}
-              </p>
-
-              <p>
-                <strong>Remaining Amount</strong> ₹
-                {formatCurrency(amountInfo.remaining)}
-              </p>
-
-              <p>
-                <strong>Remaining Type</strong> {amountInfo.remainingType}
-              </p>
-            </div>
-          )}
-          <div className="field">
-            <label>Payment Type</label>
-            <select
-              value={formData.dueStatus || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, dueStatus: e.target.value })
-              }
-            >
-              <option value="">Choose Payment Type</option>
-              <option value="Booking Amount">Booking Amount</option>
-              <option value="Agreement">Agreement</option>
-              <option value="Full Payment">Full Payment</option>
-            </select>
-          </div>
-
-          {/* PAYMENT AMOUNT */}
-          <div className="field">
-            <label>Amount</label>
-            <input
-              placeholder="Amount"
-              value={formData.amount || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, amount: e.target.value })
-              }
-            />
-          </div>
-
-          {/* PAYMENT MODE */}
-          <div className="field">
-            <label>Payment Mode</label>
-            <select
-              value={formData.paymentMode || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, paymentMode: e.target.value })
-              }
-            >
-              <option value="">Payment Mode</option>
-              <option value="Cash">Cash</option>
-              <option value="UPI">UPI</option>
-              <option value="Bank Transfer">Bank Transfer</option>
-            </select>
-          </div>
-        </>
+        <AddPaymentForm
+          setAlert={setAlert}
+          setOpen={onClose}
+          />
       );
     case "Add Lead":
       return (
@@ -828,7 +449,7 @@ const RenderFormFields = ({ actionType, formData, setFormData, setAlert }) => {
               <div className="field">
                 <SearchSelect
                   label="Customer Name"
-                  placeholder="Search name or number"
+                  placeholder="Search Customer by Name or Number"
                   options={customersList}
                   value={selectedCustomer}
                   onChange={(selected) => {
@@ -921,7 +542,7 @@ const RenderFormFields = ({ actionType, formData, setFormData, setAlert }) => {
           <div className="field">
             <SearchSelect
               label="Customer Name"
-              placeholder="Search name or number"
+              placeholder="Search Customer by Name or Number"
               options={customers}
               value={selectedCustomer}
               onChange={(selected) => {

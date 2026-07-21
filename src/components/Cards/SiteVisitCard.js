@@ -240,11 +240,13 @@ const SiteVisitCard = ({
 
       if (!selectedPlot) {
         setAlert({ message: "Please select plot", status: "Error" });
+        setTimeout(() => setAlert(null), 3000);
         return;
       }
 
       if (!formData.requestAmount) {
         setAlert({ message: "Enter request amount", status: "Error" });
+        setTimeout(() => setAlert(null), 3000);
         return;
       }
 
@@ -253,6 +255,7 @@ const SiteVisitCard = ({
           message: "Please accept terms & conditions",
           status: "Error",
         });
+        setTimeout(() => setAlert(null), 3000);
         return;
       }
 
@@ -360,20 +363,20 @@ const SiteVisitCard = ({
       status: "Success",
     });
     dispatch(getSiteVisit());
-    
+
     // reset UI
     setViewOpen(false);
     setSelectedPlot(null);
     setFormData({});
     setPanelMode(null);
-    
+
     setTimeout(() => setAlert(null), 3000);
     setSaving(false)
     // setShowHoldModal(false);
     // onClose();
   };
-  
-  // console.log(item, "item")
+
+  console.log(item, "item")
   return (
     <div className="user-card card" onClick={dashboard || undefined}>
       <div className="user-card-top">
@@ -447,7 +450,8 @@ const SiteVisitCard = ({
           <p>{item.visitDate}</p>
         </div>
       </div>
-      {mood === "admin" && (item.status === "approval") && (
+      <span className="countdown" style={{fontSize:"12px"}}>{item.siteVisitCounter} Out of 3 Site Visit, After 3 site visit some additional charge will be applied for requesting site visit</span>
+      {(mood === "admin" || mood === "staff") && (item.status === "approval") && (
         <div className="modal-actions">
           <button
             className="site-visit-approval status active"
@@ -515,7 +519,7 @@ const SiteVisitCard = ({
         <p>Are you sure you want to delete?</p>
         <div className="modal-actions">
           <button
-          disabled={saving}
+            disabled={saving}
             onClick={(e) => {
               e.stopPropagation();
               console.log("Site Visit deleted");
@@ -605,7 +609,7 @@ const SiteVisitCard = ({
 
         <div className="modal-actions">
           <button
-          disabled={saving}
+            disabled={saving}
             onClick={() => {
               if (
                 !formData.visitDate ||
@@ -616,6 +620,7 @@ const SiteVisitCard = ({
                   message: "Please select complete visit date & time",
                   status: "Error",
                 });
+                setTimeout(() => setAlert(null), 3000);
                 return;
               }
 
@@ -624,6 +629,7 @@ const SiteVisitCard = ({
                   message: "Note is required",
                   status: "Error",
                 });
+                setTimeout(() => setAlert(null), 3000);
                 return;
               }
 
@@ -658,13 +664,14 @@ const SiteVisitCard = ({
 
         <div className="modal-actions">
           <button
-          disabled={saving}
+            disabled={saving}
             onClick={() => {
               if (!formData.notes?.trim()) {
                 setAlert({
                   message: "Note is required",
                   status: "Error",
                 });
+                setTimeout(() => setAlert(null), 3000);
                 return;
               }
 
@@ -917,7 +924,7 @@ const SiteVisitCard = ({
                 </select>
               </div>
               <p style={{ color: "#ff6969", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "5px", padding: "10px 0" }}>
-                <input style={{ width: "5%" }} type="checkbox"
+                <input style={{ width: "auto" }} type="checkbox"
                   checked={formData.termsAccepted || false}
                   onChange={(e) =>
                     setFormData({ ...formData, termsAccepted: e.target.checked })
@@ -930,7 +937,7 @@ const SiteVisitCard = ({
 
               <div className="modal-actions">
                 <button
-                disabled={saving}
+                  disabled={saving}
                   onClick={() => {
                     if (!selectedPlot) {
                       setAlert({

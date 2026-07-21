@@ -20,6 +20,7 @@ const ProjectDetail = ({ mood, setAlert }) => {
   const navigate = useNavigate();
   const  projectId  = projectData?.state?.project?._id;
 // console.log(projectData,"projectData")
+console.log(projectId,"projectId")
   const dispatch = useDispatch();
   const { plots } = useSelector((state) => state.app);
 
@@ -40,10 +41,10 @@ const ProjectDetail = ({ mood, setAlert }) => {
             <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
             <h2>{projectName}</h2>
           </div>
-          <Breadcrumb />
+          {/* <Breadcrumb /> */}
         </div>
       </div>
-      <PlotDrawCard data={plots} mood={mood} setAlert={setAlert} />
+      <PlotDrawCard data={plots} mood={mood} setAlert={setAlert} projectId={projectId}/>
     </div>
   );
 };

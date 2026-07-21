@@ -7,8 +7,12 @@ import { FaQuoteLeft, FaQuoteRight } from "react-icons/fa";
 const Testimonial = ({ data }) => {
   const ServicesData = data?.testimonials;
   return (
-    <div className="landing-pages">
-      <h2>Testimonial</h2>
+    <div className="landing-pages home-about">
+      <h2 className="landing-title ">
+        {/* Our */}
+        <span> Testimonial</span>
+      </h2>
+      {/* <h2>Testimonial</h2> */}
       <Swiper
         modules={[Navigation, Autoplay]}
         spaceBetween={24}

@@ -397,6 +397,19 @@ export const getOffers = createAsyncThunk("app/getOffers", async () => {
 
   return res.json();
 });
+export const getOfferClaims = createAsyncThunk(
+  "app/getOfferClaims",
+  async () => {
+    const res = await fetch(`${Host}/api/offer/claims`, {
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": getToken(),
+      },
+    });
+
+    return res.json();
+  },
+);
 
 export const addOffer = createAsyncThunk("app/addOffer", async (data) => {
   const res = await fetch(`${Host}/api/offer/add`, {
@@ -450,6 +463,26 @@ export const toggleOfferStatus = createAsyncThunk(
     });
 
     return await res.json();
+  },
+);
+
+export const deliverOfferReward = createAsyncThunk(
+  "app/deliverOfferReward",
+  async ({ id, remarks }, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${Host}/api/offer/claim/${id}/deliver`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          authToken: localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ remarks }),
+      });
+
+      return await res.json();
+    } catch (err) {
+      return rejectWithValue(err);
+    }
   },
 );
 
@@ -858,6 +891,17 @@ export const updateStaffRole = createAsyncThunk(
   },
 );
 
+export const getPayout = createAsyncThunk("app/getPayout", async () => {
+  const res = await fetch(`${Host}/api/payout`, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": getToken(),
+    },
+  });
+
+  return await res.json();
+});
+
 export const addPayoutPayment = createAsyncThunk(
   "app/addPayoutPayment",
   async ({ payoutId, formData }) => {
@@ -874,6 +918,27 @@ export const addPayoutPayment = createAsyncThunk(
     return res.data;
   },
 );
+
+export const getExpense = createAsyncThunk("app/getExpense", async () => {
+  const res = await fetch(`${Host}/api/expense`, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": getToken(),
+    },
+  });
+
+  return await res.json();
+});
+export const getLedger = createAsyncThunk("app/getLedger", async () => {
+  const res = await fetch(`${Host}/api/account/ledger`, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": getToken(),
+    },
+  });
+
+  return await res.json();
+});
 
 // ========================
 // 🔥 Slice
@@ -905,6 +970,9 @@ const appSlice = createSlice({
     notifications: [],
     notificationsCount: [],
     staffRoles: [],
+    expense: [],
+    ledger: [],
+    payout: [],
     paymentTerms: null,
     loading: false,
     error: null,
@@ -1008,6 +1076,9 @@ const appSlice = createSlice({
       .addCase(getOffers.fulfilled, (state, action) => {
         state.offersData = action.payload;
       })
+      .addCase(getOfferClaims.fulfilled, (state, action) => {
+        state.offerClaims = action.payload;
+      })
       .addCase(getDiscount.fulfilled, (state, action) => {
         state.discountsData = action.payload;
       })
@@ -1078,6 +1149,17 @@ const appSlice = createSlice({
         state.staffRoles = state.staffRoles.map((i) =>
           i._id === action.payload._id ? action.payload : i,
         );
+      })
+      .addCase(getExpense.fulfilled, (state, action) => {
+        state.expense = action.payload;
+      })
+
+      .addCase(getLedger.fulfilled, (state, action) => {
+        state.ledger = action.payload;
+      })
+
+      .addCase(getPayout.fulfilled, (state, action) => {
+        state.payout = action.payload;
       })
       // LOADING (optional global)
       .addMatcher(

@@ -131,14 +131,14 @@ const AgentDashboard = () => {
         </div>
       </div>
       {/* Sections */}
-      <div className="dashboard-charts">
+      {/* <div className="dashboard-charts">
         <div>
           <h4>Weekly Revenue</h4>
           <div className="card">
             <Charts title="My Monthly Sales" data={salesData} dataKey="sales" />
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -13,7 +13,7 @@ export default function NiSearch() {
                 opacity="0.6"
                 d="M22 22L18.5 18.5"
                 stroke="currentColor"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke-linecap="round"
             ></path>
             <circle
@@ -21,7 +21,7 @@ export default function NiSearch() {
                 cy="11.5"
                 r="9.5"
                 stroke="currentColor"
-                stroke-width="1.5"
+                strokeWidth="1.5"
             ></circle>
         </svg>
     )

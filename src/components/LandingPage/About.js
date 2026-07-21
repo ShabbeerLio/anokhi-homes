@@ -17,16 +17,15 @@ const About = ({ data }) => {
     { title: "Drainage", icons: <GiWaterfall /> },
   ];
   return (
-    <div className="landing-pages">
-      <h2>{data?.about?.title}</h2>
-      <p>
-        {data?.about?.description}
-        {/* Anokhi Homes Private Limited is a dynamic and growing real estate
-        company committed to redefining urban and suburban living experiences
-        through thoughtfully planned plots and development projects. */}
-      </p>
+    <div className="landing-pages home-about">
+      <h2 className="landing-title">
+        {data?.about?.title?.split(" ").slice(0, -2).join(" ")}
+        <span> {data?.about?.title?.split(" ").slice(-2).join(" ")}</span>
+      </h2>
+      {/* <h2>{data?.about?.title}</h2> */}
+
       <div className="about-box">
-        <div className="about-right">
+        {/* <div className="about-right">
           <img
             src={
               data?.about?.image
@@ -35,31 +34,23 @@ const About = ({ data }) => {
             }
             alt=""
           />
-        </div>
+        </div> */}
         <div className="about-left">
-          <p>
-            {/* Based out of Patna, our company is focused on transforming emerging
-            locations into thriving communities. With a strong foundation built
-            on transparency, trust, and customer satisfaction, Anokhi Homes aims
-            to be a leading force in the real estate landscape of Bihar. */}
-            {data?.about?.subdescription}
-          </p>
-          {/* <p>
-            Currently, we are proud to unveil our flagship venture – Rajgir
-            Green Valley, a premium plotting project situated in the spiritual
-            and scenic town of Rajgir.
-          </p> */}
-          <h3>Our Amenities</h3>
-          <div className="feature-grid">
-            {items.map((f) => (
-              <div key={f.title} className="feature-card card">
-                <span>{f.icons}</span>
-                <h3>{f.title}</h3>
-              </div>
-            ))}
-          </div>
+          <p>{data?.about?.description}</p>
+          <p>{data?.about?.subdescription}</p>
         </div>
       </div>
+      {/* <div className="about-amities">
+        <h3>Our Amenities</h3>
+        <div className="feature-grid">
+          {items.map((f) => (
+            <div key={f.title} className="feature-card card">
+              <span>{f.icons}</span>
+              <h3>{f.title}</h3>
+            </div>
+          ))}
+        </div>
+      </div> */}
     </div>
   );
 };

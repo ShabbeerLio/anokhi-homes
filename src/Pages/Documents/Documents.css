@@ -17,7 +17,7 @@
 .document-item {
   break-inside: avoid;
   /* margin-bottom: 1rem; */
-  border-radius: 1.75rem;
+  border-radius: 12px;
   overflow: hidden;
   cursor: zoom-in;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -27,7 +27,7 @@
   width: 100%;
   display: block;
   object-fit: cover;
-  border-radius: 1.75rem;
+  border-radius: 12px;
   transition: transform 0.4s ease;
 }
 

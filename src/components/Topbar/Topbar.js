@@ -8,31 +8,41 @@ import { useNavigate } from "react-router-dom";
 import NotificationModal from "../Modals/NotificationModal";
 import SearchModal from "../Modals/SearchModal";
 import MainLogo from "../../icons/MainLogo";
-import AdminLogo from "../../Assets/Logo/logo-anokhi-home-parpul.png";
+import AdminLogo from "../../Assets/Logo/logo-anokhi-homes.png";
 import StaffLogo from "../../Assets/Logo/logo-anokhi-home-green.png";
 import AgentLogo from "../../Assets/Logo/logo-anokhi-home-blue.png";
 import UserLogo from "../../Assets/Logo/logo-anokhi-home-yellow.png";
-import mainLoag from "../../Assets/Logo/Final_pah-logo-green-hq.png"
 import NiUser from "../../icons/ni-user";
 import { useDispatch, useSelector } from "react-redux";
-import { getAccountDetails, getNotifications, getNotificationsCount, readNotification } from "../../Redux/Slices/AppSlices";
+import {
+  getAccountDetails,
+  getNotifications,
+  getNotificationsCount,
+  getOffers,
+  readNotification,
+} from "../../Redux/Slices/AppSlices";
 import NiDrawr from "../../icons/ni-drawr";
 import Floating from "../LandingPage/Floating";
+import { LuChartNoAxesGantt, LuX } from "react-icons/lu";
+import PosterView from "./PosterView";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
   const dispatch = useDispatch();
-  const { userDetail, notificationsCount, notifications } = useSelector((state) => state.app);
+  const { userDetail, notificationsCount, notifications, offersData } =
+    useSelector((state) => state.app);
   useEffect(() => {
     dispatch(getAccountDetails());
     dispatch(getNotificationsCount());
     dispatch(getNotifications());
+    dispatch(getOffers());
   }, []);
 
   const currentUser = userDetail;
   const navigate = useNavigate();
   const [openProfile, setOpenProfile] = useState(false);
   const [openNotif, setOpenNotif] = useState(false);
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const profileRef = useRef();
   const notifRef = useRef();
 
@@ -61,6 +71,7 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
 
   const handleLogout = () => {
     navigate("/");
+    setMood("");
     localStorage.removeItem("token");
   };
 
@@ -69,32 +80,34 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
     dispatch(getNotificationsCount());
   };
 
-  // console.log(notificationsCount?.unread, "notificationsCount");
+  const createSlug = (name) =>
+    name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
 
   return (
     <div className="topbar">
-      <div className="top-left">
-        <button className="mobile-btn" onClick={() => setMobileOpen((v) => !v)}>
-          <NiDrawr />
-        </button>
-        <span className="logo">
-          {/* <MainLogo /> */}
-          {mood === "admin" ? (
-            <img className="topbar-nav-logo" src={AdminLogo} alt="" />
-          ) : mood === "staff" ? (
-            <img className="topbar-nav-logo" src={StaffLogo} alt="" />
-          ) : mood === "agent" ? (
-            <img className="topbar-nav-logo" src={AgentLogo} alt="" />
-          ) : (
-            <img className="topbar-nav-logo" src={UserLogo} alt="" />
-          )}
-          {/* <img className="topbar-nav-logo" src={mainLoag} alt="" /> */}
-        </span>
-      </div>
+      <div className="topbar-box">
+        <div className="top-left">
+          <button
+            className="mobile-btn"
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            <NiDrawr />
+          </button>
+          <div className="page-head-title" style={{ margin: "0 0 0 10px", fontSize: "18px" }}>
+            <h2 style={{ margin: "0", fontSize: "18px" }}>
+              Welcome back, {userDetail?.name}
+            </h2>
+            <Breadcrumb />
+          </div>
+        </div>
 
-      <div className="top-right">
-        {/* Role Switch (Demo Only) */}
-        {/* <select
+        <div className="top-right">
+          {/* Role Switch (Demo Only) */}
+          {/* <select
           className="top-mood"
           value={mood}
           onChange={(e) => setMood(e.target.value)}
@@ -105,102 +118,130 @@ function Topbar({ dark, setDark, setMobileOpen, mood, setMood }) {
           <option value="user">User</option>
         </select> */}
 
-        {/* Notifications */}
-        <div
-          className="notif"
-          ref={notifRef}
-          onClick={() => {
-            setOpenNotif(!openNotif);
-            setOpenProfile(false);
-          }}
-        >
-          <NiBell />
-          <span>{notificationsCount?.unread}</span>
-          {openNotif && <NotificationModal notifications={notifications} handleRead={handleRead} />}
-        </div>
+          {/* Notifications */}
+          <div
+            className="notif"
+            ref={notifRef}
+            onClick={() => {
+              setOpenNotif(!openNotif);
+              setOpenProfile(false);
+            }}
+          >
+            <NiBell />
+            <span>{notificationsCount?.unread}</span>
+            {openNotif && (
+              <NotificationModal
+                notifications={notifications}
+                handleRead={handleRead}
+              />
+            )}
+          </div>
 
-        {/* Dark Mode */}
-        <button className="top-mood" onClick={() => setDark(!dark)}>
-          {dark ? <NiSun /> : <NiMoon />}
-        </button>
+          {/* Dark Mode */}
+          {/* <button className="top-mood" onClick={() => setDark(!dark)}>
+            {dark ? <NiSun /> : <NiMoon />}
+          </button> */}
 
-        {/* PROFILE */}
-        <div
-          className="profile"
-          ref={profileRef}
-          onClick={() => {
-            setOpenProfile(!openProfile);
-            setOpenNotif(false);
-          }}
-        >
-          <span>{currentUser?.user?.toUpperCase()}</span>
+          {/* PROFILE */}
+          <div
+            className="profile"
+            ref={profileRef}
+            onClick={() => {
+              setOpenProfile(!openProfile);
+              setOpenNotif(false);
+            }}
+          >
+            <span>{currentUser?.user?.toUpperCase()}</span>
 
-          {currentUser?.avatar ? (
-            <img
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              className="profile-avatar"
-            />
-          ) : (
-            <NiUser />
+            {currentUser?.avatar ? (
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.name}
+                className="profile-avatar"
+              />
+            ) : (
+              <NiUser />
+            )}
+
+            {openProfile && (
+              <div className="profile-modal">
+                <div className="pm-header">
+                  {currentUser?.avatar ? (
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      className="profile-avatar"
+                    />
+                  ) : (
+                    <div className="profile-avatar-placeholder">
+                      <NiUser />
+                    </div>
+                  )}
+                  <h4>{currentUser?.name}</h4>
+                  <p>{currentUser?.email}</p>
+                </div>
+
+                <div
+                  className="pm-item"
+                  onClick={() =>
+                    navigate(`/user/${createSlug(currentUser.name)}`, {
+                      state: currentUser._id,
+                    })
+                  }
+                >
+                  My Profile
+                </div>
+
+                {/* <div className="pm-item">
+                  Mode{" "}
+                  <span onClick={() => setDark(!dark)}>
+                    {dark ? <NiSun /> : <NiMoon />}
+                  </span>
+                </div> */}
+
+                <div
+                  className="pm-item"
+                  onClick={() => navigate(`/help-support`)}
+                >
+                  Help and Support
+                </div>
+                <div className="pm-item" onClick={() => navigate(`/rating`)}>
+                  Rating
+                </div>
+
+                <button className="pm-logout" onClick={handleLogout}>
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
+          {mood !== "admin" && (
+            <>
+              <Floating />
+              <div
+                className="floating-menu-btn"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <span>Offers & Bonenza</span>
+              </div>
+            </>
           )}
+          <div
+            className={`sidebar-overlay ${sidebarOpen ? "active" : ""}`}
+            onClick={() => setSidebarOpen(false)}
+          >
+            <div className="sidebar-popup" onClick={(e) => e.stopPropagation()}>
+              <LuX
+                className="sidebar-close"
+                onClick={() => setSidebarOpen(false)}
+              />
 
-          {openProfile && (
-            <div className="profile-modal">
-              <div className="pm-header">
-                {currentUser?.avatar ? (
-                  <img
-                    src={currentUser.avatar}
-                    alt={currentUser.name}
-                    className="profile-avatar"
-                  />
-                ) : (
-                  <div className="profile-avatar-placeholder">
-                    <NiUser />
-                  </div>
-                )}
-                <h4>{currentUser?.name}</h4>
-                <p>{currentUser?.email}</p>
+              <div className="sidebar-content">
+                <PosterView offersData={offersData} />
               </div>
-
-              <div
-                className="pm-item"
-                onClick={() =>
-                  navigate(`/user/${currentUser._id}`, {
-                    state: currentUser,
-                  })
-                }
-              >
-                My Profile
-              </div>
-
-              <div className="pm-item">
-                Mode{" "}
-                <span onClick={() => setDark(!dark)}>
-                  {dark ? <NiSun /> : <NiMoon />}
-                </span>
-              </div>
-
-              <div
-                className="pm-item"
-                onClick={() => navigate(`/help-support`)}
-              >
-                Help and Support
-              </div>
-              <div
-                className="pm-item"
-                onClick={() => navigate(`/rating`)}
-              >
-                Rating
-              </div>
-
-              <button className="pm-logout" onClick={handleLogout}>
-                Sign out
-              </button>
             </div>
-          )}
+          </div>
         </div>
-        {mood !== "admin" && <Floating />}
       </div>
     </div>
   );

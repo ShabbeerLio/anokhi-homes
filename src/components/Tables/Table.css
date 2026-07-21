@@ -1,0 +1,6 @@
+.table-head, .table-row {
+    display: grid;
+    grid-template-columns: 40px 60px 100px 1fr 1fr 1fr 1.5fr 1fr 100px 60px;
+    align-items: center;
+    padding: 12px 0;
+}

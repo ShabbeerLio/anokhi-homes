@@ -67,8 +67,7 @@ const Counter = () => {
   }, [startAnimation]);
 
   return (
-    <div className="landing-pages" ref={sectionRef}>
-      <div className="testimonial-box">
+      <div className="couter-box" ref={sectionRef}>
         <div className="counter-grid">
           {counters.map((item, i) => (
             <div className="counter-bx" key={i}>
@@ -85,7 +84,6 @@ const Counter = () => {
           ))}
         </div>
       </div>
-    </div>
   );
 };
 

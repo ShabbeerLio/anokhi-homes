@@ -14,11 +14,11 @@ const Gallery = ({ data }) => {
   return (
     <>
       <div className="landing-head-box">
-        <div className="landing-head">
+        <div className="">
           <div className="landing-top">
             <h1>Gallery</h1>
-          </div>
           <LBreadcrumb />
+          </div>
         </div>
       </div>
 

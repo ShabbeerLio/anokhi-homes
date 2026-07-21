@@ -21,7 +21,7 @@ const LandingSetting = ({ mood, setAlert }) => {
   useEffect(() => {
     dispatch(getLandingPage());
   }, []);
-    // console.log(landingPage, "landingPage");
+  // console.log(landingPage, "landingPage");
   const navigate = useNavigate();
 
   /* ================= ROLE BASED TABS ================= */
@@ -80,14 +80,14 @@ const LandingSetting = ({ mood, setAlert }) => {
             <ChevronLeft className="back-button" onClick={() => navigate(-1)} />
             <h2>Front Pages Settings</h2>
           </div>
-          <Breadcrumb />
+          {/* <Breadcrumb /> */}
         </div>
       </div>
 
       <div className="profile-grid">
         {/* LEFT SIDEBAR */}
         <div className="profile-sidebar">
-          <div className="profile-card card">
+          <div className="profile-card card" style={{ background: "#25271d" }}>
             <div className="profile-nav">
               {TABS.map((tab) => (
                 <span

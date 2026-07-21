@@ -1,7 +1,7 @@
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  gap: 8px;
   /* margin-top: 20px; */
 }
 
@@ -29,9 +29,10 @@
 
 .dashboard-card h4 {
   font-weight: 500;
-  color: #9f9f9f;
+  /* color: #9f9f9f; */
+  /* color: black; */
   margin: 0 !important;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
   font-size: 14px;
 }
 
@@ -41,14 +42,17 @@
   /* color: #111; */
   margin: 0;
 }
-
+.dashboard-box-left {
+  margin-top: 1rem;
+}
 .dashboard-wrapper {
   margin: 0 0 1rem 0;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 .dashboard-wrapper h4 {
-  margin: 1.5rem 0 0.7rem 0;
+  margin: 0;
 }
 .dashboard-charts {
   display: grid;
@@ -56,15 +60,10 @@
   gap: 1rem;
 }
 
-.dashboard-box {
+/* .dashboard-box {
   display: flex;
   gap: 1.5rem;
-}
-
-.dashboard-box-left {
-  width: 65%;
-  height: 100%;
-}
+} */
 
 .dashboard-title-box {
   display: flex;
@@ -78,7 +77,7 @@
   gap: 5px;
   font-size: 12px;
   padding: 5px 10px;
-  margin-top: 1rem;
+  /* margin-top: 1rem; */
   border-radius: 1.75rem;
   cursor: pointer;
   text-decoration: none;
@@ -97,11 +96,15 @@
   grid-template-columns: repeat(2, 1fr);
 }
 .dashboard-box-right {
-  width: 35%;
+  border: 0.1px solid #bdbaad;
   gap: 10px;
   display: flex;
   /* align-items: center; */
+  background-color: var(--secondary-color);
+  padding: 1rem;
+  border-radius: 12px;
   flex-direction: column;
+  margin-bottom: 1rem;
 }
 .dashboard-box-right h4 {
   margin: 0;
@@ -127,6 +130,14 @@
   align-items: center;
   gap: 10px;
 }
+.dashboard-box-item.main {
+  background: #ef0000;
+  background: radial-gradient(circle, #ef0000 0%, #aa0000 100%);
+  color: white;
+}
+.dashboard-box-item.main p {
+  color: white;
+}
 
 .dashboard-box-left .dashboard-box-item-left {
   width: 60%;
@@ -140,6 +151,22 @@
   width: 80%;
   height: 100%;
 }
+.dashboard-box-item-right img {
+  color: var(--mood-color);
+  width: 80%;
+}
+
+.dashboard-head {
+  /* color: #9f9f9f; */
+  border-bottom: 1px solid #9f9f9f;
+}
+.dashboard-head,
+.dashboard-row {
+  display: grid;
+  grid-template-columns: 40px 100px 1fr 1.5fr 1fr 100px 120px 120px 100px 60px;
+  align-items: center;
+  padding: 12px 0;
+}
 
 .dashboard-box-left .dashboard-box-item .dashboard-box-item-left h4 {
   margin: 0;
@@ -148,7 +175,7 @@
 }
 .dashboard-box-right .dashboard-box-item {
   padding: 3px;
-  border-radius: 1.5rem;
+  /* border-radius: 1.5rem; */
 }
 .dashboard-box-right .dashboard-box-item .dashboard-box-item-right h6 {
   font-size: 14px;
@@ -161,9 +188,10 @@
 
 .dashboard-card .dashboard-box-item-left,
 .dashboard-box-right .dashboard-box-item .dashboard-box-item-left {
-  border-radius: 1.3rem;
-  width: 15%;
+  border-radius: 12px;
+  width: 20%;
   height: 100%;
+  aspect-ratio: 2/2 !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -200,7 +228,7 @@
 .dashboard-alerts .alert-items svg {
   width: 35px;
   height: 35px;
-  color: var(--mood-color);
+  color: white !important;
   background-color: color-mix(in oklab, var(--mood-color) 10%, transparent);
   border-radius: 1.5rem;
   padding: 10px;
@@ -209,27 +237,60 @@
 .danger {
   background-color: color-mix(
     in oklab,
-    var(--error-color) 10%,
+    var(--error-color) 100%,
     transparent
   ) !important;
-  color: var(--error-color) !important;
+  /* color: var(--error-color) !important; */
+  color: white !important;
   gap: 5px !important;
 }
 .success svg,
 .success {
   background-color: color-mix(
     in oklab,
-    var(--success-color) 10%,
+    var(--success-color) 100%,
     transparent
   ) !important;
-  color: var(--success-color) !important;
+  /* color: var(--success-color) !important; */
+  color: white !important;
   gap: 5px !important;
 }
 .warning svg,
 .warning {
   background-color: color-mix(
     in oklab,
-    var(--warning-color) 10%,
+    var(--warning-color) 100%,
+    transparent
+  ) !important;
+  /* color: var(--warning-color) !important; */
+  color: white !important;
+  gap: 5px !important;
+}
+.dashboard.danger svg,
+.danger {
+  background-color: color-mix(
+    in oklab,
+    var(--error-color) 20%,
+    transparent
+  ) !important;
+  color: var(--error-color) !important;
+  gap: 5px !important;
+}
+.dashboard.success svg,
+.success {
+  background-color: color-mix(
+    in oklab,
+    var(--success-color) 20%,
+    transparent
+  ) !important;
+  color: var(--success-color) !important;
+  gap: 5px !important;
+}
+.dashboard.warning svg,
+.warning {
+  background-color: color-mix(
+    in oklab,
+    var(--warning-color) 20%,
     transparent
   ) !important;
   color: var(--warning-color) !important;
@@ -250,13 +311,20 @@
 }
 
 .offer-carousel {
-  height: 130px;
-  overflow: hidden;
+  /* height: 130px; */
+  /* overflow: hidden; */
   position: relative;
+}
+.offer-carousel h4 {
+  font-size: 16px !important;
+}
+.offer-carousel p {
+  font-size: 12px !important;
 }
 
 .offer-slide {
   position: absolute;
+  top: 0;
   width: 100%;
   opacity: 0;
   transform: translateY(20px);
@@ -299,6 +367,44 @@
   color: #ff7a00 !important;
 }
 
+.dashboard-container {
+  display: flex;
+  gap: 1rem;
+}
+.dashboard-container-left {
+  width: 70%;
+}
+.dashboard-container-right {
+  width: 30%;
+  overflow: hidden;
+}
+.dashboard-box-item-right {
+  width: 80%;
+}
+
+.top-perf .table {
+  width: 300px;
+  min-width: 250px;
+}
+.top-perf.dashboard-box-left .dashboard-head,
+.top-perf.dashboard-box-left .dashboard-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 100px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 0.1px solid #c0c0c0;
+}
+.top-perf.dashboard-box-left .dashboard-row .top-number {
+  background-color: color-mix(in oklab, var(--mood-color) 10%, transparent);
+  color: var(--mood-color);
+  width: 25px;
+  height: 25px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+}
 @media (max-width: 768px) {
   .dashboard-box {
     flex-direction: column;

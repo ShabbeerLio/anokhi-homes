@@ -1,13 +1,18 @@
 .testimonial-box {
   display: flex;
   align-items: center;
+  justify-content:center;
+  flex-direction: column;
+  text-align: center;
   gap: 2rem;
-  background-image: url("../../Assets/Bg/bg-light.jpg");
+  /* background-image: url("../../Assets/Bg/bg-light.jpg");
   background-size: cover;
   background-position: bottom;
-  background-repeat: no-repeat;
-  border-radius: 1.75rem;
-  padding: 5rem;
+  background-repeat: no-repeat; */
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fcfaf3;
+  border: 0.1px solid #bdbaad;
 }
 
 .testimonial-box-left {

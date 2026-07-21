@@ -45,7 +45,7 @@ const AdminSiteVisit = ({ siteVisits, mood, setAlert ,landingPage}) => {
         />
       </div>
       {/* Filters */}
-      <h4>Site Visits</h4>
+      <h4 style={{margin:"1rem 0"}}>Site Visits</h4>
       <VisitTable data={siteVisits} mood={mood} setAlert={setAlert} landingPage={landingPage}/>
       <h4>Monthly Revenue</h4>
       <div className="card">

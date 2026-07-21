@@ -45,11 +45,11 @@ const BookingCard = ({
   useEffect(() => {
     if (!viewOpen) {
       setShowReport(false);
-      setShowTimeline(false)
-    };
+      setShowTimeline(false);
+    }
   }, [viewOpen]);
 
-  const ratingdone = ratingData.find((i) => i.booking._id === item._id)
+  const ratingdone = ratingData?.find((i) => i.booking._id === item._id);
   const total = Number(item.finalAmount || 0);
   const paid = Number(item.amountPaid || 0);
   const remaining = total - paid;
@@ -169,28 +169,37 @@ const BookingCard = ({
 
   const bookingProgress =
     currentStage === "booking"
-      ? getProgressPercent(bookingDaysLeft, item.paymentSchedule?.booking?.dueDays)
+      ? getProgressPercent(
+          bookingDaysLeft,
+          item.paymentSchedule?.booking?.dueDays,
+        )
       : bookingPaid
         ? 100
         : 0;
 
   const agreementProgress =
     currentStage === "agreement"
-      ? getProgressPercent(agreementDaysLeft, item.paymentSchedule?.agreement?.dueDays)
+      ? getProgressPercent(
+          agreementDaysLeft,
+          item.paymentSchedule?.agreement?.dueDays,
+        )
       : agreementPaid
         ? 100
         : 0;
 
   const registryProgress =
     currentStage === "full"
-      ? getProgressPercent(registryDaysLeft, item.paymentSchedule?.full?.dueDays)
+      ? getProgressPercent(
+          registryDaysLeft,
+          item.paymentSchedule?.full?.dueDays,
+        )
       : fullPaid
         ? 100
         : 0;
 
   // console.log(bookingProgress, "bookingProgress")
   const handleBookingAction = async (bookingId, action, note = "") => {
-    setSaving(true)
+    setSaving(true);
     try {
       const token = localStorage.getItem("token");
 
@@ -217,7 +226,7 @@ const BookingCard = ({
       setFormData({});
 
       setTimeout(() => setAlert(null), 3000);
-      setSaving(false)
+      setSaving(false);
     } catch (err) {
       console.error(err);
       setAlert({
@@ -225,12 +234,12 @@ const BookingCard = ({
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
-      setSaving(false)
+      setSaving(false);
     }
   };
 
   const handleDeleteBooking = async (bookingId) => {
-    setSaving(true)
+    setSaving(true);
     try {
       const token = localStorage.getItem("token");
 
@@ -248,7 +257,7 @@ const BookingCard = ({
       });
       setTimeout(() => setAlert(null), 3000);
 
-      setSaving(false)
+      setSaving(false);
       setDeleteOpen(false);
     } catch (err) {
       console.error(err);
@@ -257,27 +266,33 @@ const BookingCard = ({
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
-      setSaving(false)
+      setSaving(false);
     }
   };
 
   // Add Payment
   const handleAddPayment = async () => {
-    setSaving(true)
+    setSaving(true);
     try {
       const token = localStorage.getItem("token");
 
       // 🔥 validations
       if (!formData.paymentType) {
-        return setAlert({ message: "Select payment type", status: "Error" });
+        return;
+        setAlert({ message: "Select payment type", status: "Error" });
+        setTimeout(() => setAlert(null), 3000);
       }
 
       if (!formData.mode) {
-        return setAlert({ message: "Select payment mode", status: "Error" });
+        return;
+        setAlert({ message: "Select payment mode", status: "Error" });
+        setTimeout(() => setAlert(null), 3000);
       }
 
       if (!formData.amount) {
-        return setAlert({ message: "Enter amount", status: "Error" });
+        return;
+        setAlert({ message: "Enter amount", status: "Error" });
+        setTimeout(() => setAlert(null), 3000);
       }
 
       if (
@@ -288,6 +303,7 @@ const BookingCard = ({
           message: "Transaction ID required",
           status: "Error",
         });
+        setTimeout(() => setAlert(null), 3000);
       }
 
       const payload = {
@@ -319,7 +335,7 @@ const BookingCard = ({
       setViewOpen(false);
 
       setTimeout(() => setAlert(null), 3000);
-      setSaving(false)
+      setSaving(false);
     } catch (err) {
       console.error(err);
       setAlert({
@@ -327,7 +343,7 @@ const BookingCard = ({
         status: "Error",
       });
       setTimeout(() => setAlert(null), 3000);
-      setSaving(false)
+      setSaving(false);
     }
   };
 
@@ -352,7 +368,7 @@ const BookingCard = ({
   }, [item._id]);
 
   const handleSubmitRating = async () => {
-    setSaving(true)
+    setSaving(true);
     try {
       const token = localStorage.getItem("token");
 
@@ -367,7 +383,7 @@ const BookingCard = ({
           headers: {
             "auth-token": token,
           },
-        }
+        },
       );
       setAlert({
         message: "Rating submitted successfully",
@@ -378,20 +394,18 @@ const BookingCard = ({
       setTimeout(() => {
         setAlert(null);
       }, 3000);
-      setSaving(false)
+      setSaving(false);
     } catch (err) {
       console.log(err);
 
       setAlert({
-        message:
-          err.response?.data?.msg ||
-          "Unable to submit rating",
+        message: err.response?.data?.msg || "Unable to submit rating",
         status: "Error",
       });
       setTimeout(() => {
         setAlert(null);
       }, 3000);
-      setSaving(false)
+      setSaving(false);
     }
   };
 
@@ -411,16 +425,17 @@ const BookingCard = ({
                 {/* <span>({item?.agent?.name})</span> */}
 
                 <span
-                  className={`status ${item.status === "confirmed"
-                    ? "active"
-                    : item.status === "pending"
-                      ? "pending"
-                      : item.status === "approval"
-                        ? "pending2"
-                        : item.status === "rejected"
-                          ? "failed"
-                          : ""
-                    }`}
+                  className={`status ${
+                    item.status === "confirmed"
+                      ? "active"
+                      : item.status === "pending"
+                        ? "pending"
+                        : item.status === "approval"
+                          ? "pending2"
+                          : item.status === "rejected"
+                            ? "failed"
+                            : ""
+                  }`}
                 >
                   {item.status}
                 </span>
@@ -490,7 +505,10 @@ const BookingCard = ({
 
           <div className="user-card-bottom-right">
             <p>{formatDate(item?.createdAt)}</p>
-            <p>{item?.plot?.plotNumber}, {item?.colony?.name}, {item?.location?.name}</p>
+            <p>
+              {item?.plot?.plotNumber}, {item?.colony?.name},{" "}
+              {item?.location?.name}
+            </p>
             {mood !== "agent" && <p>{item?.agent?.name}</p>}
             <p>{formatCurrency(item?.plotArea)} sqft</p>
             {!isApproval ? (
@@ -517,7 +535,7 @@ const BookingCard = ({
               <div
                 className="progress-fill"
                 style={{
-                  width: `${(item.status === "pending" || item.status === "confirmed") ? bookingProgress : 0}%`,
+                  width: `${item.status === "pending" || item.status === "confirmed" ? bookingProgress : 0}%`,
                 }}
               >
                 <span>
@@ -538,7 +556,7 @@ const BookingCard = ({
               <div
                 className="progress-fill"
                 style={{
-                  width: `${(item.status === "pending" || item.status === "confirmed") ? agreementProgress : 0}%`,
+                  width: `${item.status === "pending" || item.status === "confirmed" ? agreementProgress : 0}%`,
                 }}
               >
                 <span>
@@ -559,7 +577,7 @@ const BookingCard = ({
               <div
                 className="progress-fill"
                 style={{
-                  width: `${(item.status === "pending" || item.status === "confirmed") ? registryProgress : 0}%`,
+                  width: `${item.status === "pending" || item.status === "confirmed" ? registryProgress : 0}%`,
                 }}
               >
                 <span>
@@ -573,7 +591,7 @@ const BookingCard = ({
             </div>
           </div>
         </div>
-        {mood === "admin" &&
+        {(mood === "admin" || mood === "staff") &&
           (item.status === "scheduled" || item.status === "approval") && (
             <div className="modal-actions">
               <button
@@ -595,7 +613,7 @@ const BookingCard = ({
             </div>
           )}
         <div>
-          {!ratingdone && item.status === "completed" && mood === "user" &&
+          {!ratingdone && item.status === "completed" && mood === "user" && (
             <div className="modal-actions">
               <button
                 className=" view-report-btn"
@@ -609,7 +627,7 @@ const BookingCard = ({
                 Please Give Rating
               </button>
             </div>
-          }
+          )}
         </div>
       </div>
 
@@ -674,7 +692,6 @@ const BookingCard = ({
               e.stopPropagation();
               setDeleteOpen(false);
             }}
-
           >
             Cancel
           </button>
@@ -721,7 +738,8 @@ const BookingCard = ({
           <div className="user-card-bottom-right">
             <p>{formatDate(item?.createdAt)}</p>
             <p>
-              {item?.plot?.plotNumber}, {item?.colony?.name}, {item?.location?.name}
+              {item?.plot?.plotNumber}, {item?.colony?.name},{" "}
+              {item?.location?.name}
             </p>
             <p>₹{formatCurrency(item?.finalAmount)}</p>
             <p>₹{formatCurrency(paid)}</p>
@@ -757,10 +775,10 @@ const BookingCard = ({
                     setPanelMode("report");
                     setShowReport(true);
                     setShowTimeline(false);
-
                   }}
                 >
-                  <NiReport />Report
+                  <NiReport />
+                  Report
                 </button>
                 <button
                   className={`view-report-btn ${showTimeline ? "active" : ""}`}
@@ -773,7 +791,8 @@ const BookingCard = ({
                   <NiSitevisit /> Timeline
                 </button>
               </div>
-            </>))}
+            </>
+          ))}
         {item.status === "pending" &&
           mood !== "user" &&
           panelMode !== "payment" && (
@@ -787,7 +806,6 @@ const BookingCard = ({
               >
                 Book Now
               </button>
-
             </div>
           )}
         {/* {item.status === "confirmed" ||
@@ -905,22 +923,24 @@ const BookingCard = ({
                 formData.mode === "cash" ||
                 formData.mode === "cheque" ||
                 formData.mode === "bank") && (
-                  <div className="field">
-                    <label>Attachment *</label>
-                    <input
-                      type="file"
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          attachment: e.target.files[0],
-                        })
-                      }
-                    />
-                  </div>
-                )}
+                <div className="field">
+                  <label>Attachment *</label>
+                  <input
+                    type="file"
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        attachment: e.target.files[0],
+                      })
+                    }
+                  />
+                </div>
+              )}
               <p>Notes : 35% cancellation charges</p>
               <div className="modal-actions">
-                <button disabled={saving} onClick={handleAddPayment}>Add Payment</button>
+                <button disabled={saving} onClick={handleAddPayment}>
+                  Add Payment
+                </button>
               </div>
             </>
           )}
@@ -930,7 +950,6 @@ const BookingCard = ({
               <h4>Timeline</h4>
               {timeline.map((log, index) => (
                 <div key={log.id} className="log-item">
-
                   {/* LEFT TIMELINE */}
                   <div className="log-left">
                     <div
@@ -942,12 +961,15 @@ const BookingCard = ({
 
                   {/* RIGHT CONTENT */}
                   <div className="log-content">
-                    <span>{log.title} {log.by ? ` (${log.by})` : ""}</span>
+                    <span>
+                      {log.title} {log.by ? ` (${log.by})` : ""}
+                    </span>
                     <p>{log.description} </p>
                     <span className="log-time">{formatDate(log.date)}</span>
                   </div>
                 </div>
-              ))}</>
+              ))}
+            </>
           )}
 
           {panelMode === "report" && (
@@ -971,10 +993,18 @@ const BookingCard = ({
               <h4>Payment History</h4>
               <div className="installment-box">
                 <div className="installment">
-                  <span><strong>Type</strong></span>
-                  <span><strong>Mode</strong></span>
-                  <span><strong>Amount</strong></span>
-                  <span><strong>Date</strong></span>
+                  <span>
+                    <strong>Type</strong>
+                  </span>
+                  <span>
+                    <strong>Mode</strong>
+                  </span>
+                  <span>
+                    <strong>Amount</strong>
+                  </span>
+                  <span>
+                    <strong>Date</strong>
+                  </span>
                 </div>
                 {paymentSummary?.payments?.map((i) => (
                   <div className="installment">
@@ -1022,9 +1052,9 @@ const BookingCard = ({
                       {agreementPaid
                         ? ""
                         : `${getRemainingDays(
-                          item.paymentSchedule?.booking?.date,
-                          item.paymentSchedule?.agreement?.dueDays || 30,
-                        )} days remaining`}
+                            item.paymentSchedule?.booking?.date,
+                            item.paymentSchedule?.agreement?.dueDays || 30,
+                          )} days remaining`}
                     </span>
                   </div>
                 )}
@@ -1051,10 +1081,10 @@ const BookingCard = ({
                       {fullPaid
                         ? ""
                         : `${getRemainingDays(
-                          item.paymentSchedule?.agreement?.date ||
-                          item.paymentSchedule?.booking?.date,
-                          item.paymentSchedule?.full?.dueDays || 90,
-                        )} days remaining`}
+                            item.paymentSchedule?.agreement?.date ||
+                              item.paymentSchedule?.booking?.date,
+                            item.paymentSchedule?.full?.dueDays || 90,
+                          )} days remaining`}
                     </span>
                   </div>
                 )}
@@ -1093,10 +1123,7 @@ const BookingCard = ({
                     style={{
                       cursor: "pointer",
                       fontSize: "30px",
-                      color:
-                        star <= cratingData.stars
-                          ? "#FFC107"
-                          : "#d9d9d9",
+                      color: star <= cratingData.stars ? "#FFC107" : "#d9d9d9",
                     }}
                     onClick={() =>
                       setCratingData({
@@ -1116,7 +1143,9 @@ const BookingCard = ({
                   </span>
                 ))}
               </div>
-              <p style={{ marginBottom: "1rem", justifyContent: "center" }}>Rate your experience with our Associate.</p>
+              <p style={{ marginBottom: "1rem", justifyContent: "center" }}>
+                Rate your experience with our Associate.
+              </p>
 
               {/* <div className="field">
                 <label>Review</label>

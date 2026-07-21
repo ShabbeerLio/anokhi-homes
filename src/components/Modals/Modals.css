@@ -248,7 +248,7 @@
 }
 
 .searchItem {
-  background-color: white;
+  background-color: var(--secondary-color);
   border-radius: 18px;
   padding: 5px 10px;
   display: flex;
@@ -349,7 +349,7 @@
 @keyframes drop2 {
   from {
     opacity: 0;
-    transform: translateX(-50%);;
+    transform: translateX(-50%);
   }
   to {
     opacity: 1;

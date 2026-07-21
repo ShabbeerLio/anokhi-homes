@@ -85,9 +85,9 @@ const AdminPayments = ({ payment, mood, setAlert }) => {
           icons={<NiPayments />}
         />
       </div>
-      <h4>Payments</h4>
+      <h4 style={{margin:"1rem 0"}}>Payments</h4>
       <PaymentTable data={payment} mood={mood} setAlert={setAlert} />
-      <h4>Collection Trend</h4>
+      {/* <h4>Collection Trend</h4>
       <div className="card">
         <Charts
           title="Collection Trend"
@@ -103,8 +103,7 @@ const AdminPayments = ({ payment, mood, setAlert }) => {
           dataKey="revenue"
           setAlert={setAlert}
         />
-        {/* Filters */}
-      </div>
+      </div> */}
     </div>
   );
 };

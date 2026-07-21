@@ -3,7 +3,7 @@ import NiEdit from "../../icons/ni-edit";
 
 const LandingCard = ({ p, action, onEdit, onDelete }) => {
   return (
-    <div className="plot-card card">
+    <div className="plot-card image-box card">
       {p?.image && (
         <div className="plot-img">
           <img src={p?.image} alt={p?.title} />
