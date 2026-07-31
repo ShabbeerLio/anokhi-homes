@@ -1,7 +1,7 @@
 .testimonial-box {
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   flex-direction: column;
   text-align: center;
   gap: 2rem;
@@ -10,7 +10,7 @@
   background-position: bottom;
   background-repeat: no-repeat; */
   border-radius: 12px;
-  padding: 1rem;
+  padding: 2rem 1rem;
   background: #fcfaf3;
   border: 0.1px solid #bdbaad;
 }
@@ -25,6 +25,10 @@
 }
 .testimonial-box-right {
   width: 85%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 @media (max-width: 900px) {
@@ -34,10 +38,12 @@
     text-align: center;
   }
 
-  .testimonial-box-left{
+  .testimonial-box-left {
     width: 50%;
   }
-  .nav-right button, .testimonial-box-right button, .hero-actions button {
+  .nav-right button,
+  .testimonial-box-right button,
+  .hero-actions button {
     justify-content: center;
     width: 100%;
   }
